@@ -1,22 +1,3 @@
-<p align=center>
-  <a href="https://github.com/Jasonandy/Java-Core-Advanced">
-    <img src="http://upload-images.jianshu.io/upload_images/7802425-9eb1bcd006e34aa6.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="Java-Core-Advanced" >
-  </a>
-</p>
-
-<p align=center>
-  You are what you want to be.
-</p>
-
-<p align="center">
-	<a href="#"><img src="https://img.shields.io/badge/Java-Patterns-blue.svg?style=for-the-badge" alt=""></a>
-	<a href="#"><img src="https://img.shields.io/badge/Author-Jason-orange.svg?style=for-the-badge" alt=""></a>
-</p>
-
-
-# Ucaner
-> You are what you want to be. - w.b
-
 ### 逻辑结构图
 ![逻辑结构](http://upload-images.jianshu.io/upload_images/7802425-5d6b679ecdac9f47.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
 
@@ -396,7 +377,6 @@ public interface XManBuilder {
 
 ```
 # 原型模式
-[博客参考](https://www.cnblogs.com/lfxiao/p/6812835.html)
 * 原型模式（Prototype Pattern）是用于创建重复的对象，同时又能保证性能。
 这种类型的设计模式属于创建型模式，它提供了一种创建对象的最佳方式
 
@@ -562,12 +542,6 @@ public abstract class BaseMessage {
 ### ENV
 - JDK 1.8
 - Intellij IDEA
-- Git
-- gitHub
-- gitee
 
 ## License
 开源协议 [Apache License, Version 2.0](http://www.apache.org/licenses/LICENSE-2.0.html)
-
-#
-![](http://upload-images.jianshu.io/upload_images/7802425-bb910b4ae954107a.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
