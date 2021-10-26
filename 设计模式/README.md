@@ -17,12 +17,6 @@
 # Ucaner
 > You are what you want to be. - w.b
 
-
-# patterns
-* Project：Java-Patterns 
-* OfficialWebsite：http://patterns.ucaner.cn
-* describe：设计模式学习笔记
-
 ### 逻辑结构图
 ![逻辑结构](http://upload-images.jianshu.io/upload_images/7802425-5d6b679ecdac9f47.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
 
@@ -567,14 +561,10 @@ public abstract class BaseMessage {
 
 ### ENV
 - JDK 1.8
-- Intellij IDEA 14
+- Intellij IDEA
 - Git
 - gitHub
 - gitee
-
-## Contact
-- QQ:603043194
-- E-Mail: jasonandy@hotmail.com
 
 ## License
 开源协议 [Apache License, Version 2.0](http://www.apache.org/licenses/LICENSE-2.0.html)
