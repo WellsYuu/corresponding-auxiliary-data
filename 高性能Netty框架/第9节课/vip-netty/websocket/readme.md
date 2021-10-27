@@ -1,0 +1,1 @@
+本工程，展示了SpringBoot如何集成纯WebSocket的页面。
