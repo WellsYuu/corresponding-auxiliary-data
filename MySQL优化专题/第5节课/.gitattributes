@@ -1,0 +1,1 @@
+product_info.sql filter=lfs diff=lfs merge=lfs -text
