@@ -1,0 +1,30 @@
+spring容器的refresh()[创建刷新]
+1，prepareRefresh()：刷新前的预处理
+	1）initPropertySources()：初始化一些属性设置；子类自定义个性化的属性设置方法
+	2）getEnvironment().validateRequiredProperties()：检验属性的合法性等
+	3）this.earlyApplicationEvents = new LinkedHashSet<>();保存容器中的一些早期的事件
+
+2，obtainFreshBeanFactory()：获取beanFactory实例
+	1）refreshBeanFactory();刷新或创建beanFactory
+	2）getBeanFactory()：将刚生成的beanFactory返回
+
+3，prepareBeanFactory(beanFactory)：beanFactory预准备工作，（以上创建的beanFactory好多属性没有值，只有一些默认的值）
+	beanFactory.setBeanClassLoader(getClassLoader());设置BeanFactory的类加载器
+	beanFactory.setBeanExpressionResolver：支持相关的表达式语言的解析
+	ignoreDependencyInterface：设置忽略的自动装配接口 EnvironmentAware  EmbeddedValueResolverAware
+	beanFactory.registerResolvableDependency：注册可以解析的自动装配：我们能直接在任何组件中自动注入  BeanFactory  ApplicationContext
+	beanFactory.addBeanPostProcessor(new ApplicationListenerDetector(this));添加监听检测的处理器
+    if (!beanFactory.containsLocalBean(ENVIRONMENT_BEAN_NAME))：注册环境变量相关bean
+
+
+
+
+
+
+
+
+
+
+
+
+
