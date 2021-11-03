@@ -1,0 +1,131 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.enjoylearning.mybatis.mapper.TJobHistoryMapper">
+	<resultMap id="userInfo" type="TUser">
+		<id column="id" property="id" />
+		<result column="user_name" property="userName" />
+		<result column="real_name" property="realName" />
+		<result column="sex" property="sex" />
+		<result column="mobile" property="mobile" />
+		<result column="email" property="email" />
+		<result column="note" property="note" />
+	</resultMap>
+	
+	<resultMap id="BaseResultMap" type="com.enjoylearning.mybatis.entity.TJobHistory">
+		<id column="id" property="id" jdbcType="INTEGER" />
+		<result column="user_id" property="userId" jdbcType="INTEGER" />
+		<result column="comp_name" property="compName" jdbcType="VARCHAR" />
+		<result column="years" property="years" jdbcType="INTEGER" />
+		<result column="title" property="title" jdbcType="VARCHAR" />
+	</resultMap>
+
+
+
+
+	<select id="selectByEmailAndSex2" resultMap="userInfo">
+		select
+		id, user_name, real_name, sex, mobile, email, note,
+		position_id
+		from t_user a
+		where a.email like CONCAT('%', #{email}, '%') and
+		a.sex =
+		#{sex}
+	</select>
+
+
+	<select id="selectByUserId" resultMap="BaseResultMap"  parameterType="java.lang.Integer">
+		select
+		<include refid="Base_Column_List" />
+		from t_job_history
+		where user_id = #{userId,jdbcType=INTEGER}
+	</select>
+
+
+
+
+
+	<sql id="Base_Column_List">
+		id, user_id, comp_name, years, title
+	</sql>
+	<select id="selectByPrimaryKey" resultMap="BaseResultMap"
+		parameterType="java.lang.Integer">
+		select
+		<include refid="Base_Column_List" />
+		from t_job_history
+		where id = #{id,jdbcType=INTEGER}
+	</select>
+	<delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
+		delete from t_job_history
+		where id = #{id,jdbcType=INTEGER}
+	</delete>
+	<insert id="insert" parameterType="com.enjoylearning.mybatis.entity.TJobHistory">
+		insert into t_job_history (id, user_id, comp_name,
+		years, title)
+		values (#{id,jdbcType=INTEGER}, #{userId,jdbcType=INTEGER},
+		#{compName,jdbcType=VARCHAR},
+		#{years,jdbcType=INTEGER}, #{title,jdbcType=VARCHAR})
+	</insert>
+	<insert id="insertSelective" parameterType="com.enjoylearning.mybatis.entity.TJobHistory">
+		insert into t_job_history
+		<trim prefix="(" suffix=")" suffixOverrides=",">
+			<if test="id != null">
+				id,
+			</if>
+			<if test="userId != null">
+				user_id,
+			</if>
+			<if test="compName != null">
+				comp_name,
+			</if>
+			<if test="years != null">
+				years,
+			</if>
+			<if test="title != null">
+				title,
+			</if>
+		</trim>
+		<trim prefix="values (" suffix=")" suffixOverrides=",">
+			<if test="id != null">
+				#{id,jdbcType=INTEGER},
+			</if>
+			<if test="userId != null">
+				#{userId,jdbcType=INTEGER},
+			</if>
+			<if test="compName != null">
+				#{compName,jdbcType=VARCHAR},
+			</if>
+			<if test="years != null">
+				#{years,jdbcType=INTEGER},
+			</if>
+			<if test="title != null">
+				#{title,jdbcType=VARCHAR},
+			</if>
+		</trim>
+	</insert>
+	<update id="updateByPrimaryKeySelective" parameterType="com.enjoylearning.mybatis.entity.TJobHistory">
+		update t_job_history
+		<set>
+			<if test="userId != null">
+				user_id = #{userId,jdbcType=INTEGER},
+			</if>
+			<if test="compName != null">
+				comp_name = #{compName,jdbcType=VARCHAR},
+			</if>
+			<if test="years != null">
+				years = #{years,jdbcType=INTEGER},
+			</if>
+			<if test="title != null">
+				title = #{title,jdbcType=VARCHAR},
+			</if>
+		</set>
+		where id = #{id,jdbcType=INTEGER}
+	</update>
+	<update id="updateByPrimaryKey" parameterType="com.enjoylearning.mybatis.entity.TJobHistory">
+		update t_job_history
+		set user_id = #{userId,jdbcType=INTEGER},
+		comp_name = #{compName,jdbcType=VARCHAR},
+		years = #{years,jdbcType=INTEGER},
+		title = #{title,jdbcType=VARCHAR}
+		where id = #{id,jdbcType=INTEGER}
+	</update>
+</mapper>
