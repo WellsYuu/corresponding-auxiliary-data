@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.enjoylearning.mybatis.mapper.TUserMapper">
+
+	<select id="selectByPrimaryKey" resultType="com.enjoylearning.mybatis.entity.TUser"	parameterType="java.lang.Integer">
+		select
+			id, 
+			user_name , 
+			real_name , 
+			sex, 
+			mobile, 
+			email, 
+			note,
+			position_id positionId
+		from t_user
+		where id = #{id,jdbcType=INTEGER}
+	</select>
+
+</mapper>
