@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.enjoylearning.mybatis.mapper.TUserMapper">
+
+	<resultMap id="BaseResultMap" type="TUser">
+		<id column="id" property="id" />
+		<result column="note" property="note" />
+	</resultMap>
+	<resultMap id="userAndPosition1" extends="BaseResultMap" type="TUser">
+		<association property="position" javaType="TPosition" columnPrefix="post_">
+			<id column="id" property="id"/>
+		</association>
+	</resultMap>
+
+	<sql id="Base_Column_List">
+		id, user_name, real_name, sex, mobile, email, note,
+		position_id
+	</sql>
+	
+	<select id="selectUserPosition1" resultMap="userAndPosition1">
+		select   a.id,user_name,real_name,sex,	mobile,
+		from t_user a,
+			t_position b
+		where a.position_id = b.id
+	</select>
+	
+	<insert id="insertForeach4Batch" useGeneratedKeys="true" keyProperty="id">
+		insert into t_user (user_name, real_name,sex, mobile,email,note,position_id)
+		values(
+			#{user.userName,jdbcType=VARCHAR},
+			#{user.realName,jdbcType=VARCHAR},
+			#{user.note,jdbcType=VARCHAR},
+			#{user.position.id,jdbcType=INTEGER})
+	</insert>
+
+</mapper>
