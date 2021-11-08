@@ -1,0 +1,30 @@
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+<style>
+    body {
+        width: 35em;
+        margin: 0 auto;
+        font-family: Tahoma, Verdana, Arial, sans-serif;
+    }
+</style>
+</head>
+<body>
+	<br />
+	<h2>a页面</h2>
+	<br />
+	<div id = "testcors"></div>
+</body>
+</html>
+<script src="https://code.jquery.com/jquery-3.1.1.min.js"></script>
+<script type="text/javascript">
+//$("#testcors").text("Hello world!");
+	$.ajax({  
+		 url:"http://www.enjoy.com/proxy/enjoy/getPage",  
+		 async :false,  
+		 type:"GET",  
+		 success:function(data){  
+			 $("#testcors").html(data);  
+			 }  
+	 });
+</script>
