@@ -1,0 +1,86 @@
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+<style>
+    body {
+        width: 35em;
+        margin: 0 auto;
+        font-family: Tahoma, Verdana, Arial, sans-serif;		
+    }
+	.content {
+		float: left;
+		width: 30%;
+		height: 300px;
+	}
+	.head {
+		float: left;
+		width: 30%;
+		height: 60px;
+		text-align:center;
+		
+	}
+</style>
+</head>
+<body>
+	<br />	
+	<div style="float: left;width: 45%;height: 60px;text-align:left;"><h1>电商门户页面</h1></div>
+	<div style="float: left;width: 45%;height: 60px;text-align:right;right:0;bottom:0;"><h5 id="balance"></h5></div>
+	
+	<div style="float: left;width: 90%;height: 60px;text-align:right;"></div>
+
+	<div class = "head" style="background-color:#9999ff;"><h3>商品</h3></div>
+	<div class = "head" style="background-color:#99ffbb;"><h3>订单</h3></div>
+	<div class = "head" style="background-color:#ff9999;"><h3>物流</h3></div>
+	<div id = "page1" class = "content" style="background-color:#e5e5ff;"></div>
+	<div id = "page2" class = "content" style="background-color:#e5ffee;"></div>
+	<div id = "page3" class = "content" style="background-color:#ffe5e5;"></div>
+
+</body>
+</html>
+<script src="https://code.jquery.com/jquery-3.1.1.min.js"></script>
+<script type="text/javascript">
+$("#page1").text("Hello world!");
+$("#page2").text("Hello world2!");
+$("#page3").text("Hello world3!");
+$("#balance").text("余额：500.00");
+$.ajax({  
+		 url:"http://order.enjoy.com/order/detail",  
+		 async :false,  
+		 type:"GET",  
+		 dataType:'json',
+		 success:function(data){  
+			 $("#page2").html(data.orderName + "<br/>"
+				+ data.balence + "<br/>"
+				+ data.discount + "<br/>"
+				+ data.realPay + "<br/>"
+				);  
+			 }  
+	 });
+$.ajax({
+                 url:"http://product.enjoy.com/product/detail",
+                 async :false,
+                 type:"GET",
+                 dataType:'json',
+                 success:function(data){
+                         $("#page1").html(
+                                 data.productName + "<br/>"
+                                + data.colour + "<br/>"
+                                + data.price + "<br/>"
+                                );
+                         }
+         });
+$.ajax({
+                 url:"http://deliver.enjoy.com/deliver/detail",
+                 async :false,
+                 type:"GET",
+                 dataType:'json',
+                 success:function(data){
+                         $("#page3").html(data.receiver + "<br/>"
+                                + data.tel + "<br/>"
+                                + data.addr + "<br/>"
+                                );
+                         }
+         });
+
+	
+</script>
