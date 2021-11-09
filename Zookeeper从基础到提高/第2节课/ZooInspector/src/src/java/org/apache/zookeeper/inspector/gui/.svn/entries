@@ -1,0 +1,98 @@
+10
+
+dir
+0
+http://svn.apache.org/repos/asf/hadoop/zookeeper/trunk/src/contrib/inspector/src/java/org/apache/zookeeper/inspector/gui
+http://svn.apache.org/repos/asf
+add
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+13f79535-47bb-0310-9956-ffa450edef68
+
+ZooInspectorTreeViewer.java
+file
+
+
+
+add
+
+ZooInspectorIconResources.java
+file
+
+
+
+add
+
+NodeViewersChangeListener.java
+file
+
+
+
+add
+
+nodeviewer
+dir
+
+
+
+add
+
+ZooInspectorAboutDialog.java
+file
+
+
+
+add
+
+ZooInspectorNodeViewersDialog.java
+file
+
+
+
+add
+
+ZooInspectorNodeViewersPanel.java
+file
+
+
+
+add
+
+ZooInspectorConnectionPropertiesDialog.java
+file
+
+
+
+add
+
+about.html
+file
+
+
+
+add
+
+ZooInspectorPanel.java
+file
+
+
+
+add
+

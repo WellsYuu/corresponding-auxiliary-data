@@ -1,0 +1,63 @@
+10
+
+dir
+0
+http://svn.apache.org/repos/asf/hadoop/zookeeper/trunk/src/contrib/inspector/src/java/org/apache/zookeeper/inspector
+http://svn.apache.org/repos/asf
+add
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+13f79535-47bb-0310-9956-ffa450edef68
+
+logger
+dir
+
+
+
+add
+
+gui
+dir
+
+
+
+add
+
+encryption
+dir
+
+
+
+add
+
+manager
+dir
+
+
+
+add
+
+ZooInspector.java
+file
+
+
+
+add
+

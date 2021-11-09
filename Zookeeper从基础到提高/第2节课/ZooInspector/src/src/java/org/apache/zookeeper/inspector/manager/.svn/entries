@@ -1,0 +1,77 @@
+10
+
+dir
+0
+http://svn.apache.org/repos/asf/hadoop/zookeeper/trunk/src/contrib/inspector/src/java/org/apache/zookeeper/inspector/manager
+http://svn.apache.org/repos/asf
+add
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+13f79535-47bb-0310-9956-ffa450edef68
+
+ZooInspectorNodeManager.java
+file
+
+
+
+add
+
+ZooInspectorNodeTreeManager.java
+file
+
+
+
+add
+
+ZooInspectorReadOnlyManager.java
+file
+
+
+
+add
+
+ZooInspectorManager.java
+file
+
+
+
+add
+
+NodeListener.java
+file
+
+
+
+add
+
+Pair.java
+file
+
+
+
+add
+
+ZooInspectorManagerImpl.java
+file
+
+
+
+add
+
