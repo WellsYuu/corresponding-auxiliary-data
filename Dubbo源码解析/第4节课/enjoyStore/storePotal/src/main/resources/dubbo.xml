@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:dubbo="http://code.alibabatech.com/schema/dubbo"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+	 http://www.springframework.org/schema/beans/spring-beans.xsd        
+	 http://code.alibabatech.com/schema/dubbo        
+	 http://code.alibabatech.com/schema/dubbo/dubbo.xsd">
+
+    <!-- 提供方应用信息，用于计算依赖关系 -->
+    <dubbo:application name="enjoyStore"/>
+
+    <!-- 使用zookeeper注册中心暴露服务地址 -->
+    <dubbo:registry address="zookeeper://172.17.0.2:2181"/>
+
+    <!--用dubbo协议在20880端口暴露服务 -->
+    <dubbo:protocol name="dubbo" port="20881"/>
+
+
+    <dubbo:provider />
+    <dubbo:consumer check="false" timeout="3000" cluster="failover" loadbalance="random"/>
+
+    <!-- 声明需要暴露的服务接口 -->
+
+    <!-- 声明需要引用的服务接口 -->
+    <dubbo:reference  id="productService" interface="com.enjoy.service.ProductService" />
+
+    <dubbo:reference  id="userService" interface="com.enjoy.service.UserService" loadbalance="first" />
+
+    <dubbo:reference  id="orderService"  interface="com.enjoy.service.OrderService"  loadbalance="last" >
+        <dubbo:method name="submit" async="true" onreturn="callBack.onOrderSubmit" onthrow="callBack.onError"/>
+        <dubbo:method name="cancel" async="true" />
+    </dubbo:reference>
+    <dubbo:reference  id="payService" interface="com.enjoy.service.PayService" >
+        <dubbo:method name="cancelPay" async="true" />
+    </dubbo:reference>
+    <dubbo:reference id="otherService" interface="com.enjoy.service.OtherService" generic="true" />
+
+
+
+    <bean id="callBack" class="com.enjoy.callback.CallBack" />
+
+
+</beans>
