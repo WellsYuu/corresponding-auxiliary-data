@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xmlns:dubbo="http://code.alibabatech.com/schema/dubbo"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+	 http://www.springframework.org/schema/beans/spring-beans.xsd
+	      http://www.springframework.org/schema/context
+                        http://www.springframework.org/schema/context/spring-context-3.1.xsd
+	 http://code.alibabatech.com/schema/dubbo
+	 http://code.alibabatech.com/schema/dubbo/dubbo.xsd">
+
+    <!-- 提供方应用信息，用于计算依赖关系 -->
+    <dubbo:application name="enjoyStore_annotation"/>
+
+    <!-- 使用zookeeper注册中心暴露服务地址 -->
+    <!--<dubbo:registry address="zookeeper://127.0.0.1:2181" check="false"/>-->
+
+    <dubbo:annotation package="com.enjoy.controller" />
+
+</beans>
