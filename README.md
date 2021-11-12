@@ -45,8 +45,12 @@ Corresponding Auxiliary Data 以系列模块的方式来区分不同的视频集
 
 该系列视频来自于某 VIP 内部培训课程，具体是哪个培训机构，后续在视频更新进度到 50% 的时候会在此发布。
 
+### 系列二
+
+正在更新...
+
 ------
 
 ## License
 
-Thenx Generator is Open Source software released under the [Apache 2.0 License](https://www.apache.org/licenses/LICENSE-2.0.html).
+Corresponding Auxiliary Data is Open Source software released under the [Apache 2.0 License](https://www.apache.org/licenses/LICENSE-2.0.html).
