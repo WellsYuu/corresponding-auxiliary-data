@@ -1,4 +1,4 @@
-# <img src="./doc/thenx.png" width="80" height="80"> Corresponding Auxiliary Data 视频对应辅助源码材料
+# <img src="https://i1.hdslb.com/bfs/face/859398b588e9406296e3fb008a2f46b51ad499c3.jpg@256w_256h_1o.webp" width="80" height="50"> Corresponding Auxiliary Data 
 
 Corresponding Auxiliary Data 是专为 [哔哩哔哩 (B站) ](https://space.bilibili.com/243683809/video) 视频中所涉及到的源码、PPT、Word、笔记、辅助工具等材料的项目，项目开发类别不限于 Java、C/C++、Python、汇编、Go、Vue、Angular、SQL等语言，各个不同项目多对应的语言可自行利用对应的开发工具进行学习。
 
