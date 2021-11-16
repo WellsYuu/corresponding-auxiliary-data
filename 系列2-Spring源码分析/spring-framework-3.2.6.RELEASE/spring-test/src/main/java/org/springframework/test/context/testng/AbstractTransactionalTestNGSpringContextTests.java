@@ -1,0 +1,166 @@
+/*
+ * Copyright 2002-2012 the original author or authors.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+package org.springframework.test.context.testng;
+
+import javax.sql.DataSource;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.ApplicationContext;
+import org.springframework.core.io.Resource;
+import org.springframework.core.io.support.EncodedResource;
+import org.springframework.dao.DataAccessException;
+import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.jdbc.core.simple.SimpleJdbcTemplate;
+import org.springframework.test.context.TestExecutionListeners;
+import org.springframework.test.context.transaction.TransactionalTestExecutionListener;
+import org.springframework.test.jdbc.JdbcTestUtils;
+import org.springframework.transaction.PlatformTransactionManager;
+import org.springframework.transaction.annotation.Transactional;
+
+/**
+ * Abstract {@linkplain Transactional transactional} extension of
+ * {@link AbstractTestNGSpringContextTests} which adds convenience functionality
+ * for JDBC access. Expects a {@link DataSource} bean and a
+ * {@link PlatformTransactionManager} bean to be defined in the Spring
+ * {@linkplain ApplicationContext application context}.
+ *
+ * <p>This class exposes a {@link JdbcTemplate} and provides an easy way to
+ * {@linkplain #countRowsInTable count the number of rows in a table}
+ * (potentially {@linkplain #countRowsInTableWhere with a WHERE clause}),
+ * {@linkplain #deleteFromTables delete from tables},
+ * {@linkplain #dropTables drop tables}, and
+ * {@linkplain #executeSqlScript execute SQL scripts} within a transaction.
+ *
+ * <p>Concrete subclasses must fulfill the same requirements outlined in
+ * {@link AbstractTestNGSpringContextTests}.
+ *
+ * @author Sam Brannen
+ * @author Juergen Hoeller
+ * @since 2.5
+ * @see AbstractTestNGSpringContextTests
+ * @see org.springframework.test.context.ContextConfiguration
+ * @see org.springframework.test.context.TestExecutionListeners
+ * @see org.springframework.test.context.transaction.TransactionalTestExecutionListener
+ * @see org.springframework.test.context.transaction.TransactionConfiguration
+ * @see org.springframework.transaction.annotation.Transactional
+ * @see org.springframework.test.annotation.NotTransactional
+ * @see org.springframework.test.annotation.Rollback
+ * @see org.springframework.test.context.transaction.BeforeTransaction
+ * @see org.springframework.test.context.transaction.AfterTransaction
+ * @see org.springframework.test.jdbc.JdbcTestUtils
+ * @see org.springframework.test.context.junit4.AbstractTransactionalJUnit4SpringContextTests
+ */
+@TestExecutionListeners(TransactionalTestExecutionListener.class)
+@Transactional
+@SuppressWarnings("deprecation")
+public abstract class AbstractTransactionalTestNGSpringContextTests extends AbstractTestNGSpringContextTests {
+
+	/**
+	 * The {@code SimpleJdbcTemplate} that this base class manages, available to subclasses.
+	 * @deprecated As of Spring 3.2, use {@link #jdbcTemplate} instead.
+	 */
+	@Deprecated
+	protected SimpleJdbcTemplate simpleJdbcTemplate;
+
+	/**
+	 * The {@code JdbcTemplate} that this base class manages, available to subclasses.
+	 * @since 3.2
+	 */
+	protected JdbcTemplate jdbcTemplate;
+
+	private String sqlScriptEncoding;
+
+
+	/**
+	 * Set the {@code DataSource}, typically provided via Dependency Injection.
+	 * <p>This method also instantiates the {@link #simpleJdbcTemplate} and
+	 * {@link #jdbcTemplate} instance variables.
+	 */
+	@Autowired
+	public void setDataSource(DataSource dataSource) {
+		this.simpleJdbcTemplate = new SimpleJdbcTemplate(dataSource);
+		this.jdbcTemplate = new JdbcTemplate(dataSource);
+	}
+
+	/**
+	 * Specify the encoding for SQL scripts, if different from the platform encoding.
+	 * @see #executeSqlScript
+	 */
+	public void setSqlScriptEncoding(String sqlScriptEncoding) {
+		this.sqlScriptEncoding = sqlScriptEncoding;
+	}
+
+	/**
+	 * Count the rows in the given table.
+	 * @param tableName table name to count rows in
+	 * @return the number of rows in the table
+	 */
+	protected int countRowsInTable(String tableName) {
+		return JdbcTestUtils.countRowsInTable(this.jdbcTemplate, tableName);
+	}
+
+	/**
+	 * Count the rows in the given table, using the provided {@code WHERE} clause.
+	 * <p>See the Javadoc for {@link JdbcTestUtils#countRowsInTableWhere} for details.
+	 * @param tableName the name of the table to count rows in
+	 * @param whereClause the {@code WHERE} clause to append to the query
+	 * @return the number of rows in the table that match the provided
+	 * {@code WHERE} clause
+	 * @since 3.2
+	 */
+	protected int countRowsInTableWhere(String tableName, String whereClause) {
+		return JdbcTestUtils.countRowsInTableWhere(this.jdbcTemplate, tableName, whereClause);
+	}
+
+	/**
+	 * Convenience method for deleting all rows from the specified tables. Use
+	 * with caution outside of a transaction!
+	 * @param names the names of the tables from which to delete
+	 * @return the total number of rows deleted from all specified tables
+	 */
+	protected int deleteFromTables(String... names) {
+		return JdbcTestUtils.deleteFromTables(this.jdbcTemplate, names);
+	}
+
+	/**
+	 * Convenience method for dropping all of the specified tables. Use
+	 * with caution outside of a transaction!
+	 * @param names the names of the tables to drop
+	 * @since 3.2
+	 */
+	protected void dropTables(String... names) {
+		JdbcTestUtils.dropTables(this.jdbcTemplate, names);
+	}
+
+	/**
+	 * Execute the given SQL script. Use with caution outside of a transaction!
+	 * <p>The script will normally be loaded by classpath. There should be one
+	 * statement per line. Any semicolons will be removed. <b>Do not use this
+	 * method to execute DDL if you expect rollback.</b>
+	 * @param sqlResourcePath the Spring resource path for the SQL script
+	 * @param continueOnError whether or not to continue without throwing an
+	 * exception in the event of an error
+	 * @throws DataAccessException if there is an error executing a statement
+	 * and continueOnError was {@code false}
+	 */
+	protected void executeSqlScript(String sqlResourcePath, boolean continueOnError) throws DataAccessException {
+		Resource resource = this.applicationContext.getResource(sqlResourcePath);
+		JdbcTestUtils.executeSqlScript(this.jdbcTemplate, new EncodedResource(resource,
+			this.sqlScriptEncoding), continueOnError);
+	}
+
+}
