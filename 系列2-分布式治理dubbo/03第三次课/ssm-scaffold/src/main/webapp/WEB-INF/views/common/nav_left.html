@@ -1,0 +1,32 @@
+<nav class="navbar-default navbar-static-side" role="navigation">
+    <div class="sidebar-collapse">
+        <ul class="nav metismenu" id="side-menu">
+            <li class="nav-header">
+                <div class="dropdown profile-element">
+                    <span><img alt="image" class="img-circle" src="#springUrl('/resources/images/default_head.png')" style="width:50px;height:50px;"/></span>
+                    <a data-toggle="dropdown" class="dropdown-toggle">
+                        <span class="clear">
+                            <span class="block m-t-xs">
+                                <strong class="font-bold">$!{currentUser.realname}</strong>
+                            </span>
+                            <span class="text-muted text-xs block">设置 <b class="caret"></b></span>
+                        </span>
+                    </a>
+                    <ul class="dropdown-menu animated fadeInRight m-t-xs">
+                        <li><a href="#">修改头像</a></li>
+                        <li><a href="#">个人资料</a></li>
+                        <li class="divider"></li>
+                        <li><a href="javascript:void(0)" onclick="logout()">安全退出</a></li>
+                    </ul>
+                </div>
+                <div class="logo-element"><img src="#springUrl('/resources/images/mini.png')"/></div>
+            </li>
+            <li class="active">
+                <a href="layouts.html"><i class="fa fa-diamond"></i> <span class="nav-label">转盘抽奖</span></a>
+            </li>
+            <li>
+                <a href="index.html#"><i class="fa fa-bar-chart-o"></i> <span class="nav-label">数据监控</span><span class="fa arrow"></span></a>
+            </li>
+        </ul>
+    </div>
+</nav>

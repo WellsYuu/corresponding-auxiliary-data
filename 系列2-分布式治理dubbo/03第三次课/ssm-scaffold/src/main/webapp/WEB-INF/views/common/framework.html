@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html>
+<head>
+	#parse("/common/header.html")
+	<link href="#springUrl('/resources/plugins/gritter/jquery.gritter.css')" rel="stylesheet">
+	#block("css")#end
+</head>
+<body class="">
+<div id="loading" style="display: none">
+	<div class="sk-spinner sk-spinner-three-bounce">
+		<div class="sk-bounce1"></div>
+		<div class="sk-bounce2"></div>
+		<div class="sk-bounce3"></div>
+	</div>
+</div>
+<div id="wrapper">
+   #parse("/common/nav_left.html")
+   <!--右侧部分开始-->
+   <div id="page-wrapper" class="gray-bg dashbard-1">
+	   <div class="row border-bottom">
+	   <nav class="navbar navbar-static-top" role="navigation" style="margin-bottom: 0">
+		   <div class="navbar-header">
+		       <a class="navbar-minimalize minimalize-styl-2 btn btn-primary " href="#"><i class="fa fa-bars"></i> </a>
+		       <form role="search" class="navbar-form-custom" action="search_results.html">
+		           <div class="form-group">
+		               <input type="text" placeholder="" class="form-control" name="top-search" id="top-search" style="width:400px">
+		           </div>
+		       </form>
+		   </div>
+	       <ul class="nav navbar-top-links navbar-right">
+			   #include('/common/dropdown.html')
+	           <li>
+	               <a href="javascript:void(0)" onclick="logout()">
+	                   <i class="fa fa-sign-out"></i>退出
+	               </a>
+	           </li>
+	       </ul>
+	   </nav>
+	   </div>
+
+	<div class="row border-bottom white-bg dashboard-header">
+		<div class="col-lg-10">
+			<ol class="breadcrumb">
+				<li><a href="#springUrl('/index/index.shtml')">首页</a></li>
+				#block("breadcrumb")#end
+			</ol>
+		</div>
+	</div>
+	<div class="row">
+		<div class="col-lg-12">
+			<div class="wrapper wrapper-content">
+				#block("content")#end
+			</div>
+			<div class="footer fixed">
+				<div class="pull-right">
+					<a target="_blank" href="#">&copy;gupao</a>
+				</div>
+			</div>
+		</div>
+	</div>
+   </div>
+   <!--右侧部分结束-->
+</div>
+<script src="#springUrl('/resources/plugins/jQuery/jQuery-2.2.0.min.js')"></script>
+<script src="#springUrl('/resources/plugins/bootstrap/js/bootstrap.min.js')"></script>
+<script src="#springUrl('/resources/plugins/metisMenu/jquery.metisMenu.js')"></script>
+<script src="#springUrl('/resources/plugins/slimscroll/jquery.slimscroll.min.js')"></script>
+<script src="#springUrl('/resources/plugins/gritter/jquery.gritter.min.js')"></script>
+<script src="#springUrl('/resources/js/inspinia.js')"></script>
+<script src="#springUrl('/resources/plugins/pace/pace.min.js')"></script>
+<script src="#springUrl('/resources/plugins/sweetalert/sweetalert.min.js')"></script>
+<script src="#springUrl('/resources/plugins/toastr/toastr.min.js')"></script>
+<script src="#springUrl('/resources/js/jquery.validate.min.js')"></script>
+<script src="#springUrl('/resources/js/function.js')"></script>
+<script>
+	function logout(){
+		TOOLS.showComfirm("请确认","您将退出当前系统,请确认？", function(isConfirm){
+			if (isConfirm) {
+				window.location.href="#springUrl('/index/logout.shtml')";
+			}
+		});
+	}
+</script>
+#include("/common/theme-config.html")
+#block("js")#end
+</body>
+</html>

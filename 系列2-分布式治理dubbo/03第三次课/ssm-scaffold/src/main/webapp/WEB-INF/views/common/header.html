@@ -1,0 +1,25 @@
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>#block("title")#end</title>
+<link rel="shortcut icon" href="#springUrl('/favicon.ico')">
+<link href="#springUrl('/resources/plugins/bootstrap/css/bootstrap.min.css')" rel="stylesheet">
+<link href="#springUrl('/resources/plugins/bootstrap/css/font-awesome.css')" rel="stylesheet">
+<link href="#springUrl('/resources/css/animate.min.css')" rel="stylesheet">
+<link href="#springUrl('/resources/plugins/sweetalert/sweetalert.css')" rel="stylesheet">
+<link href="#springUrl('/resources/plugins/toastr/toastr.min.css')" rel="stylesheet">
+<link rel="stylesheet" type="text/css" href="#springUrl('/resources/plugins/fontIconPicker/icomoon/style.css')" />
+<link href="#springUrl('/resources/css/style.css')" rel="stylesheet">
+<script>
+    var sys=sys||{};
+    var swfUrl="#springUrl('/resources/plugins/uploadify/uploadify.swf')";
+    var uploadUrl="#springUrl('/upload/imageUpload.shtml')"
+    var imageOssUrl="http://cdn.weiyoutongcheng.com/";
+    var flash_swf_url="#springUrl('/resources/plugins/oss/lib/plupload-2.1.2/js/Moxie.swf')";
+    var silverlight_xap_url="#springUrl('/resources/plugins/oss/lib/plupload-2.1.2/js/Moxie.xap')";
+    var uptoken_url="#springUrl('/upload/generatorOssKey.shtml')";
+    sys.pageNum=10;
+    var wxbEditor={
+        contentUploadPath:"/upload/ueditorUploadImage.shtml",
+        store:null
+    }
+</script>

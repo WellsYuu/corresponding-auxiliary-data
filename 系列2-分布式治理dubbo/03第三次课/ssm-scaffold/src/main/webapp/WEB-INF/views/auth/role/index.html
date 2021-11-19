@@ -1,0 +1,265 @@
+#override("title")
+咕泡学院后台管理平台 - 角色管理
+#end
+#override("css")
+<!-- dtgrid -->
+<link rel="stylesheet" type="text/css" href="#springUrl('/resources/plugins/dtGrid-v1.1.9/jquery.dtGrid.min.css')" />
+<link type="text/css" rel="stylesheet" href="#springUrl('/resources/plugins/jstree/themes/default/style.css')"/>
+#end
+#override("breadcrumb")
+<li><a>权限管理</a></li><li class="active"><strong>角色管理</strong></li>
+#end
+#override("content")
+<div class="row">
+    <div class="col-lg-7">
+        <div class="ibox float-e-margins">
+            <div class="ibox-title">
+                <h5>角色列表</h5>
+            </div>
+            <div class="ibox-content">
+                <div class="text-right form-inline" style="background: #F3F3F4;">
+                    <div class="input-group">
+                        <input type="hidden" id="rid"/>
+                        <input type="text" name="name" id="name" class="form-control" placeholder="请输入角色名称查找">
+                        <span class="input-group-btn">
+                            <button type="button" id="btnSearch" class="btn btn-info">搜索</button>
+                        </span>
+                    </div>
+                    <button class="btn btn-primary" type="button"  data-toggle="modal" data-target="#addAuthRoleModel"><i class="fa fa-floppy-o"></i>&nbsp;添加角色</button>
+                </div>
+                <div id="dtGridContainer" class="dt-grid-container"></div>
+                <div id="dtGridToolBarContainer" class="dt-grid-toolbar-container"></div>
+            </div>
+        </div>
+    </div>
+    <div class="col-lg-5">
+        <div class="ibox float-e-margins">
+            <div class="ibox-title">
+                <h5>角色权限</h5>
+            </div>
+            <div class="ibox-content">
+                <div class="form-inline" style="background: #F3F3F4;">
+                    <button class="btn btn-outline btn-info btn-sm" type="button" id="btnSaveRole"><i class="fa fa-cloud"></i>&nbsp;保存</button>
+                    <button class="btn btn-outline btn-success btn-sm" type="button" id="btnSelectAll"><i class="fa fa-check"></i>&nbsp;全选</button>
+                </div>
+                <div id="tree" style="border:1px solid rgb(166,169,172);"></div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!--modal add-->
+<div class="modal inmodal" id="addAuthRoleModel" tabindex="-1" role="dialog" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content animated flipInY">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+                <h5 class="modal-title"><i class="fa fa-floppy-o"></i>&nbsp;添加角色</h5>
+            </div>
+            <div class="hr-solid"></div>
+            <form role="form" method="post" id="addAuthRoleForm" class="form-horizontal">
+                <div class="modal-body">
+                    <div class="form-group">
+                        <label class="col-sm-2 control-label">角色名<span class="text-danger">*</span></label>
+                        <div class="col-sm-9"><input name="name" type="text" class="form-control" required/></div>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-sm-2 control-label">排序值<span class="text-danger">*</span></label>
+                        <div class="col-sm-9"><input name="sort" type="number" class="form-control" required/></div>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-sm-2 control-label">描述</label>
+                        <div class="col-sm-9">
+                            <textarea class="form-control" name="description" rows="3"></textarea>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-white" data-dismiss="modal"><i class="fa fa-times"></i>&nbsp;关闭</button>
+                    <button type="submit" class="btn btn-primary"><i class="fa fa-cloud"></i>&nbsp;保存</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<!--modal edit-->
+<div class="modal inmodal" id="editAuthRoleModel" tabindex="-1" role="dialog" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content animated flipInY">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+                <h5 class="modal-title"><i class="fa fa-pencil"></i>&nbsp;编辑角色</h5>
+            </div>
+            <div class="hr-solid"></div>
+            <form role="form" method="post" id="editAuthRoleForm" class="form-horizontal">
+                <div class="modal-body">
+                    <div class="form-group">
+                        <input type="hidden" name="id" id="id"/>
+                        <label class="col-sm-2 control-label">角色名<span class="text-danger">*</span></label>
+                        <div class="col-sm-9"><input name="name" type="text" class="form-control" required/></div>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-sm-2 control-label">排序值<span class="text-danger">*</span></label>
+                        <div class="col-sm-9"><input name="sort" type="number" class="form-control" required/></div>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-sm-2 control-label">描述</label>
+                        <div class="col-sm-9">
+                            <textarea class="form-control" name="description" rows="3"></textarea>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-white" data-dismiss="modal"><i class="fa fa-times"></i>&nbsp;关闭</button>
+                    <button type="submit" class="btn btn-primary"><i class="fa fa-cloud"></i>&nbsp;保存</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+#end
+
+#override("js")
+<script type="text/javascript" src="#springUrl('/resources/plugins/dtGrid-v1.1.9/jquery.dtGrid.min.js')"></script>
+<script type="text/javascript" src="#springUrl('/resources/plugins/dtGrid-v1.1.9/i18n/zh-cn.js')"></script>
+<script type="text/javascript" src="#springUrl('/resources/plugins/jstree/jstree.min.js')"></script>
+<script type="text/javascript" src="#springUrl('/resources/plugins/jstree/jstree.checkbox.js')"></script>
+<script type="text/javascript" src="#springUrl('/resources/js/underscore-min.js')"></script>
+
+<script>
+    var ids = [];
+    var authRole= {
+        showEditModal: function (id,sort,name,description) {
+            var form = $("#editAuthRoleForm")[0];
+            form.name.value = name;
+            form.sort.value = sort;
+            form.description.value = description;
+            form.id.value = id;
+            $('#editAuthRoleModel').modal('toggle');
+        },
+        deleteRoleById: function (id) {
+            TOOLS.showComfirm("请确认", "角色删除后,角色相关联的权限也会删除,请谨慎操作！", function (isConfirm) {
+                if (isConfirm) {
+                    TOOLS.doPost({id: id}, "#springUrl('/AuthMng/Role/delAuthRole.shtml')", function (response) {
+                        if (response.status == 0) {
+                            toastr.success('删除成功');
+                            grid.reload({allReload: true});
+                        } else {
+                            toastr.error(response.message);
+                        }
+                        swal.close();
+                    });
+                }
+            })
+        },
+        setPermission:function(id){
+            $("#rid").val(id);
+            TOOLS.bindJsTree("tree","#springUrl('/AuthMng/Permission/getPermissionTree.shtml?rid="+id+"')",true,function(){});
+        },
+        getParents:function(treeObj,nodeObj){
+            var parentId = treeObj.get_parent(nodeObj);
+            if(parentId != "#"){
+                ids.push(parentId);
+                authRole.getParents(treeObj,treeObj.get_node(parentId));
+            }
+        }
+    }
+    $(function(){
+        $('#addAuthRoleModel').on('hide.bs.modal', function () {
+            $("#addAuthRoleForm")[0].reset();
+        });
+        $('#editAuthRoleModel').on('hide.bs.modal', function () {
+            $("#id").val("");
+            $("#editAuthRoleForm")[0].reset();
+        });
+        /*******************grid data init begin****************************/
+        var dtGridColumns = [
+            {id : 'id',title : '编号',columnClass : 'text-center'},
+            {id : 'name',title : '角色名',columnClass : 'text-center'},
+            {id : 'sort',title : '排序值',columnClass : 'text-center'},
+            {id : 'description',title : '描述',columnClass : 'text-center'},
+            {id : 'operation',title : '操作',columnClass : 'text-center',resolution : function(value, record, column, grid, dataNo, columnNo) {
+                return '<button class="btn btn-primary btn-sm" type="button" onclick="authRole.setPermission('+record.id+')"><i class="fa fa-flag"></i>&nbsp;分配权限</button>&nbsp;' +
+                        '<button class="btn btn-info btn-sm" type="button" onclick="authRole.showEditModal('+record.id+','+record.sort+',\''+record.name+'\',\''+record.description+'\')"><i class="fa fa-pencil"></i>&nbsp;编辑</button>&nbsp;'+
+                        '<button class="btn btn-danger btn-sm" type="button" onclick="authRole.deleteRoleById('+record.id+')"><i class="fa fa-trash-o"></i>&nbsp;删除</button>';
+            }}];
+        var dtGridOption = {
+            lang : 'zh-cn',
+            ajaxLoad : true,
+            check : true,
+            loadURL :"#springUrl('/AuthMng/Role/dataList.shtml')",
+            columns : dtGridColumns,
+            gridContainer : 'dtGridContainer',
+            toolbarContainer : 'dtGridToolBarContainer',
+            tools:'',
+            pageSize : sys.pageNum,
+            pageSizeLimit : [10, 20, 30]
+        };
+        grid = $.fn.DtGrid.init(dtGridOption);
+        grid.load();
+        TOOLS.bindJsTree("tree","#springUrl('/AuthMng/Permission/getPermissionTree.shtml?rid=0')",true,function(){});
+        $("#btnSearch").click(function(){
+            grid.parameters = new Object();
+            grid.parameters['name'] = $("#name").val();
+            grid.refresh(true);
+        });
+        /*******************grid data init end****************************/
+
+        /*******************excute save and update operation**************/
+        $("#addAuthRoleForm").validate({
+            submitHandler:function(form){
+                TOOLS.formCommitWithPost(form,"#springUrl('/AuthMng/Role/saveAuthRole.shtml')",function(result){
+                    if(result.status==0){
+                        $('#addAuthRoleModel').modal('toggle');
+                        grid.reload({allReload:true});
+                    }else{
+                        swal("提示",result.message);
+                    }
+                });
+            }
+        });
+        $("#editAuthRoleForm").validate({
+            submitHandler:function(form){
+                TOOLS.formCommitWithPost(form,"#springUrl('/AuthMng/Role/editAuthRole.shtml')",function(result){
+                    if(result.status==0){
+                        $('#editAuthRoleModel').modal('toggle');
+                        grid.reload({allReload:true});
+                    }else{
+                        swal("提示",result.message);
+                    }
+                });
+            }
+        });
+        $("#btnSaveRole").click(function(){
+            if($("#rid").val()==""){
+                swal("提示","请先选择角色！");
+                return;
+            }
+            ids = [];
+            var tree = $('#tree').jstree();
+            var selectedIds = tree.get_checked();//获取所有选中节点id
+            var selected = tree.get_checked(true);//获取所有选中节点
+            for(var i = 0; i<selected.length; i++){//遍历节点，获取选中节点的所有父节点
+                authRole.getParents(tree,selected[i]);
+            }
+            var reqData={rid:$("#rid").val(),resourceIds:_.union(ids,selectedIds).join(',')}
+            TOOLS.doPost(reqData,"#springUrl('/AuthMng/Permission/saveRolePermission.shtml')",function(response){
+                if(response.status==0){
+                    toastr.success('角色授权成功,刷新页面即可生效');
+                    grid.reload({allReload:true});
+                    TOOLS.bindJsTree("tree","#springUrl('/AuthMng/Permission/getPermissionTree.shtml?rid=0')",true,function(){});
+                    $("#rid").val("");
+                }else{
+                    swal("提示",response.message);
+                }
+            });
+        });
+        $("#btnSelectAll").click(function(){
+            var tree = $('#tree').jstree();
+            tree.select_all();
+        });
+    });
+</script>
+#end
+#extends("/common/framework.html")
