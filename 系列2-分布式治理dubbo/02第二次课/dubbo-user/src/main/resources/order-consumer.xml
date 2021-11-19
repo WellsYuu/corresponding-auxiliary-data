@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:dubbo="http://code.alibabatech.com/schema/dubbo"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans        http://www.springframework.org/schema/beans/spring-beans.xsd        http://code.alibabatech.com/schema/dubbo        http://code.alibabatech.com/schema/dubbo/dubbo.xsd">
+
+    <!--当前项目在整个分布式架构里面的唯一名称，计算依赖关系的标签-->
+    <dubbo:application name="order-provider" owner="mic"/>
+
+    <!--dubbo这个服务所要暴露的服务地址所对应的注册中心-->
+    <dubbo:registry address="zookeeper://192.168.11.129:2181?backup=192.168.11.137:2181,192.168.11.138:2181"/>
+
+    <!--生成一个远程服务的调用代理-->
+    <dubbo:reference id="orderServices"
+                     interface="com.gupao.vip.mic.dubbo.order.IOrderServices"
+                    protocol="dubbo" version="2.0">
+    </dubbo:reference>
+
+    <dubbo:reference id="orderQueryServices"
+                     interface="com.gupao.vip.mic.dubbo.order.IOrderQueryService"
+                     protocol="dubbo" version="1.0"/>
+
+</beans>

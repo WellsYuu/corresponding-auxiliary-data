@@ -1,0 +1,14 @@
+
+## 导航菜单选择宏
+#macro(currentClass $modulePath $className)
+#set($url=$request.getRequestURI())
+#if($modulePath && $modulePath != '' && ${url.contains($modulePath)})${className}#end
+#end
+
+#macro(currentSelect $source $target $classNmae)
+    #if($source==$target)${classNmae}#end
+#end
+
+#macro(hasContain $sStr $tarStr $property)
+    #if(${sStr.contains($tarStr)})$property#end
+#end

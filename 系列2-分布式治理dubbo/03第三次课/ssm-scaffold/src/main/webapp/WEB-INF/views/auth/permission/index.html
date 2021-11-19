@@ -1,0 +1,343 @@
+#override("title")
+咕泡学院后台管理平台 - 权限管理
+#end
+#override("css")
+<!-- dtgrid -->
+<link rel="stylesheet" type="text/css" href="#springUrl('/resources/plugins/dtGrid-v1.1.9/jquery.dtGrid.min.css')" />
+<link rel="stylesheet" type="text/css" href="#springUrl('/resources/plugins/fontIconPicker/css/jquery.fonticonpicker.min.css')" />
+<link rel="stylesheet" type="text/css" href="#springUrl('/resources/plugins/fontIconPicker/themes/bootstrap-theme/jquery.fonticonpicker.bootstrap.min.css')" />
+<link rel="stylesheet" type="text/css" href="#springUrl('/resources/plugins/fontIconPicker/icomoon/style.css')" />
+#end
+#override("breadcrumb")
+<li><a>权限管理</a></li><li class="active"><strong>权限资源管理</strong></li>
+#end
+#override("content")
+<div class="row">
+    <div class="ibox-content text-right form-inline" style="background: #F3F3F4;">
+        <div class="input-group">
+            <input type="text" name="title" id="title" class="form-control" placeholder="请输入资源名称查找">
+			<span class="input-group-btn">
+				<button type="button" id="btnSearch" class="btn btn-info">搜索</button>
+			</span>
+        </div>
+        <button class="btn btn-primary" type="button"  data-toggle="modal" data-target="#addAuthPermissionModel"><i class="fa fa-floppy-o"></i>&nbsp;添加权限</button>
+    </div>
+</div>
+<div class="row">
+    <div class="col-sm-12">
+        <div id="dtGridContainer" class="dt-grid-container"></div>
+        <div id="dtGridToolBarContainer" class="dt-grid-toolbar-container"></div>
+    </div>
+</div>
+
+<!--modal add-->
+<div class="modal inmodal" id="addAuthPermissionModel" tabindex="-1" role="dialog" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content animated flipInY">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+                <h5 class="modal-title"><i class="fa fa-floppy-o"></i>&nbsp;添加权限</h5>
+            </div>
+            <div class="hr-solid"></div>
+            <form role="form" method="post" id="addAuthPermissionForm" class="form-horizontal">
+                <div class="modal-body">
+                    <div class="form-group">
+                        <label class="col-sm-2 control-label">资源类型<span class="text-danger">*</span></label>
+                        <div class="col-sm-9">
+                            <select class="form-control" name="type"style="width: 100%">
+                                <option value="0" selected="selected">菜单</option>
+                                <option value="1">按钮</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-sm-2 control-label">父菜单<span class="text-danger">*</span></label>
+                        <div class="col-sm-9">
+                            <select class="form-control" name="pid">
+                                <option value="0" selected="selected">目录菜单</option>
+                                #foreach($select in $select2List)
+                                    <option value="$!{select.id}"><i class="fa fa-list"/>$!{select.text}</option>
+                                #end
+                            </select>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-sm-2 control-label">资源名称</label>
+                        <div class="col-sm-9">
+                            <input type="text" name="title" class="form-control" required/>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-sm-2 control-label">资源标识</label>
+                        <div class="col-sm-9">
+                            <input type="text" name="permcode" class="form-control" required placeholder="参考格式 menu:btn"/>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-sm-2 control-label">资源URL</label>
+                        <div class="col-sm-9">
+                            <input type="text" name="url" class="form-control"/>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-sm-2 control-label">状态</label>
+                        <div class="col-sm-9">
+                            <select name="state" class="form-control">
+                                <option value="0" selected>正常</option>
+                                <option value="1">禁用</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-sm-2 control-label">图标</label>
+                        <div class="col-sm-9">
+                            <input type="text" class="form-control" name="icon"/>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-sm-2 control-label">描述</label>
+                        <div class="col-sm-9">
+                           <textarea class="form-control" name="description"></textarea>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-white" data-dismiss="modal"><i class="fa fa-times"></i>&nbsp;关闭</button>
+                    <button type="submit" class="btn btn-primary"><i class="fa fa-cloud"></i>&nbsp;保存</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<!--modal edit-->
+<div class="modal inmodal" id="editAuthPermissionModel" tabindex="-1" role="dialog" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content animated flipInY">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+                <h5 class="modal-title"><i class="fa fa-pencil"></i>&nbsp;编辑权限</h5>
+            </div>
+            <div class="hr-solid"></div>
+            <form role="form" method="post" id="editAuthPermissionForm" class="form-horizontal">
+                <div class="modal-body">
+                    <div class="form-group">
+                        <input type="hidden" name="id"/>
+                        <label class="col-sm-2 control-label">资源类型<span class="text-danger">*</span></label>
+                        <div class="col-sm-9">
+                            <select class="form-control" id="type" name="type"style="width: 100%">
+                                <option value="0" selected="selected">菜单</option>
+                                <option value="1">按钮</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-sm-2 control-label">父菜单<span class="text-danger">*</span></label>
+                        <div class="col-sm-9">
+                            <select class="form-control" name="pid">
+                                <option value="0" selected="selected"><i class="fa fa-list"/>目录菜单</option>
+                                #foreach($select in $select2List)
+                                <option value="$!{select.id}"><i class="fa fa-list"></i>$!{select.text}</option>
+                                #end
+                            </select>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-sm-2 control-label">资源名称</label>
+                        <div class="col-sm-9">
+                            <input type="text" name="title" class="form-control" required/>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-sm-2 control-label">资源标识</label>
+                        <div class="col-sm-9">
+                            <input type="text" name="permcode" class="form-control" required placeholder="请输入英文或数字组合"/>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-sm-2 control-label">资源URL</label>
+                        <div class="col-sm-9">
+                            <input type="text" name="url" class="form-control"/>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-sm-2 control-label">状态</label>
+                        <div class="col-sm-9">
+                            <select name="state" class="form-control">
+                                <option value="0" selected>正常</option>
+                                <option value="1">禁用</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-sm-2 control-label">图标</label>
+                        <div class="col-sm-9">
+                            <input type="text" class="form-control" name="icon"/>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-sm-2 control-label">描述</label>
+                        <div class="col-sm-9">
+                            <textarea class="form-control" name="description"></textarea>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-white" data-dismiss="modal"><i class="fa fa-times"></i>&nbsp;关闭</button>
+                    <button type="submit" class="btn btn-primary"><i class="fa fa-cloud"></i>&nbsp;保存</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+#end
+
+#override("js")
+<script type="text/javascript" src="#springUrl('/resources/plugins/dtGrid-v1.1.9/jquery.dtGrid.min.js')"></script>
+<script type="text/javascript" src="#springUrl('/resources/plugins/dtGrid-v1.1.9/i18n/zh-cn.js')"></script>
+<script type="text/javascript" src="#springUrl('/resources/plugins/fontIconPicker/jquery.fonticonpicker.min.js')"></script>
+<script type="text/javascript" src="#springUrl('/resources/plugins/fontIconPicker/customer-font.js')"></script>
+<script>
+    var icomoon_json_icons = [];
+    var icomoon_json_search = [];
+    var authPermission= {
+        showEditModal: function (id) {
+            TOOLS.doGet({id:id},"#springUrl('/AuthMng/Permission/getAuthPermissionDetail.shtml')",function(response) {
+                if (response.status == 0) {
+                    var _Perm_Data=response.data;
+                    var form=$("#editAuthPermissionForm")[0];
+                    form.id.value=_Perm_Data.id;
+                    form.type.value=_Perm_Data.type;
+                    form.pid.value=_Perm_Data.pid;
+                    form.title.value=_Perm_Data.title;
+                    form.permcode.value=_Perm_Data.permcode;
+                    form.url.value=_Perm_Data.url;
+                    form.state.value=_Perm_Data.state;
+                    form.icon.value=_Perm_Data.icon;
+                    form.description.value=_Perm_Data.description;
+                }else{
+                    swal("提示","数据加载失败");
+                }
+            });
+            $('#editAuthPermissionModel').modal('toggle');
+        },
+        deleteRoleById: function (id) {
+            TOOLS.showComfirm("请确认", "数据删除后无法恢复，请谨慎操作", function (isConfirm) {
+                if (isConfirm) {
+                    TOOLS.doPost({id: id}, "#springUrl('/AuthMng/Permission/delAuthPermission.shtml')", function (response) {
+                        if (response.status == 0) {
+                            toastr.success('删除成功');
+                            swal.close();
+                            grid.reload({allReload: true});
+                        } else {
+                            swal("提示", "数据删除失败，请稍后重试!");
+                        }
+                    });
+                }
+            })
+        },
+        changePermissionStatus:function(id,status){
+            TOOLS.doPost({id:id,status:status},"#springUrl('/AuthMng/Permission/changePermissionStatus.shtml')",function(response){
+                if(response.status==0){
+                    toastr.success('状态变更成功！');
+                    grid.reload({allReload:true});
+                }else{
+                    toastr.error(response.message);
+                }
+            })
+        }
+    }
+    $(function(){
+        $('#addAuthPermissionModel').on('hide.bs.modal', function () {
+            $("#addAuthPermissionForm")[0].reset();
+        });
+        $('#editAuthPermissionModel').on('hide.bs.modal', function () {
+            $("#id").val("");
+            $("#editAuthPermissionForm")[0].reset();
+        });
+        $("input[name='icon']").initIconPicker({url:"#springUrl('/resources/plugins/fontIconPicker/icomoon/selection.json')"});
+        /*******************grid data init begin****************************/
+        var dtGridColumns = [
+            {id : 'id',title : '编号',columnClass : 'text-center'},
+            {id : 'title',title : '资源名称',columnClass : 'text-center'},
+            {id : 'parentName',title : '上级资源',columnClass : 'text-center'},
+            {id : 'icon',title : '图标',columnClass : 'text-center',resolution:function(value){
+                return '<i class="'+value+' fa-2x"/>';
+            }},
+            {id : 'url',title : 'url',columnClass : 'text-center'},
+            {id : 'permcode',title : '资源标识',columnClass : 'text-center'},
+            {id : 'type',title : '资源类型',columnClass : 'text-center',resolution:function(value){
+                var _type_html='<span class="label label-sm label-primary arrowed arrowed-righ">菜单</span>';
+                if(value==1){
+                    _type_html='<span class="label label-sm label-info arrowed arrowed-righ">按钮</span>';
+                }
+                return _type_html;
+            }},
+            {id : 'state',title : '状态',columnClass : 'text-center',resolution:function(value){
+                var _state_html='<span class="label label-sm label-primary arrowed arrowed-righ">正常</span>';
+                if(value==1){
+                    _state_html='<span class="label label-sm label-danger arrowed arrowed-righ">禁用</span>';
+                }
+                return _state_html;
+            }},
+            {id : 'sort',title : '排序',columnClass : 'text-center'},
+            {id : 'description',title : '描述',columnClass : 'text-center'},
+            {id : 'operation',title : '操作',columnClass : 'text-center',resolution : function(value, record) {
+                var _status_html='<button class="btn btn-primary btn-sm" type="button" onclick="authPermission.changePermissionStatus('+record.id+',0)"><i class="fa fa-play-circle"></i>&nbsp;启用</button>';
+                if(record.state==0){
+                    _status_html='<button class="btn btn-warning btn-sm" type="button" onclick="authPermission.changePermissionStatus('+record.id+',1)"><i class="fa fa-ban"></i>&nbsp;禁用</button>';
+                }
+                return _status_html+'&nbsp;' +
+                        '<button class="btn btn-info btn-sm" type="button" onclick="authPermission.showEditModal('+record.id+')"><i class="fa fa-pencil"></i>&nbsp;编辑</button>&nbsp;'+
+                        '<button class="btn btn-danger btn-sm" type="button" onclick="authPermission.deleteRoleById('+record.id+')"><i class="fa fa-trash-o"></i>&nbsp;删除</button>';
+            }}];
+        var dtGridOption = {
+            lang : 'zh-cn',
+            ajaxLoad : true,
+            check : true,
+            loadURL :"#springUrl('/AuthMng/Permission/dataList.shtml')",
+            columns : dtGridColumns,
+            gridContainer : 'dtGridContainer',
+            toolbarContainer : 'dtGridToolBarContainer',
+            tools:'',
+            pageSize : sys.pageNum,
+            pageSizeLimit : [10, 20, 30]
+        };
+        grid = $.fn.DtGrid.init(dtGridOption);
+        grid.load();
+        $("#btnSearch").click(function(){
+            grid.parameters = new Object();
+            grid.parameters['title'] = $("#title").val();
+            grid.refresh(true);
+        });
+        /*******************grid data init end****************************/
+
+        /*******************excute save and update operation**************/
+        $("#addAuthPermissionForm").validate({
+            submitHandler:function(form){
+                TOOLS.formCommitWithPost(form,"#springUrl('/AuthMng/Permission/saveAuthPermission.shtml')",function(result){
+                    if(result.status==0){
+                        $('#addAuthPermissionModel').modal('toggle');
+                        grid.reload({allReload:true});
+                    }else{
+                        swal("提示",result.message);
+                    }
+                });
+            }
+        });
+        $("#editAuthPermissionForm").validate({
+            submitHandler:function(form){
+                TOOLS.formCommitWithPost(form,"#springUrl('/AuthMng/Permission/editAuthPermission.shtml')",function(result){
+                    if(result.status==0){
+                        $('#editAuthPermissionModel').modal('toggle');
+                        grid.reload({allReload:true});
+                    }else{
+                        swal("提示",result.message);
+                    }
+                });
+            }
+        });
+    });
+</script>
+#end
+#extends("/common/framework.html")

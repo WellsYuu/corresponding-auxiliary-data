@@ -1,0 +1,119 @@
+#override("title")
+后台管理系统 - 登录
+#end
+#override("css")
+<link href="#springUrl('/resources/css/app.min.1.css')" rel="stylesheet">
+<link href="#springUrl('/resources/css/login.css')" rel="stylesheet">
+<link href="#springUrl('/resources/plugins/iCheck/all.css')" rel="stylesheet">
+
+#end
+#override("body")
+<body class="gray-bg login-content">
+<div class="lc-block animated flipInX" id="l-login">
+    <div>
+        <!--<h1 class="logo-name"><img src="#springUrl('/resources/images/logo.png')"></h1>-->
+    </div>
+    <h3 class="text-center">欢迎使用咕泡学院后台管理系统</h3>
+    <form class="login" method="post" action="#springUrl('/index/submitLogin.html')">
+        <div class="input-group msg-error m-b-10">
+            <div class=""><i class="fa fa-minus-circle"></i><span>请输入账户名和密码</span></div>
+        </div>
+        <div class="input-group m-b-20"><label class="input-group-addon"><i class="fa fa-user"></i></label>
+            <div class="fg-line"><input type="text" name="loginname" id="loginname" class="form-control" placeholder="用户名"></div>
+        </div>
+        <div class="input-group m-b-10"><label class="input-group-addon"><i class="fa fa-lock"></i></label>
+            <div class="fg-line"><input type="password" name="password" id="password" class="form-control" placeholder=" 密码"></div>
+        </div>
+        <div class="login-nav">
+            <input type="checkbox" name="rememberMe" id=rememberMe class="checkbox i-checks"><span class="remember">记住我</span></input>
+        </div>
+        <div>
+            <button type="button" class="btn btn-block btn-lg btn-primary">登录</button>
+        </div>
+    </form>
+</div>
+<!--<div class="v-copy">
+    © 2013-2016 www.gupao.com 上海沽泡网络技术有限公司 <a href="#" target="_blank">沪ICP备14004520号-1</a></div>
+</body>-->
+#end
+#override("js")
+<script src="#springUrl('/resources/plugins/iCheck/icheck.min.js')"></script>
+<script src="#springUrl('/resources/js/MD5.js')"></script>
+<script>
+    $(document).ready(function(){
+        Waves.attach('.btn:not(.btn-icon):not(.btn-float)');
+        Waves.attach('.btn-icon, .btn-float', ['waves-circle', 'waves-float']);
+        Waves.init();
+
+        if ($('.fg-line')[0]) {
+            $('body').on('focus', '.form-control', function () {
+                $(this).closest('.fg-line').addClass('fg-toggled');
+            })
+
+            $('body').on('blur', '.form-control', function () {
+                var p = $(this).closest('.form-group');
+                var i = p.find('.form-control').val();
+
+                if (p.hasClass('fg-float')) {
+                    if (i.length == 0) {
+                        $(this).closest('.fg-line').removeClass('fg-toggled');
+                    }
+                }
+                else {
+                    $(this).closest('.fg-line').removeClass('fg-toggled');
+                }
+            });
+        }
+        if ($('.fg-float')[0]) {
+            $('.fg-float .form-control').each(function () {
+                var i = $(this).val();
+                if (!i.length == 0) {
+                    $(this).closest('.fg-line').addClass('fg-toggled');
+                }
+            });
+        }
+        $('.i-checks').iCheck({
+            checkboxClass: 'icheckbox_square-green',
+            radioClass: 'iradio_square-green'
+        });
+        $('.login').on("click",function (e) {
+            if($("#loginname").val()==""||$("#password").val()==""){
+                $('.msg-error span').html("用户名或密码不能为空");
+                $('.msg-error div').show();
+                return;
+            }
+            TOOLS.loadingProgress("show");
+            e.preventDefault();
+            $('button[type="submit"]').attr('disabled', true);
+            $('button[type="submit"]').text('登陆中...');
+            if ($('input[name="password"]').val() != '') {
+                $('input[name="password"]').val($("#password").val());
+            }
+            var reqData={loginname:$("#loginname").val(),password:$("#password").val(),rememberMe:$("#rememberMe").is(':checked')};
+            TOOLS.doPost(reqData,'/index/submitLogin.shtml',function(msg){
+                TOOLS.loadingProgress("hide");
+                if(msg.status==0){
+                    setTimeout(function () {
+                        window.location.href = msg.data;
+                    }, 1000);
+                }else{
+                    $('input[name="password"]').val('');
+                    $('button[type="submit"]').attr('disabled', false);
+                    $('button[type="submit"]').text('登陆');
+                    $('.msg-error span').html(msg.message);
+                    $('.msg-error div').show();
+                    setTimeout(function () {
+                        $('.msg-error div').hide();
+                    }, 2500);
+                }
+            },function(err){
+                TOOLS.loadingProgress("hide");
+                $('input[name="password"]').val('');
+                $('button[type="submit"]').attr('disabled', false);
+                $('button[type="submit"]').text('登陆');
+            })
+        });
+    });
+</script>
+#end
+#extends("/common/base.html")

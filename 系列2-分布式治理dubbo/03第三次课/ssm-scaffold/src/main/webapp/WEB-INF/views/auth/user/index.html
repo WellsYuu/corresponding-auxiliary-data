@@ -1,0 +1,275 @@
+#override("title")
+咕泡学院后台管理平台 - 用户管理
+#end
+#override("css")
+<!-- dtgrid -->
+<link rel="stylesheet" type="text/css" href="#springUrl('/resources/plugins/dtGrid-v1.1.9/jquery.dtGrid.min.css')" />
+<link rel="stylesheet" type="text/css" href="#springUrl('/resources/plugins/bootstrap-select/css/bootstrap-select.min.css')" />
+
+#end
+#override("breadcrumb")
+<li><a>权限管理</a></li><li class="active"><strong>用户管理</strong></li>
+#end
+#override("content")
+<div class="row">
+    <div class="ibox-content text-right form-inline" style="background: #F3F3F4;">
+        <div class="input-group">
+            <input type="text" name="loginname" id="loginname" class="form-control" placeholder="请输入登录名或真实姓名">
+			<span class="input-group-btn">
+				<button type="button" id="btnSearch" class="btn btn-info">搜索</button>
+			</span>
+        </div>
+        <button class="btn btn-primary" type="button"  data-toggle="modal" data-target="#addAuthUserModel"><i class="fa fa-floppy-o"></i>&nbsp;添加用户</button>
+    </div>
+</div>
+<div class="row">
+    <div class="col-sm-12">
+        <div id="dtGridContainer" class="dt-grid-container"></div>
+        <div id="dtGridToolBarContainer" class="dt-grid-toolbar-container"></div>
+    </div>
+</div>
+
+<!--modal add-->
+<div class="modal inmodal" id="addAuthUserModel" tabindex="-1" role="dialog" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content animated flipInY">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+                <h5 class="modal-title"><i class="fa fa-floppy-o"></i>&nbsp;添加用户</h5>
+            </div>
+            <div class="hr-solid"></div>
+            <form role="form" method="post" id="addAuthUserForm" class="form-horizontal">
+                <div class="modal-body">
+                    <div class="form-group">
+                        <label class="col-sm-2 control-label">用户名<span class="text-danger">*</span></label>
+                        <div class="col-sm-9"><input name="loginname" type="text" class="form-control" placeholder="用于登录的用户名" required/></div>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-sm-2 control-label">密码<span class="text-danger">*</span></label>
+                        <div class="col-sm-9"><input name="password" type="password" class="form-control" required/></div>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-sm-2 control-label">真实姓名<span class="text-danger">*</span></label>
+                        <div class="col-sm-9"><input name="realname" type="text" class="form-control" placeholder="请输入真实姓名" required/></div>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-sm-2 control-label">角色</label>
+                        <div class="col-sm-9">
+                            <select class="selectpicker show-menu-arrow form-control" name="rids" multiple>
+                                #foreach($role in $roleList)
+                                <option value="$!{role.id}">$!{role.name}</option>
+                                #end
+                            </select>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-sm-2 control-label">用户状态</label>
+                        <div class="col-sm-9"><select class="form-control" name="status">
+                            <option value="1">正常</option>
+                            <option value="0">禁用</option>
+                        </select></div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-white" data-dismiss="modal"><i class="fa fa-times"></i>&nbsp;关闭</button>
+                    <button type="submit" class="btn btn-primary"><i class="fa fa-cloud"></i>&nbsp;保存</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<!--modal edit-->
+<div class="modal inmodal" id="editAuthUserModel" tabindex="-1" role="dialog" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content animated flipInY">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+                <h5 class="modal-title"><i class="fa fa-pencil"></i>&nbsp;编辑用户</h5>
+            </div>
+            <div class="hr-solid"></div>
+            <form role="form" method="post" id="editAuthUserForm" class="form-horizontal">
+                <div class="modal-body">
+                    <div class="form-group">
+                        <input type="hidden" name="id"/>
+                        <label class="col-sm-2 control-label">用户名<span class="text-danger">*</span></label>
+                        <div class="col-sm-9"><input name="loginname" type="text" class="form-control" readonly="readonly" placeholder="用于登录的用户名" required/></div>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-sm-2 control-label">密码<span class="text-danger">*</span></label>
+                        <div class="col-sm-9"><input name="password" type="password" readonly="readonly" class="form-control" required/></div>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-sm-2 control-label">真实姓名<span class="text-danger">*</span></label>
+                        <div class="col-sm-9"><input name="realname" type="text" class="form-control" required/></div>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-sm-2 control-label">角色</label>
+                        <div class="col-sm-9">
+                            <select class="selectpicker show-menu-arrow form-control" id="rids" name="rids" multiple>
+                                #foreach($role in $roleList)
+                                <option value="$!{role.id}">$!{role.name}</option>
+                                #end
+                            </select>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-sm-2 control-label">用户状态</label>
+                        <div class="col-sm-9"><select class="form-control" id="status" name="status">
+                            <option value="1">正常</option>
+                            <option value="0">禁用</option>
+                        </select></div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-white" data-dismiss="modal"><i class="fa fa-times"></i>&nbsp;关闭</button>
+                    <button type="submit" class="btn btn-primary"><i class="fa fa-cloud"></i>&nbsp;保存</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+#end
+
+#override("js")
+<script type="text/javascript" src="#springUrl('/resources/plugins/dtGrid-v1.1.9/jquery.dtGrid.min.js')"></script>
+<script type="text/javascript" src="#springUrl('/resources/plugins/dtGrid-v1.1.9/i18n/zh-cn.js')"></script>
+<script type="text/javascript" src="#springUrl('/resources/plugins/bootstrap-select/js/bootstrap-select.min.js')"></script>
+<script type="text/javascript" src="#springUrl('/resources/plugins/bootstrap-select/js/i18n/defaults-zh_CN.js')"></script>
+<script>
+    var authUser={
+        showEditModal:function(id){
+            TOOLS.doGet({id:id},"#springUrl('/AuthMng/User/getAuthUserDetail.shtml')",function(response){
+                if(response.status==0){
+                    var _User_Data=response.data.userModel;
+                    var _Role_Data=eval(response.data.roleModel);
+                    var form=$("#editAuthUserForm")[0];
+                    form.id.value=_User_Data.id;
+                    form.loginname.value=_User_Data.loginname;
+                    form.password.value=_User_Data.password;
+                    form.realname.value=_User_Data.realname;
+                    $("#status").val(_User_Data.status);
+                    var role_str="";
+                    $.each(_Role_Data,function(n){
+                        role_str+= _Role_Data[n].id+"";
+                        if(n<_Role_Data.length-1){
+                            role_str+=",";
+                        }
+                    });
+                    $("#rids").selectpicker("val",role_str.split(","));
+                    $('#editAuthUserModel').modal('toggle');
+                }else{
+                    swal("提示","数据加载失败");
+                }
+            });
+        },
+        deleteUserById:function(id){
+            TOOLS.showComfirm("请确认","用户删除后无法找回,请谨慎操作！",function(isConfirm){
+                if(isConfirm){
+                    TOOLS.doPost({id:id},"#springUrl('/AuthMng/User/delAuthUser.shtml')",function(response){
+                        if(response.status==0){
+                            toastr.success('删除成功');
+                            grid.reload({allReload:true});
+                        }else{
+                            toastr.error(response.message);
+                        }
+                        swal.close();
+                    });
+                }
+            })
+        },
+        changeUserStatus:function(id,status){
+            TOOLS.doPost({id:id,status:status},"#springUrl('/AuthMng/User/changeUserStatus.shtml')",function(response){
+                if(response.status==0){
+                    toastr.success('状态变更成功！');
+                    grid.reload({allReload:true});
+                }else{
+                    toastr.error(response.message);
+                }
+            })
+        }
+    }
+    $(function(){
+        $('#addAuthUserModel').on('hide.bs.modal', function () {
+            $("#addAuthUserForm")[0].reset();
+        });
+        $('#editAuthUserModel').on('hide.bs.modal', function () {
+            $("#rids").selectpicker('deselectAll');
+            $("#id").val("");
+            $("#editAuthUserForm")[0].reset();
+        });
+        /*******************grid data init begin****************************/
+        var dtGridColumns = [
+            {id : 'id',title : '编号',columnClass : 'text-center'},
+            {id : 'loginname',title : '用户名',columnClass : 'text-center'},
+            {id : 'password',title : '密码',columnClass : 'text-center'},
+            {id : 'realname',title : '真实姓名',columnClass : 'text-center'},
+            {id : 'status',title : '用户状态',columnClass : 'text-center',resolution : function(value, record, column, grid, dataNo, columnNo) {
+                    var _user_status='<span class="label label-sm label-danger arrowed arrowed-righ">禁用</span>';
+                    if(value==1){
+                        _user_status='<span class="label label-sm label-primary arrowed arrowed-righ">正常</span>';
+                    }
+                    return _user_status;
+                }
+            },
+            {id : 'crtime',title : '创建时间',columnClass : 'text-center',format : 'yyyy-MM-dd hh:mm:ss',oformat : 'yyyy-MM-dd hh:mm:ss'},
+            {id : 'lasttime',title : '最后登录时间',columnClass : 'text-center',format : 'yyyy-MM-dd hh:mm:ss',oformat : 'yyyy-MM-dd hh:mm:ss'},
+            {id : 'operation',title : '操作',columnClass : 'text-center',resolution : function(value, record, column, grid, dataNo, columnNo) {
+                    var _status_html='<button class="btn btn-primary btn-sm" type="button" onclick="authUser.changeUserStatus('+record.id+',1)"><i class="fa fa-play-circle"></i>&nbsp;启用</button>';
+                    if(record.status==1){
+                        _status_html='<button class="btn btn-warning btn-sm" type="button" onclick="authUser.changeUserStatus('+record.id+',0)"><i class="fa fa-ban"></i>&nbsp;禁用</button>';
+                    }
+                    return '<button class="btn btn-info btn-sm" type="button" onclick="authUser.showEditModal('+record.id+')"><i class="fa fa-pencil"></i>&nbsp;编辑</button>&nbsp;'
+                            +_status_html+'&nbsp;'+
+                            '<button class="btn btn-danger btn-sm" type="button" onclick="authUser.deleteUserById('+record.id+')"><i class="fa fa-trash-o"></i>&nbsp;删除</button>';
+            }}];
+        var dtGridOption = {
+            lang : 'zh-cn',
+            ajaxLoad : true,
+            check : true,
+            loadURL :"#springUrl('/AuthMng/User/dataList.shtml')",
+            columns : dtGridColumns,
+            gridContainer : 'dtGridContainer',
+            toolbarContainer : 'dtGridToolBarContainer',
+            tools:'',
+            pageSize : sys.pageNum,
+            pageSizeLimit : [10, 20, 30]
+        };
+        grid = $.fn.DtGrid.init(dtGridOption);
+        grid.load();
+        $("#btnSearch").click(function(){
+            grid.parameters = new Object();
+            grid.parameters['loginname'] = $("#loginname").val();
+            grid.refresh(true);
+        });
+        /*******************grid data init end****************************/
+
+        /*******************excute save and update operation**************/
+       $("#addAuthUserForm").validate({
+           submitHandler:function(form){
+                TOOLS.formCommitWithPost(form,"#springUrl('/AuthMng/User/saveAuthUser.shtml')",function(result){
+                    if(result.status==0){
+                        $('#addAuthUserModel').modal('toggle');
+                        grid.reload({allReload:true});
+                    }else{
+                        swal("提示",result.message);
+                    }
+                });
+           }
+       });
+        $("#editAuthUserForm").validate({
+            submitHandler:function(form){
+                TOOLS.formCommitWithPost(form,"#springUrl('/AuthMng/User/editAuthUser.shtml')",function(result){
+                    if(result.status==0){
+                        $('#editAuthUserModel').modal('toggle');
+                        grid.reload({allReload:true});
+                    }else{
+                        swal("提示",result.message);
+                    }
+                });
+            }
+        });
+    });
+</script>
+#end
+#extends("/common/framework.html")

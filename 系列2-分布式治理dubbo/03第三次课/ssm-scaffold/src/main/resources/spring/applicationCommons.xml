@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://www.springframework.org/schema/beans" xmlns:context="http://www.springframework.org/schema/context" xmlns:tx="http://www.springframework.org/schema/tx" xsi:schemaLocation="http://www.springframework.org/schema/beans
+   http://www.springframework.org/schema/beans/spring-beans-4.0.xsd
+   http://www.springframework.org/schema/context
+   http://www.springframework.org/schema/context/spring-context-4.0.xsd http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx.xsd">
+
+    <bean id="wxMpConfigStorage" class="me.chanjar.weixin.mp.api.WxMpInMemoryConfigStorage">
+        <property name="appId" value="wxa338e98088fb14c8"></property>
+        <property name="secret" value="1f509fc29008a593614ce0a13d53413d"></property>
+    </bean>
+
+    <bean id="wxService" class="me.chanjar.weixin.mp.api.impl.WxMpServiceImpl">
+        <property name="wxMpConfigStorage" ref="wxMpConfigStorage"></property>
+    </bean>
+
+    <bean id="taskExecutor" class="org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor">
+        <property name="corePoolSize" value="2"/>
+        <property name="keepAliveSeconds" value="30000"/>
+        <property name="maxPoolSize" value="5"/>
+        <property name="queueCapacity" value="200"/>
+        <property name="rejectedExecutionHandler">
+            <bean class="java.util.concurrent.ThreadPoolExecutor$DiscardOldestPolicy"/>
+        </property>
+    </bean>
+
+</beans>

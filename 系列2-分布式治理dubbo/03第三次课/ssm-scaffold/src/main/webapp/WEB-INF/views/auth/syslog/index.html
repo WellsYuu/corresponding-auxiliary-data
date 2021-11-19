@@ -1,0 +1,94 @@
+#override("title")
+咕泡学院后台管理平台 - 操作日志
+#end
+#override("css")
+<!-- dtgrid -->
+<link rel="stylesheet" type="text/css" href="#springUrl('/resources/plugins/dtGrid-v1.1.9/jquery.dtGrid.min.css')" />
+#end
+#override("breadcrumb")
+<li><a>操作日志</a></li><li class="active"><strong>日志列表</strong></li>
+#end
+#override("content")
+<div class="row">
+    <div class="ibox-content text-right form-inline" style="background: #F3F3F4;">
+        <input type="text" name="startTime" id="startTime" class="form-control" placeholder="操作开始时间" onFocus="WdatePicker({startDate:'%y-%M-01 00:00:00',dateFmt:'yyyy-MM-dd HH:mm:ss'})">
+        至
+        <input type="text" name="endTime" id="endTime" class="form-control" placeholder="操作结束结束" onFocus="WdatePicker({startDate:'%y-%M-01 00:00:00',dateFmt:'yyyy-MM-dd HH:mm:ss',minDate:'#F{$dp.$D(\'startTime\')}'})">
+        <div class="input-group">
+            <input type="text" name="content" id="content" class="form-control" placeholder="">
+			<span class="input-group-btn">
+				<button type="button" id="btnSearch" class="btn btn-info">搜索</button>
+			</span>
+        </div>
+    </div>
+</div>
+<div class="row">
+    <div class="col-sm-12">
+        <div id="dtGridContainer" class="dt-grid-container"></div>
+        <div id="dtGridToolBarContainer" class="dt-grid-toolbar-container"></div>
+    </div>
+</div>
+#end
+
+#override("js")
+<script type="text/javascript" src="#springUrl('/resources/plugins/dtGrid-v1.1.9/jquery.dtGrid.min.js')"></script>
+<script type="text/javascript" src="#springUrl('/resources/plugins/dtGrid-v1.1.9/i18n/zh-cn.js')"></script>
+<script type="text/javascript" src="#springUrl('/resources/plugins/My97DatePicker/WdatePicker.js')"></script>
+<script>
+    var sysLog={
+        deleteSysLogById:function(id,status){
+            TOOLS.showComfirm("请确认","数据删除后无法恢复,请谨慎操作！",function(isConfirm) {
+                if (isConfirm) {
+                    TOOLS.doPost({
+                        id: id,
+                        status: status
+                    }, "#springUrl('/SysLog/delSysLogById.shtml')", function (response) {
+                        if (response.status == 0) {
+                            toastr.success('日志删除成功');
+                            grid.reload({allReload: true});
+                        } else {
+                            toastr.error(response.message);
+                        }
+                        swal.close();
+                    })
+                }
+            });
+        }
+    }
+    $(function(){
+        /*******************grid data init begin****************************/
+        var dtGridColumns = [
+            {id : 'id',title : '编号',columnClass : 'text-center'},
+            {id : 'realName',title : '用户',columnClass : 'text-center'},
+            {id : 'content',title : '内容',columnClass : 'text-left'},
+            {id : 'operation',title : '操作',columnClass : 'text-center'},
+            {id : 'crtime',title : '操作时间',columnClass : 'text-center',format : 'yyyy-MM-dd hh:mm:ss',oformat : 'yyyy-MM-dd hh:mm:ss'},
+            {id : 'operation',title : '操作',columnClass : 'text-center',resolution : function(value, record, column, grid, dataNo, columnNo) {
+                return '<button class="btn btn-danger btn-sm" type="button" onclick="sysLog.deleteSysLogById('+record.id+')"><i class="fa fa-trash-o"></i>&nbsp;删除</button>';
+            }}];
+        var dtGridOption = {
+            lang : 'zh-cn',
+            ajaxLoad : true,
+            check : true,
+            loadURL :"#springUrl('/SysLog/dataList.shtml')",
+            columns : dtGridColumns,
+            gridContainer : 'dtGridContainer',
+            toolbarContainer : 'dtGridToolBarContainer',
+            tools:'',
+            pageSize : sys.pageNum,
+            pageSizeLimit : [10, 20, 30]
+        };
+        grid = $.fn.DtGrid.init(dtGridOption);
+        grid.load();
+        $("#btnSearch").click(function(){
+            grid.parameters = new Object();
+            grid.parameters['content'] = $("#content").val();
+            grid.parameters['startTime'] = $("#startTime").val();
+            grid.parameters['endTime'] = $("#endTime").val();
+            grid.refresh(true);
+        });
+        /*******************grid data init end****************************/
+    });
+</script>
+#end
+#extends("/common/framework.html")

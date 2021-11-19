@@ -1,0 +1,67 @@
+﻿/*login*/
+.login-content .fa {
+    font-size: 20px
+}
+
+.login-content .fa-mobile {
+    font-size: 35px
+}
+
+.login-content .input-group-addon {
+    border: 0;
+}
+
+.msg-error {
+    width: 100%;
+    height: 33px;
+    display: block;
+    text-align: left;
+}
+
+.msg-error > div {
+    display: none;
+    min-height: 18px;
+    background: #ffebeb;
+    color: #e4393c;
+    border: 1px solid #e4393c;
+    padding: 5px 20px;
+    line-height: 18px;
+}
+
+.msg-error > div i {
+    vertical-align: sub;
+}
+
+.lc-block h3 {
+    text-align: left;
+    position: relative;
+    padding: 0 0 0 15px;
+}
+
+.lc-block h3:before {
+    content: '';
+    width: 5px;
+    height: 28px;
+    background: #0FB478;
+    position: absolute;
+    top: 0;
+    left: 0;
+}
+.v-copy{
+    width: 100%;
+    position: fixed;
+    bottom: 10px;
+    left: 0;
+    color:white;
+}
+.v-copy a{
+    color: #0FB478;
+}
+.v-copy a:hover{
+    text-decoration: underline;
+}
+.login-nav{width:95%;height:40px;margin:0 auto;overflow: hidden;line-height:30px;text-align: left}
+.login-nav a{display: block;box-sizing:border-box;width: 50%;height:100%;float: left;font-size: 14px}
+.login-nav a:first-child{text-align: left;padding-left: 25px;}
+.login-nav a:last-child{text-align: right;}
+.remember{padding-left:10px;vertical-align:middle;}
