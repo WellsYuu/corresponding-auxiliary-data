@@ -1,0 +1,84 @@
+.login_info{ position: relative; width: 195px}
+#user_Info_m{ height: 50px; overflow: hidden;}
+#user_Info_m li{ float: right; padding-left: 10px; line-height: 40px;}
+#user_Info_m li a:hover{border-bottom: #01a300 5px solid; padding-bottom: 10px; color: #01a300}
+#user_Info_m li a.select{border-bottom: #01a300 5px solid; padding-bottom: 10px; color: #01a300}
+#user_Info_m li.userInfo-wz{ font-size: 14px; padding-left: 10px}
+/* #user_Info_m li.userInfo-wz span,.login_info li.userInfo-wz a{float: left;}*/
+
+
+
+#user_Info_m li.userInfo-wz span{ margin: 10px 4px 0 4px;}
+#user_Info_m li.userInfo-wz span.usenum{margin-top: 0px;}
+#user_Info_m li.userInfo-wz .vip_icon{ background: url('../images/icon.png') -93px 0 no-repeat;display: inline-block; width: 48px; height: 18px; }
+#user_Info_m li.userInfo-wz .novip_icon{ background: url('../images/icon.png') 0 0 no-repeat;display: inline-block; width: 48px; height: 18px; }
+#user_Info_m li.userInfo-wz .vip_icon a,.login_info li.userInfo-wz .novip_icon a{ display: block; height: 18px;}
+#user_Info_m li.icon_xiala{ background: url('../images/icon_xiala_h.png') 0 15px no-repeat; width: 16px; height: 40px; margin-left: 8px;} 
+ 
+#user_Info_m li.userInfo-wz a:hover{border: none;}
+
+.login_info .show_Menu{position: absolute;  width: 181px; z-index: 999999}
+.login_info .show_Menu .show_Menu_tit{ background: url('../images/top_xian.png') no-repeat; height: 19px;}
+.login_info .show_Menu .show_Menu_con{ height: 100%}
+.login_info .show_Menu .show_Menu_con li{border-bottom: #c1c1c1 1px solid; line-height:40px;  text-align: center; height: 40px; overflow: hidden;}
+.login_info .show_Menu .show_Menu_con li a.blue-wz{ float: left;text-align: center; text-overflow: ellipsis; width: 90px; display: inline-block; overflow: hidden; height: 40px;}
+.login_info .show_Menu .show_Menu_con li span.usrid{float: left;display: inline-block;}
+.login_info .show_Menu .show_Menu_con li.last{border: none;}
+
+
+.show_Menu {
+  position: absolute;
+  top:62px;
+  width: 212px;
+  left: 50%;
+  margin-left: -116px;
+  background: #fff;
+  z-index: 9999;
+  border: 1px solid #e6eaed;
+  border-radius: 3px;
+  -webkit-box-shadow: 0 2px 3px rgba(0,0,0,0.2);
+  box-shadow: 0 2px 3px rgba(0,0,0,0.2);
+  -webkit-transition: all 500ms cubic-bezier(0.34, 1.21, 0.4, 1);
+  -moz-transition: all 500ms cubic-bezier(0.34, 1.21, 0.4, 1);
+  transition: all 500ms cubic-bezier(0.34, 1.21, 0.4, 1);
+  -webkit-transform-origin: 50% 0;
+  -moz-transform-origin: 50% 0;
+  -ms-transform-origin: 50% 0;
+  -o-transform-origin: 50% 0;
+  transform-origin: 50% 0;
+  -webkit-transform: translateY(0) scale(0);
+  -moz-transform: translateY(0) scale(0);
+  -ms-transform: translateY(0) scale(0);
+  -o-transform: translateY(0) scale(0);
+  transform: translateY(0) scale(0);
+  list-style: none;
+  opacity: 1;
+  pointer-events: none; z-index:9999999
+}
+
+.login_info_select .show_Menu {
+  opacity: 1;
+  pointer-events: auto;
+  -webkit-transform: translateY(0) scale(1);
+  -moz-transform: translateY(0) scale(1);
+  -ms-transform: translateY(0) scale(1);
+  -o-transform: translateY(0) scale(1);
+  transform: translateY(0) scale(1);z-index:9999999
+}
+.show_Menu:before {
+  content: "";
+  width: 20px;
+  height: 12px;
+  position: absolute;
+  top: -12px;
+  left: 50%;
+  margin-left: -10px;
+  background-image: url(../images/czl_jt_icon.png)
+}
+
+@media only screen and (-webkit-min-device-pixel-ratio: 1.3), only screen and (min--moz-device-pixel-ratio: 1.3), only screen and (-o-min-device-pixel-ratio: 1.3 / 1), only screen and (min-resolution: 125dpi), only screen and (min-resolution: 1.3dppx) {
+  .show_Menu:before {
+    background-image: url(../images/czl_jt_icon.png);
+    background-size: 20px 12px
+  }
+}
