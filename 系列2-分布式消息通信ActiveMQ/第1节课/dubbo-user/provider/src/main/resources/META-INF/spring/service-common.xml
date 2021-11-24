@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	   xmlns:context="http://www.springframework.org/schema/context"
+	   xmlns:p="http://www.springframework.org/schema/p"
+	   xsi:schemaLocation="http://www.springframework.org/schema/beans
+	   http://www.springframework.org/schema/beans/spring-beans-4.3.xsd
+       http://www.springframework.org/schema/context
+       http://www.springframework.org/schema/context/spring-context-4.3.xsd"
+	   default-autowire="byName">
+
+	<context:property-placeholder location="classpath:application.properties" />
+
+	<bean id="userDataSource" class="com.alibaba.druid.pool.DruidDataSource" init-method="init" destroy-method="close"
+		  p:url="${datasource.user.url}"
+		  p:username="${datasource.user.username}"
+		  p:password="${datasource.user.password}"
+		  p:initialSize="${datasource.user.initialSize}"
+		  p:minIdle="${datasource.user.minIdle}"
+		  p:maxActive="${datasource.user.maxActive}"
+		  p:maxWait="${datasource.user.maxWait}"
+		  p:timeBetweenEvictionRunsMillis="${datasource.user.timeBetweenEvictionRunsMillis}"
+		  p:minEvictableIdleTimeMillis="${datasource.user.minEvictableIdleTimeMillis}"
+		  p:validationQuery="${datasource.user.validationQuery}"
+		  p:testWhileIdle="${datasource.user.testWhileIdle}"
+		  p:testOnBorrow="${datasource.user.testOnBorrow}"
+		  p:testOnReturn="${datasource.user.testOnReturn}"
+		  p:poolPreparedStatements="${datasource.user.poolPreparedStatements}"
+		  p:maxPoolPreparedStatementPerConnectionSize="${datasource.user.maxPoolPreparedStatementPerConnectionSize}"
+		  p:connectionProperties="config.decrypt=true;config.decrypt.key=${datasource.user.publickey}"
+		  p:filters="${datasource.user.filters}">
+	</bean>
+
+	<bean id="userSqlSessionFactory" class="org.mybatis.spring.SqlSessionFactoryBean">
+		<property name="dataSource" ref="userDataSource" />
+		<property name="typeAliasesPackage"
+				  value="com.gupao.vip.mic.dubbo.dal.entity" />
+		<property name="mapperLocations" value="classpath*:com/gupao/vip/mic/dubbo/dal/persistence/*Mapper.xml" />
+	</bean>
+
+	<bean name="userMapperScannerConfigurer" class="org.mybatis.spring.mapper.MapperScannerConfigurer">
+		<property name="basePackage"
+				  value="com.gupao.vip.mic.dubbo.dal.persistence" />
+		<property name="sqlSessionFactory" ref="userSqlSessionFactory" />
+	</bean>
+
+	<context:component-scan base-package="com.gupao.vip.mic.dubbo.dal" />
+	<context:component-scan base-package="com.gupao.vip.mic.dubbo.services" />
+</beans>
