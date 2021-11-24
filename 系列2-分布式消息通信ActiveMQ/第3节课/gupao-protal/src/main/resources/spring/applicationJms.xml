@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:dubbo="http://code.alibabatech.com/schema/dubbo"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+        http://www.springframework.org/schema/beans/spring-beans.xsd
+        http://code.alibabatech.com/schema/dubbo
+        http://code.alibabatech.com/schema/dubbo/dubbo.xsd" default-autowire="byName">
+
+
+    <bean id="connectionFactory" class="org.apache.activemq.pool.PooledConnectionFactory" destroy-method="stop">
+        <property name="connectionFactory">
+            <bean class="org.apache.activemq.ActiveMQConnectionFactory">
+                <property name="brokerURL">
+                    <value>tcp://192.168.11.140:61616</value>
+                </property>
+            </bean>
+        </property>
+        <property name="maxConnections" value="50"/>
+    </bean>
+    <bean id="destination" class="org.apache.activemq.command.ActiveMQQueue">
+        <constructor-arg index="0" value="register-queue"/>
+    </bean>
+
+    <bean id="jmsTemplate" class="org.springframework.jms.core.JmsTemplate">
+        <property name="connectionFactory" ref="connectionFactory"/>
+        <property name="defaultDestination" ref="destination"/>
+        <property name="messageConverter">
+            <bean class="org.springframework.jms.support.converter.SimpleMessageConverter"/>
+        </property>
+    </bean>
+
+
+
+</beans>
