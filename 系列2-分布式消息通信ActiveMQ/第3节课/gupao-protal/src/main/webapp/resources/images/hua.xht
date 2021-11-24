@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html [
+  <!ENTITY % lmDTD SYSTEM "chrome://easyscreenshot/locale/snapshot.dtd">
+  %lmDTD;
+]>
+<html xmlns="http://www.w3.org/1999/xhtml">
+    <head>
+<meta http-equiv="content-type" content="text/html; charset=UTF-8" />
+        <title>火狐截图编辑</title>
+        <script type="application/javascript" src="hua_files/editor.js"></script>
+        <link href="hua_files/editor.css" rel="stylesheet" type="text/css" />
+    </head>
+    <body>
+        <ul id="toolbar">
+            <li id="button-crop" title="裁剪 (X)">
+            </li><li id="button-rectangle" title="添加矩形 (R)">
+            </li><li id="button-circle" title="添加椭圆 (E)">
+            </li><li id="button-line" title="添加直线 (D)">
+            </li><li id="button-pencil" title="铅笔 (F)">
+            </li><li id="button-text" title="添加文字 (T)">
+            </li><li id="button-blur" title="模糊 (B)">
+            </li><li id="button-undo" title="撤销 (Z)" disabled="true">
+            </li><li id="button-local" title="保存到本地 (S)">
+            </li><li id="button-copy" title="复制到剪贴板 (C)">
+            </li><li id="button-cancel" title="关闭 (Q)"></li>
+        </ul>
+        <ul id="floatbar" style="display: none;">
+            <li id="button-lineWidth" class="container" title="线条粗细">
+                <ul><li value="3"></li><li value="6" class="current"></li><li value="9"></li></ul>
+            </li><li id="button-fontSize" title="文字大小">18 px<ul id="fontselect" style="display: none;">
+            <li>10</li><li>11</li><li>12</li><li>13</li><li>14</li><li>18</li><li>24</li><li>36</li><li>48</li><li>64</li><li>72</li><li>96</li>
+        </ul></li><li id="button-color" title="选择填充颜色"><div id="color" style="background-color: rgb(255, 0, 0);"></div><colorpicker xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul" id="colorpicker" style="display: none;"/></li>
+        </ul>
+        
+        <canvas id="display" width="161" height="8"></canvas>
+        <div id="crop" title="拖动开始，双击完成" style="display: none;">
+            <div id="croptop"></div>
+            <div id="cropleft"></div>
+            <div id="cropright"></div>
+            <div id="cropbottom"></div>
+            <div id="croptarget">
+                <div id="ctrlnw"></div>
+                <div id="ctrlne"></div>
+                <div id="ctrlse"></div>
+                <div id="ctrlsw"></div>
+            </div>
+        </div>
+        <textarea id="textinput" style="display: none;" wrap="off"></textarea>
+        <audio id="sound-capture" src="hua_files/capture.ogv" preload="auto"></audio>
+        <audio id="sound-export" src="hua_files/export.ogv" preload="auto"></audio>
+    </body>
+</html>

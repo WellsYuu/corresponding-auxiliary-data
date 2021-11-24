@@ -1,0 +1,99 @@
+﻿/*登录*/
+.wrapper { width: 960px; font-family:'Microsoft YaHei'; }
+.wxlogma { width: 200px; height: 230px; position: fixed; top: 100px; left: 500px; background: #fff; border: solid 1px #d6d6d6; z-index: 9999; display: none; }
+.wxlogma .close { position: absolute; right: 5px; top: 5px; }
+.wxlogma h3 { margin-top: 10px; font-size: 14px; font-family: 'Microsoft YaHei'; color: #f60; padding: 0 14px; }
+.log_head { height: 80px; overflow: hidden; }
+.log_logo { height: 80px; width: 220px; }
+.log_logo a { position:relative; width:400px; height:80px; display:block; background:url(../../images/login/logo.png) no-repeat center left;}
+.log_logo span { text-decoration:none; color:#ff6700; font-weight:normal; font-size:24px; position:absolute; top:23px; left:180px; line-height:36px; border-left:2px solid #d6d6d6; padding-left:20px;}
+
+.login_wrap { margin-bottom: 20px;  }
+.log_ad { width: 600px; float: left; overflow: hidden; height: 370px; }
+.log_ad a { display:block; width:600px; height:370px;}
+
+.login_border { float: right;  background:rgba(255,255,255,.6);}
+.login { width: 330px; min-height: 334px; padding-bottom:20px; background: #fff; position: relative;} 
+.login input { font-family:'Microsoft YaHei'; outline:none;}
+.login input:focus { box-shadow: 0 0 5px rgba(46, 141, 237, 0.3); border: 1px solid rgba(46, 141, 237, 0.5) !important; } 
+.login-body { padding: 5px 30px 0; overflow: hidden; }
+.login ul { overflow: hidden; width:310px; padding-left:20px; border-bottom:1px solid #e7e7e7; height: 46px; }
+.login ul li { float: left; width: 60px; text-align: center; height: 45px; margin:0 10px; line-height: 46px; border-bottom:1px solid #fff; cursor: pointer; }
+.login ul li em { width: 0; height: 0; border-left: 5px solid transparent; border-right: 5px solid transparent; border-top: 5px solid #f60; position: absolute; top: 26px; left: 56px; opacity: 0; }
+.login-style { display: none; }
+.login-on { color: #f60; font-size:14px; border-bottom:1px solid #f60 !important;}
+.login-on em { opacity: 1 !important; }
+.login dl { margin-top: 20px; }
+.login dl dt { height: 25px; line-height: 25px; color: #777; width: 240px; font-weight: bold; }
+.login dl dt a { color: #39f; }
+.login dl dd input[type=text], .login dl dd input[type=password] { border: solid 1px #d6d6d6; height: 34px; line-height: 28px\9; width: 233px; padding-left: 35px; border-radius:3px; }
+.btn_mfyzm { width: 90px; margin-left: 10px; height: 36px; background: #f0f0f0; border: 1px solid #d6d6d6; border-radius:3px; cursor:pointer;}
+.tishi { line-height: 26px; color: #f60; margin-top: 10px; }
+.remember { margin-top: 15px; }
+.remember input[type=checkbox] { vertical-align: middle; margin-right: 5px; }
+.remember label { color: #999; }
+.login button { width: 270px; border: 0; background: #f60; border-radius: 3px; height: 40px; color: #fff; cursor: pointer; margin-top: 10px; font-size:16px; font-family: 'Microsoft YaHei';  }
+
+.close { right:10px; top:10px; position:absolute; z-index:10;}
+.app_login { position:relative; padding:35px 50px 0;}
+.app_login h1 { text-align:center; background:#ffebeb; color:#e4393c; border:1px solid #FFAEAF; padding-left:25px; line-height:32px;display:none}
+.app_login h1 i { width:16px; height:16px; background:#e4393c; color:#fff; font-weight:bold; line-height:16px; text-align:center; border-radius:100%; position:absolute; margin:8px 0 0 -25px; font-size:17px;}
+.app_login h2 { text-align:center; font-size:16px; font-family:'Microsoft YaHei'; color:#888; line-height:32px;}
+.app_code { border: 1px solid #e1e1e1; padding: 10px; width: 155px; margin: 15px auto; font-size:0;}
+.app_code img { width:100%; height:100%;}
+.shuaxin { text-align:center;}
+.shuaxin span{ padding: 0 10px; width:155px; line-height: 30px;display: inline-block; border-radius: 3px; cursor: pointer; background:#f60; color:#fff; margin-bottom:8px;}
+
+.hezuo { margin-top: 15px; padding: 0 30px; }
+.hezuo h3 { color: #999; margin-bottom: 10px; font-weight:normal; }
+.hezuo p a { display: inline-block; padding: 0 10px; height: 25px; line-height: 25px; background: #f3f3f3; border: solid 1px #e3e3e3; border-radius: 3px; margin-right: 10px; text-shadow: 0 1px 0 #fff; }
+.hezuo p a i { display: inline-block; width: 16px; height: 16px; vertical-align: middle; margin-right: 5px; background: url(../../images/login/log_icon.png) no-repeat; }
+.hezuo p a i.wx { background-position: 0 0; }
+.hezuo p a i.qq { background-position: -16px 0; }
+.hezuo p a i.alipay { background-position: -32px 0; }
+.foot_nav i { margin: 0 10px; }
+
+/*登录成功之后提示微信绑定*/
+.bindWeixin{ font-family: 'Microsoft YaHei';}
+.bindWeixin .login-success{font-size:18px;color: #56abe4; text-align:center; margin:0 auto;}
+.bindWeixin .login-success img { display: inline-block; width:40px; height:40px;vertical-align: middle; margin-right:10px;}
+.bindWeixin .login-tips{ color: #eb8249;background: #fff7e1;border: 2px solid #f0d788; text-align:center; height:35px; line-height:35px; width:360px; font-size:16px;display: block;margin: 0 auto 20px;}
+.bindWeixin img{ width:210px; height:210px;display: block;margin: 10px auto;}
+.bindWeixin .sale-tips { color: #df3232; font-size:18px; text-align:center;}
+.qiehuan { width:60px; height:60px; position:absolute; right:0; bottom:0; background:url(../../images/login/login-code.png) no-repeat right top; cursor:pointer;}
+
+input:-webkit-autofill, textarea:-webkit-autofill, select:-webkit-autofill { background-color:rgba(255,255,255,0) !important}
+#phone{ background:url(../../images/login/iconfont-shouji.png) no-repeat 6px center; background-size:22px;}
+#dynamicPWD { background:url(../../images/login/iconfont-duanxin.png) no-repeat 6px center; background-size:22px;}
+#txtCode,#txtCode2 { background:url(../../images/login/iconfont-yanzhengma.png) no-repeat 6px center; background-size:22px;}
+#txtUser { background:url(../../images/login/iconfont-yonghu.png) no-repeat 7px center; background-size:20px;}
+#Userpwd { background:url(../../images/login/iconfont-psw.png) no-repeat 7px center; background-size:20px;}
+
+/*注册*/
+.yhzt { background-color: #fff; border: 1px #8FA4F5 solid; height: auto; left: 50%; padding: 1px; position: absolute; width: 700px; z-index: 100; }
+.yhzt h2 { background: rgb(27, 145, 235); color: #fff; font-family: 微软雅黑; font-size: 14px; height: 30px; line-height: 30px; margin-bottom: 30px; padding-left: 10px; position: relative; }
+.yhzt h2 a { color: #fff; font-size: 12px; position: absolute; right: 5px; }
+.yhxy { border: 3px #EEE solid; color: #666; font-size: 12px; height: 400px; line-height: 22px; margin: auto; margin-bottom: 30px; overflow: auto; padding: 10px; width: 600px; }
+.yhxy p { margin-bottom: 8px; text-indent: 25px; }
+.yhxy h4 { font-family: 微软雅黑; font-size: 14px; margin: 5px 0; }
+.yhxy div { padding: 0 25px; }
+#TB_overlayBG { -moz-opacity: 0.5; background-color: #666; display: none; filter: alpha(opacity=50); height: 100%; left: 0; opacity: 0.5; position: absolute; top: 0; width: 100%; z-index: 99; }
+.regtip { margin: 10px 10px 0 0; text-shadow: 0 1px 0 #fff; }
+.regtip a { background: #9c3; color: #fff; margin-left: 5px; padding: 2px; text-shadow: none; }
+.reg dl { line-height: 30px; margin-top: 15px; min-height: 30px; }
+.reg dl dt { color: #999; float: left; height: 30px; line-height: 30px; text-align: right; width: 100px; }
+.reg dl dt i { color: #f33; }
+.reg dl dd { margin-left: 110px; }
+.reg dl dd input[type=text],
+.reg dl dd input[type=password] { border: solid 1px #ccc; border-radius: 2px; box-shadow: inset 0 2px #f3f3f3; height: 28px; line-height: 28px\9; text-indent: 5px; width: 240px; }
+.reg dl dd em { color: #999; margin-left: 10px; }
+.reg dl dd button { background: #f60; border: 0; border-radius: 3px; outline:none; color: #fff; cursor: pointer; font-size: 14px; height: 40px; width: 160px; }
+.foot_nav i { margin: 0 10px; }
+.zhuce-tab { cursor: pointer; font-size: 16px; color: #999; background: #eee; display: inline-block; font-family: 'Microsoft YaHei'; }
+.zhuce-tab .xz { border-top: solid 2px #f60; font-size: 16px; color: #666; background: #fff; }
+.zhuce-tab ul li { float: left; height: 40px; line-height: 40px; padding: 0 20px; border-right: solid 1px #ddd; }
+.btn { margin-left: 10px; border: 1px solid #dddddd; padding: 0; width: 106px; height: 30px; background: #f4f4f4; margin-top: 0; text-align: center; line-height: 30px; color: #333; text-decoration: none; display: inline-block; }
+#codedl{ display: none;} 
+
+
+
