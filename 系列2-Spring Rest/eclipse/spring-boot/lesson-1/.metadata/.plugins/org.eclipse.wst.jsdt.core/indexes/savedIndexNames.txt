@@ -1,0 +1,7 @@
+INDEX VERSION 1.4+E:\Google Driver\Private\Lessons\gupao\VIP¿Î\´úÂë\eclipse\spring-boot\lesson-1\.metadata\.plugins\org.eclipse.wst.jsdt.core\indexes
+125725006.index
+2403275190.index
+847515704.index
+2671262948.index
+441698321.index
+2301209854.index
