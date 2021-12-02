@@ -1,0 +1,78 @@
+-Xms20M  starting
+-Xmx     max
+-Xmn     new
+
+对象分配eden
+-XX:SurvivorRatio=8
+8:1:1
+
+
+TLAB  Thread Local Allaction Buffer
+
+对象很大
+	-XX:PretenureSizeThreshold=3145728   3M
+长期存活的对象 
+	-XX:MaxTenuringThreshold=15
+动态对象年龄判定
+	相同年龄所有对象的大小总和 > Survivor空间的一半
+	
+分配担保
+	Minor GC 之前检查 老年代最大可用连续空间是否>新生代所有对象总空间
+	
+	
+Minor GC  
+Major GC
+Full  GC
+	
+什么样的对象需要回收？
+判断算法
+引用
+	强  Object object = new Object();
+	软  
+	弱  
+	虚  
+	
+回收
+	方法论
+		标记-清除算法
+		复制回收算法
+		标记-整理算法
+	垃圾收集器
+		STW  Stop The World
+		Serial
+		ParNew 
+			-XX:ParallelGCThreads
+		Parallel Scavenge （全局）
+			吞吐量 = 运行用户代码时间 / （运行用户代码时间  + 垃圾收集时间）
+			-XX:MaxGCPauseMillis=n
+			-XX:GCTimeRatio=n
+			-XX:UseAdaptiveSizePolicy   GC  Ergonomics
+		Serial Old
+			CMS备用预案  Concurrent Mode Failusre时使用
+			标记-整理算法
+		Parallel Old
+			标记-整理算法
+		CMS
+			标记-清除算法
+			减少回收停顿时间
+			碎片 -XX:CMSInitiationgOccupancyFraction  
+			Concurrent Mode Failure 启用Serial Old
+			
+			-XX:+UseCMSCompactAtFullCollection
+			-XX:CMSFullGCsBeforeCompaction 执行多少次不压缩FullGC后 来一次带压缩的 0 表示每次都压
+			-XX:+UseConcMarkSweep
+		G1
+			
+回收的时间节点
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	

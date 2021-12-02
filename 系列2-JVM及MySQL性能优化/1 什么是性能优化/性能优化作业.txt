@@ -1,0 +1,6 @@
+作业：
+1.jmeter去验正一下当CPU跑满和不满对TPS的影响
+2.写spring-boot的war  去看一下，cpu跑满的时候页面打开慢的情景
+3.模拟内存高的状态，怎么用top看
+4.模拟读 看iostat -xd 1 
+5.用jmeter压我们某个地址
