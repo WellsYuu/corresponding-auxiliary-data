@@ -1,0 +1,145 @@
+-Xms20M  starting
+-Xmx     max
+-Xmn     new
+
+对象分配eden
+-XX:SurvivorRatio=8
+8:1:1
+
+TLAB  Thread Local Allaction Buffer
+
+对象很大
+	-XX:PretenureSizeThreshold=3145728   3M
+长期存活的对象 
+	-XX:MaxTenuringThreshold=15
+动态对象年龄判定
+	相同年龄所有对象的大小总和 > Survivor空间的一半
+	
+分配担保
+	Minor GC 之前检查 老年代最大可用连续空间是否>新生代所有对象总空间
+	
+	
+Minor GC  
+Major GC
+Full  GC
+	
+什么样的对象需要回收？
+判断算法
+引用
+	强  Object object = new Object();
+	软  
+	弱  
+	虚  
+	
+回收
+	方法论
+		标记-清除算法
+		复制回收算法
+		标记-整理算法
+	垃圾收集器
+		STW  Stop The World
+		Serial
+		ParNew 
+			-XX:ParallelGCThreads
+		Parallel Scavenge （全局）
+			吞吐量 = 运行用户代码时间 / （运行用户代码时间  + 垃圾收集时间）
+			-XX:MaxGCPauseMillis=n
+			-XX:GCTimeRatio=n
+			-XX:UseAdaptiveSizePolicy   GC  Ergonomics
+		Serial Old
+			CMS备用预案  Concurrent Mode Failusre时使用
+			标记-整理算法
+		Parallel Old
+			标记-整理算法
+		CMS
+			标记-清除算法
+			减少回收停顿时间
+			碎片 -XX:CMSInitiatingOccupancyFraction  
+			Concurrent Mode Failure 启用Serial Old
+			
+			-XX:+UseCMSCompactAtFullCollection
+			-XX:CMSFullGCsBeforeCompaction 执行多少次不压缩FullGC后 来一次带压缩的 0 表示每次都压
+			-XX:+UseConcMarkSweep
+		G1
+			
+回收的时间节点
+	
+如何查看当前的垃圾回收器
+	-XX:+PrintFlagsFinal
+	-XX:+PrintCommandLineFlags
+	server client
+	MBean
+	
+GC日志
+	1.输出日志
+	-XX:+PrintGCTimeStamps 
+	-XX:+PrintGCDetails 
+	-Xloggc:/home/administrator/james/gc.log
+	-XX:+PrintHeapAtGC
+	2.日志文件控制
+	-XX:-UseGCLogFileRotation
+	-XX:GCLogFileSize=8K
+	3.怎么看
+	
+JDK自带的 监控工具
+https://docs.oracle.com/javase/8/docs/technotes/tools/windows/toc.html
+	jmap -heap pid 堆使用情况
+	jstat  -gcutil pid 1000
+	jstack  线程dump 
+	jvisualvm
+	jconsole
+	
+MAT
+	http://help.eclipse.org/oxygen/index.jsp?topic=/org.eclipse.mat.ui.help/welcome.html
+	-XX:+HeapDumpOnOutOfMemoryError 
+	-XX:HeapDumpPath=/home/administrator/james/error.hprof
+
+怀疑：
+	1.看GC日志  126719K->126719K(126720K)
+	2.dump
+	3.MAT
+		1.占用Retained Heap
+		2.看有没有GC Root指向
+	
+	
+VM参数
+http://www.oracle.com/technetwork/java/javase/tech/vmoptions-jsp-140102.html
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+
+什么条件触发STW的Full GC呢？
+Perm空间不足；
+CMS GC时出现promotion failed和concurrent mode failure（concurrent mode failure发生的原因一般是CMS正在进行，但是由于老年代空间不足，需要尽快回收老年代里面的不再被使用的对象，这时停止所有的线程，同时终止CMS，直接进行Serial Old GC）；
+（promontion faild产生的原因是EDEN空间不足的情况下将EDEN与From survivor中的存活对象存入To survivor区时,To survivor区的空间不足，再次晋升到old gen区，而old gen区内存也不够的情况下产生了promontion faild从而导致full gc	）
+
+统计得到的Young GC晋升到老年代的平均大小大于老年代的剩余空间；
+
+主动触发Full GC（执行jmap -histo:live [pid]）来避免碎片问题。
+	
+	
+java -Xms8m -Xmx64m -verbose:gc -Xloggc:/home/administrator/james/gc.log  -XX:+PrintHeapAtGC -XX:+PrintGCApplicationStoppedTime -XX:+PrintGCTimeStamps -XX:+PrintCommandLineFlags -XX:+PrintFlagsFinal -XX:+PrintGCDetails -XX:+UseConcMarkSweepGC -Dcom.sun.management.jmxremote.authenticate=false -Dcom.sun.management.jmxremote.ssl=false -Dcom.sun.management.jmxremote.port=9004 -Djava.rmi.server.hostname=177.1.1.122 -jar jvm-demo1-0.0.1-SNAPSHOT.jar  > catalina.out  2>&1 &
+
+java -Xms128m -Xmx128m -verbose:gc -Xloggc:/home/administrator/james/gc.log  -XX:+HeapDumpOnOutOfMemoryError -XX:HeapDumpPath=/home/administrator/james/error.hprof -XX:+PrintGCApplicationStoppedTime -XX:+PrintGCTimeStamps -XX:+PrintCommandLineFlags -XX:+PrintFlagsFinal -XX:+PrintGCDetails -XX:+UseConcMarkSweepGC  -XX:+UseCMSCompactAtFullCollection -Dcom.sun.management.jmxremote.authenticate=false -Dcom.sun.management.jmxremote.ssl=false -Dcom.sun.management.jmxremote.port=9004 -Djava.rmi.server.hostname=177.1.1.122 -jar jvm-demo1-0.0.1-SNAPSHOT.jar  > catalina.out  2>&1 &
+ 	
+java -Xms128m -Xmx128m -verbose:gc -Xloggc:/home/administrator/james/gc.log  -XX:+HeapDumpOnOutOfMemoryError -XX:+PrintHeapAtGC -XX:HeapDumpPath=/home/administrator/james/error.hprof -XX:+PrintGCApplicationStoppedTime -XX:+PrintGCTimeStamps -XX:+PrintCommandLineFlags -XX:+PrintFlagsFinal -XX:+PrintGCDetails -XX:+UseCMSCompactAtFullCollection -Dcom.sun.management.jmxremote.authenticate=false -Dcom.sun.management.jmxremote.ssl=false -Dcom.sun.management.jmxremote.port=9004 -Djava.rmi.server.hostname=177.1.1.122 -jar jvm-demo1-0.0.1-SNAPSHOT.jar  > catalina.out  2>&1 &
+ 	
+
+-XX:+CMSScavengeBeforeRemark
+	
+	
+	
+	
+	
+	
