@@ -1,0 +1,14 @@
+libevent:
+	安装
+		1、解压缩
+		2、./configure --prefix=/opt/install/libevent
+		3、make
+		4、make install
+		
+		
+memcached:
+	安装
+		1、解压缩
+		2、./configure --prefix=/opt/install/memcached --with-libevent=/opt/install/libevent
+		3、make
+		4、make install
