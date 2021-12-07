@@ -1,0 +1,130 @@
+=encoding utf-8
+
+=head1 NAME
+
+ngx_http_mirror_module - Module ngx_http_mirror_module
+
+
+
+
+=head1
+
+
+
+The C<ngx_http_mirror_module> module (1.13.4) implements
+mirroring of an original request
+by creating background mirror subrequests.
+Responses to mirror subrequests are ignored.
+
+
+
+
+=head1 Example Configuration
+
+
+
+
+    
+    location / {
+        mirror /mirror;
+        proxy_pass http://backend;
+    }
+    
+    location /mirror {
+        internal;
+        proxy_pass http://test_backend$request_uri;
+    }
+
+
+
+
+
+
+=head1 Directives
+
+=head2 mirror
+
+
+B<syntax:> mirror I<I<C<uri>> E<verbar> C<off>>
+
+
+B<default:> I<off>
+
+
+B<context:> I<http>
+
+
+B<context:> I<server>
+
+
+B<context:> I<location>
+
+
+
+
+
+Sets the URI to which an original request will be mirrored.
+Several mirrors can be specified on the same level.
+
+
+
+
+
+
+
+=head2 mirror_request_body
+
+
+B<syntax:> mirror_request_body I<C<on> E<verbar> C<off>>
+
+
+B<default:> I<on>
+
+
+B<context:> I<http>
+
+
+B<context:> I<server>
+
+
+B<context:> I<location>
+
+
+
+
+
+Indicates whether the client request body is mirrored.
+When enabled, the client request body will be read
+prior to creating mirror subrequests.
+In this case, unbuffered client request body proxying
+set by the
+L<ngx_http_proxy_module>,
+L<ngx_http_fastcgi_module>,
+L<ngx_http_scgi_module>,
+and
+L<ngx_http_uwsgi_module>
+directives will be disabled.
+
+    
+    location / {
+        mirror /mirror;
+        mirror_request_body off;
+        proxy_pass http://backend;
+    }
+    
+    location /mirror {
+        internal;
+        proxy_pass http://log_backend;
+        proxy_pass_request_body off;
+        proxy_set_header Content-Length "";
+        proxy_set_header X-Original-URI $request_uri;
+    }
+
+
+
+
+
+
+
+
+

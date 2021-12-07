@@ -1,0 +1,817 @@
+=encoding utf-8
+
+
+
+=head1 Name
+
+ngx_stream_lua_module - Embed the power of Lua into Nginx stream/TCP Servers.
+
+I<This module is not distributed with the Nginx source.> See L<the installation instructions>.
+
+
+=head1 Status
+
+Experimental.
+
+The API is still in flux and may change without notice.
+
+
+=head1 Synopsis
+
+
+    events {
+        worker_connections 1024;
+    }
+    
+    stream {
+        # define a TCP server listening on the port 1234:
+        server {
+            listen 1234;
+    
+            content_by_lua_block {
+                ngx.say("Hello, Lua!")
+            }
+        }
+    }
+
+Set up as an SSL TCP server:
+
+
+    stream {
+        server {
+            listen 4343 ssl;
+    
+            ssl_protocols       TLSv1 TLSv1.1 TLSv1.2;
+            ssl_ciphers         AES128-SHA:AES256-SHA:RC4-SHA:DES-CBC3-SHA:RC4-MD5;
+            ssl_certificate     /path/to/cert.pem;
+            ssl_certificate_key /path/to/cert.key;
+            ssl_session_cache   shared:SSL:10m;
+            ssl_session_timeout 10m;
+    
+            content_by_lua_block {
+                local sock = assert(ngx.req.socket(true))
+                local data = sock:receive()  -- read a line from downstream
+                if data == "thunder!" then
+                    ngx.say("flash!")  -- output data
+                else
+                    ngx.say("boom!")
+                end
+                ngx.say("the end...")
+            }
+        }
+    }
+
+Listening on a UNIX domain socket is also supported:
+
+
+    stream {
+        server {
+            listen unix:/tmp/nginx.sock;
+    
+            content_by_lua_block {
+                ngx.say("What's up?")
+                ngx.flush(true)  -- flush any pending output and wait
+                ngx.sleep(3)  -- sleeping for 3 sec
+                ngx.say("Bye bye...")
+            }
+        }
+    }
+
+
+=head1 Description
+
+This is a port of the L<ngx_http_lua_module|https://github.com/openresty/lua-nginx-module#readme> to the NGINX "stream" subsystem so
+as to support generic stream/TCP clients in the downstream.
+
+Lua APIs and directive names rename the same as the C<ngx_http_lua_module>.
+
+
+
+
+=head2 Directives
+
+The following directives are ported directly from C<ngx_http_lua_module>. Please check the
+documentation of C<ngx_http_lua_module> for more details about their usage and behavior.
+
+
+=over
+
+
+=item *
+
+L<lua_code_cache|https://github.com/openresty/lua-nginx-module#lua_code_cache>
+
+=item *
+
+L<lua_regex_cache_max_entries|https://github.com/openresty/lua-nginx-module#lua_regex_cache_max_entries>
+
+=item *
+
+L<lua_package_path|https://github.com/openresty/lua-nginx-module#lua_package_path>
+
+=item *
+
+L<lua_package_cpath|https://github.com/openresty/lua-nginx-module#lua_package_cpath>
+
+=item *
+
+L<init_by_lua_block|https://github.com/openresty/lua-nginx-module#init_by_lua_block>
+
+=item *
+
+L<init_by_lua_file|https://github.com/openresty/lua-nginx-module#init_by_lua_file>
+
+=item *
+
+L<init_worker_by_lua_block|https://github.com/openresty/lua-nginx-module#init_worker_by_lua_block>
+
+=item *
+
+L<init_worker_by_lua_file|https://github.com/openresty/lua-nginx-module#init_worker_by_lua_file>
+
+=item *
+
+L<content_by_lua_block|https://github.com/openresty/lua-nginx-module#content_by_lua_block>
+
+=item *
+
+L<content_by_lua_file|https://github.com/openresty/lua-nginx-module#content_by_lua_file>
+
+=item *
+
+L<balancer_by_lua_block|https://github.com/openresty/lua-nginx-module#balancer_by_lua_block>
+
+=item *
+
+L<balancer_by_lua_file|https://github.com/openresty/lua-nginx-module#balancer_by_lua_file>
+
+=item *
+
+L<lua_shared_dict|https://github.com/openresty/lua-nginx-module#lua_shared_dict>
+
+=item *
+
+L<lua_socket_connect_timeout|https://github.com/openresty/lua-nginx-module#lua_socket_connect_timeout>
+
+=item *
+
+L<lua_socket_buffer_size|https://github.com/openresty/lua-nginx-module#lua_socket_buffer_size>
+
+=item *
+
+L<lua_socket_pool_size|https://github.com/openresty/lua-nginx-module#lua_socket_pool_size>
+
+=item *
+
+L<lua_socket_keepalive_timeout|https://github.com/openresty/lua-nginx-module#lua_socket_keepalive_timeout>
+
+=item *
+
+L<lua_socket_log_errors|https://github.com/openresty/lua-nginx-module#lua_socket_log_errors>
+
+=item *
+
+L<lua_ssl_ciphers|https://github.com/openresty/lua-nginx-module#lua_ssl_ciphers>
+
+=item *
+
+L<lua_ssl_crl|https://github.com/openresty/lua-nginx-module#lua_ssl_crl>
+
+=item *
+
+L<lua_ssl_protocols|https://github.com/openresty/lua-nginx-module#lua_ssl_protocols>
+
+=item *
+
+L<lua_ssl_trusted_certificate|https://github.com/openresty/lua-nginx-module#lua_ssl_trusted_certificate>
+
+=item *
+
+L<lua_ssl_verify_depth|https://github.com/openresty/lua-nginx-module#lua_ssl_verify_depth>
+
+=item *
+
+L<lua_check_client_abort|https://github.com/openresty/lua-nginx-module#lua_check_client_abort>
+
+=item *
+
+L<lua_max_pending_timers|https://github.com/openresty/lua-nginx-module#lua_max_pending_timers>
+
+=item *
+
+L<lua_max_running_timers|https://github.com/openresty/lua-nginx-module#lua_max_running_timers>
+
+
+=back
+
+The L<send_timeout|http://nginx.org/r/send_timeout> directive in the Nginx "http" subsystem is missing in the "stream" subsystem.
+So C<ngx_stream_lua_module> uses the C<lua_socket_send_timeout> for this purpose.
+
+B<Note:> the lingering close directive that used to exist in older version of stream_lua_nginx_module has been removed and can
+now be simulated with the newly added L<tcpsock:shutdown> method if necessary.
+
+
+
+
+=head2 Nginx API for Lua
+
+Many Lua API functions are ported from the C<ngx_http_lua_module>. Check out the official manual of
+C<ngx_http_lua_module> for more details on these Lua API functions.
+
+
+=over
+
+
+=item *
+
+L<ngx.var.VARIABLE|https://github.com/openresty/lua-nginx-module#ngxvarvariable>
+
+
+=back
+
+This module fully supports the new variable subsystem inside the NGINX stream core. You may access any
+L<built-in variables|https://nginx.org/en/docs/stream/ngx_stream_core_module.html#variables> provided by the stream core or
+other stream modules.
+
+=over
+
+
+=item *
+
+L<Core constants|https://github.com/openresty/lua-nginx-module#core-constants>
+
+C<ngx.OK>, C<ngx.ERROR>, and etc.
+
+=item *
+
+L<Nginx log level constants|https://github.com/openresty/lua-nginx-module#nginx-log-level-constants>
+
+C<ngx.ERR>, C<ngx.WARN>, and etc.
+
+=item *
+
+L<print|https://github.com/openresty/lua-nginx-module#print>
+
+=item *
+
+L<ngx.ctx|https://github.com/openresty/lua-nginx-module#ngxctx>
+
+=item *
+
+L<ngx.req.socket|https://github.com/openresty/lua-nginx-module#ngxreqsocket>
+
+Only raw request sockets are supported, for obvious reasons. The C<raw> argument value
+is ignored and the raw request socket is always returned. Unlike C<ngx_http_lua_module>,
+you can still call output API functions like C<ngx.say>, C<ngx.print>, and C<ngx.flush>
+after acquiring the raw request socket via this function.
+
+
+=back
+
+Raw request socket returned by this module will contain the following extra method:
+
+
+=head2 tcpsock:shutdown
+
+B<syntax:> I<ok, err = tcpsock:shutdown("send")>
+
+B<context:> I<content_by_luaE<42>>
+
+Shuts down the write part of the request socket, prevents all further writing to the client
+and sends TCP FIN, while keeping the reading half open.
+
+Currently only the C<"send"> direction is supported. Using any parameters other than "send" will return
+an error.
+
+If you called any output functions (like L<ngx.say|https://github.com/openresty/lua-nginx-module#ngxsay>)
+before calling this method, consider use C<ngx.flush(true)> to make sure all busy buffers are complely
+flushed before shutting down the socket. If any busy buffers were detected, this method will return C<nil>
+will error message C<"socket busy writing">.
+
+This feature is particularly useful for protocols that generates response before actually
+finishes consuming all incoming data. Normally Kernel will send out RST to the client when
+L<tcpsock:close|https://github.com/openresty/lua-nginx-module#tcpsockclose> is called without
+emptying the receiving buffer first. Calling this method will allow you to keep reading from
+the receiving buffer and prevents RST from being sent.
+
+You can also use this method to simulate lingering close similar to that
+L<provided by the ngx_http_core_module|https://nginx.org/en/docs/http/ngx_http_core_module.html#lingering_close>
+for protocols that needs such behavior. Here is an example:
+
+
+    local LINGERING_TIME = 30 -- 30 seconds
+    local LINGERING_TIMEOUT = 5000 -- 5 seconds
+    
+    local ok, err = sock:shutdown("send")
+    if not ok then
+        ngx.log(ngx.ERR, "failed to shutdown: ", err)
+        return
+    end
+    
+    local deadline = ngx.time() + LINGERING_TIME
+    
+    sock:settimeouts(nil, nil, LINGERING_TIMEOUT)
+    
+    repeat
+        local data, _, partial = sock:receive(1024)
+    until (not data and not partial) or ngx.time() >= deadline
+
+
+
+
+=over
+
+
+=item *
+
+L<ngx.print|https://github.com/openresty/lua-nginx-module#ngxprint>
+
+=item *
+
+L<ngx.say|https://github.com/openresty/lua-nginx-module#ngxsay>
+
+=item *
+
+L<ngx.log|https://github.com/openresty/lua-nginx-module#ngxlog>
+
+=item *
+
+L<ngx.flush|https://github.com/openresty/lua-nginx-module#ngxflush>
+
+This call currently ignores the C<wait> argument and always wait for all the pending
+output to be completely flushed out (to the system socket send buffers).
+
+=item *
+
+L<ngx.exit|https://github.com/openresty/lua-nginx-module#ngxexit>
+
+=item *
+
+L<ngx.eof|https://github.com/openresty/lua-nginx-module#ngxeof>
+
+=item *
+
+L<ngx.sleep|https://github.com/openresty/lua-nginx-module#ngxsleep>
+
+=item *
+
+L<ngx.escape_uri|https://github.com/openresty/lua-nginx-module#ngxescape_uri>
+
+=item *
+
+L<ngx.unescape_uri|https://github.com/openresty/lua-nginx-module#ngxunescape_uri>
+
+=item *
+
+L<ngx.encode_args|https://github.com/openresty/lua-nginx-module#ngxencode_args>
+
+=item *
+
+L<ngx.decode_args|https://github.com/openresty/lua-nginx-module#ngxdecode_args>
+
+=item *
+
+L<ngx.encode_base64|https://github.com/openresty/lua-nginx-module#ngxencode_base64>
+
+=item *
+
+L<ngx.decode_base64|https://github.com/openresty/lua-nginx-module#ngxdecode_base64>
+
+=item *
+
+L<ngx.crc32_short|https://github.com/openresty/lua-nginx-module#ngxcrc32_short>
+
+=item *
+
+L<ngx.crc32_long|https://github.com/openresty/lua-nginx-module#ngxcrc32_long>
+
+=item *
+
+L<ngx.hmac_sha1|https://github.com/openresty/lua-nginx-module#ngxhmac_sha1>
+
+=item *
+
+L<ngx.md5|https://github.com/openresty/lua-nginx-module#ngxmd5>
+
+=item *
+
+L<ngx.md5_bin|https://github.com/openresty/lua-nginx-module#ngxmd5_bin>
+
+=item *
+
+L<ngx.sha1_bin|https://github.com/openresty/lua-nginx-module#ngxsha1_bin>
+
+=item *
+
+L<ngx.quote_sql_str|https://github.com/openresty/lua-nginx-module#ngxquote_sql_str>
+
+=item *
+
+L<ngx.today|https://github.com/openresty/lua-nginx-module#ngxtoday>
+
+=item *
+
+L<ngx.time|https://github.com/openresty/lua-nginx-module#ngxtime>
+
+=item *
+
+L<ngx.now|https://github.com/openresty/lua-nginx-module#ngxnow>
+
+=item *
+
+L<ngx.update_time|https://github.com/openresty/lua-nginx-module#ngxupdate_time>
+
+=item *
+
+L<ngx.localtime|https://github.com/openresty/lua-nginx-module#ngxlocaltime>
+
+=item *
+
+L<ngx.utctime|https://github.com/openresty/lua-nginx-module#ngxutctime>
+
+=item *
+
+L<ngx.re.match|https://github.com/openresty/lua-nginx-module#ngxrematch>
+
+=item *
+
+L<ngx.re.find|https://github.com/openresty/lua-nginx-module#ngxrefind>
+
+=item *
+
+L<ngx.re.gmatch|https://github.com/openresty/lua-nginx-module#ngxregmatch>
+
+=item *
+
+L<ngx.re.sub|https://github.com/openresty/lua-nginx-module#ngxresub>
+
+=item *
+
+L<ngx.re.gsub|https://github.com/openresty/lua-nginx-module#ngxregsub>
+
+=item *
+
+L<ngx.shared.DICT|https://github.com/openresty/lua-nginx-module#ngxshareddict>
+
+=item *
+
+L<ngx.socket.tcp|https://github.com/openresty/lua-nginx-module#ngxsockettcp>
+
+=item *
+
+L<ngx.socket.udp|https://github.com/openresty/lua-nginx-module#ngxsocketudp>
+
+=item *
+
+L<ngx.socket.connect|https://github.com/openresty/lua-nginx-module#ngxsocketconnect>
+
+=item *
+
+L<ngx.get_phase|https://github.com/openresty/lua-nginx-module#ngxget_phase>
+
+=item *
+
+L<ngx.thread.spawn|https://github.com/openresty/lua-nginx-module#ngxthreadspawn>
+
+=item *
+
+L<ngx.thread.wait|https://github.com/openresty/lua-nginx-module#ngxthreadwait>
+
+=item *
+
+L<ngx.thread.kill|https://github.com/openresty/lua-nginx-module#ngxthreadkill>
+
+=item *
+
+L<ngx.on_abort|https://github.com/openresty/lua-nginx-module#ngxon_abort>
+
+=item *
+
+L<ngx.timer.at|https://github.com/openresty/lua-nginx-module#ngxtimerat>
+
+=item *
+
+L<ngx.timer.running_count|https://github.com/openresty/lua-nginx-module#ngxtimerrunning_count>
+
+=item *
+
+L<ngx.timer.pending_count|https://github.com/openresty/lua-nginx-module#ngxtimerpending_count>
+
+=item *
+
+L<ngx.config.debug|https://github.com/openresty/lua-nginx-module#ngxconfigdebug>
+
+=item *
+
+L<ngx.config.subsystem|https://github.com/openresty/lua-nginx-module#ngxconfigsubsystem>
+
+Always takes the Lua string value C<"stream"> in this module.
+
+=item *
+
+L<ngx.config.prefix|https://github.com/openresty/lua-nginx-module#ngxconfigprefix>
+
+=item *
+
+L<ngx.config.nginx_version|https://github.com/openresty/lua-nginx-module#ngxconfignginx_version>
+
+=item *
+
+L<ngx.config.nginx_configure|https://github.com/openresty/lua-nginx-module#ngxconfignginx_configure>
+
+=item *
+
+L<ngx.config.ngx_lua_version|https://github.com/openresty/lua-nginx-module#ngxconfigngx_lua_version>
+
+=item *
+
+L<ngx.worker.exiting|https://github.com/openresty/lua-nginx-module#ngxworkerexiting>
+
+=item *
+
+L<ngx.worker.pid|https://github.com/openresty/lua-nginx-module#ngxworkerpid>
+
+=item *
+
+L<ngx.worker.count|https://github.com/openresty/lua-nginx-module#ngxworkercount>
+
+=item *
+
+L<ngx.worker.id|https://github.com/openresty/lua-nginx-module#ngxworkerid>
+
+=item *
+
+L<coroutine.create|https://github.com/openresty/lua-nginx-module#coroutinecreate>
+
+=item *
+
+L<coroutine.resume|https://github.com/openresty/lua-nginx-module#coroutineresume>
+
+=item *
+
+L<coroutine.yield|https://github.com/openresty/lua-nginx-module#coroutineyield>
+
+=item *
+
+L<coroutine.wrap|https://github.com/openresty/lua-nginx-module#coroutinewrap>
+
+=item *
+
+L<coroutine.running|https://github.com/openresty/lua-nginx-module#coroutinerunning>
+
+=item *
+
+L<coroutine.status|https://github.com/openresty/lua-nginx-module#coroutinestatus>
+
+
+=back
+
+
+
+
+=head1 TODO
+
+
+=over
+
+
+=item *
+
+Add new directives C<access_by_lua_block> and C<access_by_lua_file>.
+
+=item *
+
+Add new directives C<log_by_lua_block> and C<log_by_lua_file>.
+
+=item *
+
+Add new directives C<balancer_by_lua_block> and C<balancer_by_lua_file>.
+
+=item *
+
+Add new directives C<ssl_certificate_by_lua_block> and C<ssl_certificate_by_lua_file>.
+
+=item *
+
+Add C<ngx.semaphore> API.
+
+=item *
+
+Add C<ngx_meta_lua_module> to share as much code as possible between this module and C<ngx_http_lua_module> and allow sharing
+of C<lua_shared_dict>.
+
+=item *
+
+Add support for L<lua-resty-core|https://github.com/openresty/lua-resty-core>.
+
+=item *
+
+Add C<lua_postpone_output> to emulate the L<postpone_output|http://nginx.org/r/postpone_output> directive.
+
+
+=back
+
+
+
+
+=head1 Nginx Compatibility
+
+The latest version of this module is compatible with the following versions of Nginx:
+
+
+=over
+
+
+=item *
+
+1.13.x E<gt>= 1.13.3 (last tested: 1.13.3)
+
+
+=back
+
+Nginx cores older than 1.13.3 (exclusive) are I<not> tested and may or may not work. Use at your own risk!
+
+
+
+
+=head1 Installation
+
+This module can be manually compiled into Nginx or OpenResty:
+
+
+=over
+
+
+=item 1.
+
+Install LuaJIT 2.1 or Lua 5.1 (Lua 5.2+ are I<not> supported yet). LuaJIT can be downloaded from the L<the LuaJIT project website|http://luajit.org/download.html> and Lua 5.1, from the L<Lua project website|http://www.lua.org/>.  Some distribution package managers also distribute LuaJIT and/or Lua.
+
+=item 2.
+
+Download the latest version of ngx_stream_lua L<HERE|https://github.com/openresty/stream-lua-nginx-module/tags>.
+
+=item 3.
+
+Download the latest supported version of NGINX L<HERE|http://nginx.org/> (See L<Nginx Compatibility>) or the OpenResty bundle from L<HERE|https://openresty.org/>.
+
+
+=back
+
+Build the source of NGINX or OpenResty with this module, like below:
+
+
+    wget 'http://nginx.org/download/nginx-1.13.3.tar.gz'
+    tar -xzvf nginx-1.13.3.tar.gz
+    cd nginx-1.13.3/
+    
+    # tell nginx's build system where to find LuaJIT 2.1:
+    export LUAJIT_LIB=/path/to/luajit/lib
+    export LUAJIT_INC=/path/to/luajit/include/luajit-2.1
+    
+    # or tell where to find Lua if using Lua instead:
+    #export LUA_LIB=/path/to/lua/lib
+    #export LUA_INC=/path/to/lua/include
+    
+    # Here we assume Nginx is to be installed under /opt/nginx/.
+    ./configure --prefix=/opt/nginx \
+            --with-ld-opt="-Wl,-rpath,/path/to/luajit-or-lua/lib" \
+            --with-stream \
+            --with-stream_ssl_module \
+            --add-module=/path/to/stream-lua-nginx-module
+    
+    # Build and install
+    make -j4
+    make install
+
+You may use C<--without-http> if you do not wish to use this module with the HTTP subsystem.
+ngx_stream_lua will work perfectly fine without the presense of the HTTP subsystem.
+
+
+
+
+=head1 Community
+
+
+
+
+=head2 English Mailing List
+
+The L<openresty-en|https://groups.google.com/group/openresty-en> mailing list is for English speakers.
+
+
+
+
+=head2 Chinese Mailing List
+
+The L<openresty|https://groups.google.com/group/openresty> mailing list is for Chinese speakers.
+
+
+
+
+=head1 Code Repository
+
+The code repository of this project is hosted on github at L<openrestyE<sol>stream-lua-nginx-module|https://github.com/openresty/stream-lua-nginx-module>.
+
+
+
+
+=head1 Bugs and Patches
+
+Please submit bug reports, wishlists, or patches by
+
+
+=over
+
+
+=item 1.
+
+creating a ticket on the L<GitHub Issue Tracker|https://github.com/openresty/stream-lua-nginx-module/issues>,
+
+=item 2.
+
+or posting to the L<OpenResty community>.
+
+
+=back
+
+
+
+
+=head1 Acknowledgments
+
+
+=over
+
+
+=item *
+
+We appreciate L<Mashape, Inc.|https://www.mashape.com/> for kindly sponsoring L<OpenResty Inc.|https://openresty.com/> to make
+this module compatible with Nginx core 1.13.3. In addition, they sponsored the work on making code sharing between this module and
+L<lua-nginx-module|https://github.com/openresty/lua-nginx-module>, as well as balancer_by_lua* support possible.
+
+
+=back
+
+
+=head1 Copyright and License
+
+This module is licensed under the BSD license.
+
+Copyright (C) 2009-2017, by Yichun "agentzh" Zhang (章亦春) E<lt>agentzh@gmail.comE<gt>, OpenResty Inc.
+
+Copyright (C) 2009-2016, by Xiaozhe Wang (chaoslawful) E<lt>chaoslawful@gmail.comE<gt>.
+
+All rights reserved.
+
+Redistribution and use in source and binary forms, with or without modification, are permitted provided that the following conditions are met:
+
+
+=over
+
+
+=item *
+
+Redistributions of source code must retain the above copyright notice, this list of conditions and the following disclaimer.
+
+
+=back
+
+
+=over
+
+
+=item *
+
+Redistributions in binary form must reproduce the above copyright notice, this list of conditions and the following disclaimer in the documentation and/or other materials provided with the distribution.
+
+
+=back
+
+THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+
+
+
+
+=head1 See Also
+
+
+=over
+
+
+=item *
+
+L<ngx_http_lua_module|https://github.com/openresty/lua-nginx-module>
+
+=item *
+
+L<ngx_stream_echo_module|https://github.com/openresty/stream-echo-nginx-module>
+
+=item *
+
+L<OpenResty|https://openresty.org/>
+
+
+=back
+
+
+

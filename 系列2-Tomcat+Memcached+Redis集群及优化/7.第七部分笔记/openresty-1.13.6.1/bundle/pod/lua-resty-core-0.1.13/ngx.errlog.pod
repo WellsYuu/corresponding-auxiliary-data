@@ -1,0 +1,342 @@
+=encoding utf-8
+
+
+=head1 Name
+
+C<ngx.errlog> - manage nginx error log data in Lua for OpenResty/ngx_lua.
+
+
+=head1 Status
+
+This Lua module is currently considered experimental.
+
+The API is still in flux and may change in the future without notice.
+
+
+=head1 Synopsis
+
+
+=head2 Capturing nginx error logs with specified log filtering level
+
+
+    error logs/error.log info;
+    
+    http {
+        # enable capturing error logs
+        lua_capture_error_log 32m;
+    
+        init_by_lua_block {
+            local errlog = require "ngx.errlog"
+            local status, err = errlog.set_filter_level(ngx.WARN)
+            if not status then
+                ngx.log(ngx.ERR, err)
+                return
+            end
+            ngx.log(ngx.WARN, "set error filter level: WARN")
+        }
+    
+        server {
+            # ...
+            location = /t {
+                content_by_lua_block {
+                    local errlog = require "ngx.errlog"
+                    ngx.log(ngx.INFO, "test1")
+                    ngx.log(ngx.WARN, "test2")
+                    ngx.log(ngx.ERR, "test3")
+    
+                    local logs, err = errlog.get_logs(10)
+                    if not logs then
+                        ngx.say("FAILED ", err)
+                        return
+                    end
+    
+                    for i = 1, #logs, 3 do
+                        ngx.say("level: ", logs[i], " time: ", logs[i + 1],
+                                " data: ", logs[i + 2])
+                    end
+                }
+            }
+        }
+    }
+    
+
+The example location above produces a response like this:
+
+
+    level: 5 time: 1498546995.304 data: 2017/06/27 15:03:15 [warn] 46877#0:
+        [lua] init_by_lua:8: set error filter level: WARN
+    level: 5 time: 1498546999.178 data: 2017/06/27 15:03:19 [warn] 46879#0: *1
+        [lua] test.lua:5: test2, client: 127.0.0.1, server: localhost, ......
+    level: 4 time: 1498546999.178 data: 2017/06/27 15:03:19 [error] 46879#0: *1
+        [lua] test.lua:6: test3, client: 127.0.0.1, server: localhost, ......
+
+
+
+
+=head1 Methods
+
+
+=head2 set_filter_level
+
+B<syntax:> I<status, err = log_module.set_filter_level(log_level)>
+
+B<context:> I<init_by_luaE<42>>
+
+Specifies the filter log level, only to capture and buffer the error logs with a log level
+no lower than the specified level.
+
+If we don't call this API, all of the error logs will be captured by default.
+
+In case of error, C<nil> will be returned as well as a string describing the
+error.
+
+This API should always work with directive
+L<lua_capture_error_log|https://github.com/openresty/lua-nginx-module#lua_capture_error_log>.
+
+See L<Nginx log level constants|https://github.com/openresty/lua-nginx-module#nginx-log-level-constants> for all nginx log levels.
+
+For example,
+
+
+     init_by_lua_block {
+         local errlog = require "ngx.errlog"
+         errlog.set_filter_level(ngx.WARN)
+     }
+
+I<NOTE:> The debugging logs since when OpenResty or NGINX is not built with C<--with-debug>, all the debug level logs are suppressed regardless.
+
+
+
+
+=head2 get_logs
+
+B<syntax:> I<res, err = log_module.get_logs(max?, res?)>
+
+B<context:> I<any>
+
+Fetches the captured nginx error log messages if any in the global data buffer
+specified by C<ngx_lua>'s
+L<lua_capture_error_log|https://github.com/openresty/lua-nginx-module#lua_capture_error_log>
+directive. Upon return, this Lua function also I<removes> those messages from
+that global capturing buffer to make room for future new error log data.
+
+In case of error, C<nil> will be returned as well as a string describing the
+error.
+
+The optional C<max> argument is a number that when specified, will prevent
+C<errlog.get_logs> from adding more than C<max> messages to the C<res> array.
+
+
+    for i = 1, 20 do
+       ngx.log(ngx.ERR, "test")
+    end
+    
+    local errlog = require "ngx.errlog"
+    local res = errlog.get_logs(10)
+    -- the number of messages in the `res` table is 10 and the `res` table
+    -- has 30 elements.
+
+The resulting table has the following structure:
+
+
+    { level1, time1, msg1, level2, time2, msg2, ... }
+
+The C<levelX> values are constants defined below:
+
+https://github.com/openresty/lua-nginx-module/#nginx-log-level-constants
+
+The C<timeX> values are UNIX timestamps in seconds with millisecond precision. The sub-second part is presented as the decimal part.
+The time format is exactly the same as the value returned by L<ngx.now|https://github.com/openresty/lua-nginx-module/#ngxnow>. It is
+also subject to NGINX core's time caching.
+
+The C<msgX> values are the error log message texts.
+
+So to traverse this array, the user can use a loop like this:
+
+
+    for i = 1, #res, 3 do
+        local level = res[i]
+        if not level then
+            break
+        end
+    
+        local time = res[i + 1]
+        local msg = res[i + 2]
+    
+        -- handle the current message with log level in `level`,
+        -- log time in `time`, and log message body in `msg`.
+    end
+
+Specifying C<max <= 0> disables this behavior, meaning that the number of
+results won't be limited.
+
+The optional 2th argument C<res> can be a user-supplied Lua table
+to hold the result instead of creating a brand new table. This can avoid
+unnecessary table dynamic allocations on hot Lua code paths. It is used like this:
+
+
+    local errlog = require "ngx.errlog"
+    local new_tab = require "table.new"
+    
+    local buffer = new_tab(100 * 3, 0)  -- for 100 messages
+    
+    local errlog = require "ngx.errlog"
+    local res, err = errlog.get_logs(0, buffer)
+    if res then
+        -- res is the same table as `buffer`
+        for i = 1, #res, 3 do
+            local level = res[i]
+            if not level then
+                break
+            end
+            local time = res[i + 1]
+            local msg  = res[i + 2]
+            ...
+        end
+    end
+
+When provided with a C<res> table, C<errlog.get_logs> won't clear the table
+for performance reasons, but will rather insert a trailing C<nil> value
+after the last table element.
+
+When the trailing C<nil> is not enough for your purpose, you should
+clear the table yourself before feeding it into the C<errlog.get_logs> function.
+
+
+
+
+=head2 get_sys_filter_level
+
+B<syntax:> I<log_level = log_module.get_sys_filter_level()>
+
+B<context:> I<any>
+
+Return the nginx core's error log filter level (defined via the L<error_log|http://nginx.org/r/error_log>
+configuration directive in C<nginx.conf>) as an integer value matching the nginx error log level
+constants documented below:
+
+https://github.com/openresty/lua-nginx-module/#nginx-log-level-constants
+
+For example:
+
+
+    local errlog = require "ngx.errlog"
+    local log_level = errlog.get_sys_filter_level()
+    -- Now the filter level is always one level higher than system default log level on priority
+    local status, err = errlog.set_filter_level(log_level - 1)
+    if not status then
+        ngx.log(ngx.ERR, err)
+        return
+    end
+
+
+
+
+=head1 Community
+
+
+
+
+=head2 English Mailing List
+
+The L<openresty-en|https://groups.google.com/group/openresty-en> mailing list is for English speakers.
+
+
+
+
+=head2 Chinese Mailing List
+
+The L<openresty|https://groups.google.com/group/openresty> mailing list is for Chinese speakers.
+
+
+
+
+=head1 Bugs and Patches
+
+Please report bugs or submit patches by
+
+
+=over
+
+
+=item 1.
+
+creating a ticket on the L<GitHub Issue Tracker|https://github.com/openresty/lua-resty-core/issues>,
+
+=item 2.
+
+or posting to the L<OpenResty community>.
+
+
+=back
+
+
+
+
+=head1 Author
+
+Yuansheng Wang E<lt>membphis@gmail.comE<gt> (membphis), OpenResty Inc.
+
+
+
+
+=head1 Copyright and License
+
+This module is licensed under the BSD license.
+
+Copyright (C) 2017, by Yichun "agentzh" Zhang, OpenResty Inc.
+
+All rights reserved.
+
+Redistribution and use in source and binary forms, with or without modification, are permitted provided that the following conditions are met:
+
+
+=over
+
+
+=item *
+
+Redistributions of source code must retain the above copyright notice, this list of conditions and the following disclaimer.
+
+
+=back
+
+
+=over
+
+
+=item *
+
+Redistributions in binary form must reproduce the above copyright notice, this list of conditions and the following disclaimer in the documentation and/or other materials provided with the distribution.
+
+
+=back
+
+THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+
+
+
+
+=head1 See Also
+
+
+=over
+
+
+=item *
+
+library L<lua-resty-core|https://github.com/openresty/lua-resty-core>
+
+=item *
+
+the ngx_lua module: https://github.com/openresty/lua-nginx-module
+
+=item *
+
+OpenResty: http://openresty.org
+
+
+=back
+
+
+

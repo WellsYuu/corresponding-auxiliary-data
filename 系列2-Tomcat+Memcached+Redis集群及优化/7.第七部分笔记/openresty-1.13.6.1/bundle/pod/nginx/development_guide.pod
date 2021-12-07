@@ -1,0 +1,8265 @@
+=encoding utf-8
+
+
+=head1 Name
+
+
+development_guide - Development guide
+
+
+=head1 Introduction
+
+
+=head2 Code layout
+
+
+=over
+
+
+
+=item *
+
+C<auto> — Build scripts
+
+
+
+=item *
+
+C<src>
+
+
+=over
+
+
+
+
+=item *
+
+C<core> — Basic types and functions — string, array, log,
+pool, etc.
+
+
+
+=item *
+
+C<event> — Event core
+
+
+=over
+
+
+
+
+=item *
+
+C<modules> — Event notification modules:
+C<epoll>, C<kqueue>, C<select>
+etc.
+
+
+
+=back
+
+
+
+
+
+
+=item *
+
+C<http> — Core HTTP module and common code
+
+
+=over
+
+
+
+
+=item *
+
+C<modules> — Other HTTP modules
+
+
+
+=item *
+
+C<v2> — HTTPE<sol>2
+
+
+
+=back
+
+
+
+
+
+
+=item *
+
+C<mail> — Mail modules
+
+
+
+=item *
+
+C<os> — Platform-specific code
+
+
+=over
+
+
+
+
+=item *
+
+ C<unix>
+
+
+
+=item *
+
+ C<win32>
+
+
+
+=back
+
+
+
+
+
+
+=item *
+
+C<stream> — Stream modules
+
+
+
+=back
+
+
+
+
+
+
+=back
+
+
+
+
+=head2 Include files
+
+
+
+The following two C<#include> statements must appear at the
+beginning of every nginx file:
+
+
+
+
+    
+    #include <ngx_config.h>
+    #include <ngx_core.h>
+
+
+
+
+
+In addition to that, HTTP code should include
+
+
+
+
+
+    
+    #include <ngx_http.h>
+
+
+
+
+
+Mail code should include
+
+
+
+
+
+    
+    #include <ngx_mail.h>
+
+
+
+
+
+Stream code should include
+
+
+
+
+
+    
+    #include <ngx_stream.h>
+
+
+
+
+=head2 Integers
+
+
+
+For general purposes, nginx code uses two integer types,
+C<ngx_int_t> and C<ngx_uint_t>, which are
+typedefs for C<intptr_t> and C<uintptr_t>
+respectively.
+
+
+
+
+=head2 Common return codes
+
+
+
+Most functions in nginx return the following codes:
+
+
+
+
+=over
+
+
+
+
+=item *
+
+C<NGX_OK> — Operation succeeded.
+
+
+
+=item *
+
+C<NGX_ERROR> — Operation failed.
+
+
+
+=item *
+
+C<NGX_AGAIN> — Operation incomplete; call the function again.
+
+
+
+=item *
+
+C<NGX_DECLINED> — Operation rejected, for example, because it is
+disabled in the configuration. This is never an error.
+
+
+
+=item *
+
+C<NGX_BUSY> — Resource is not available.
+
+
+
+=item *
+
+C<NGX_DONE> — Operation complete or continued elsewhere.
+Also used as an alternative success code.
+
+
+
+=item *
+
+C<NGX_ABORT> — Function was aborted.
+Also used as an alternative error code.
+
+
+
+=back
+
+
+
+
+=head2 Error handling
+
+
+
+The C<ngx_errno> macro returns the last system error code.
+It's mapped to C<errno> on POSIX platforms and to
+C<GetLastError()> call in Windows.
+The C<ngx_socket_errno> macro returns the last socket error
+number.
+Like the C<ngx_errno> macro, it's mapped to
+C<errno> on POSIX platforms.
+It's mapped to the C<WSAGetLastError()> call on Windows.
+Accessing the values of C<ngx_errno> or
+C<ngx_socket_errno> more than once in a row can cause
+performance issues.
+If the error value might be used multiple times, store it in a local variable
+of type C<ngx_err_t>.
+To set errors, use the C<ngx_set_errno(errno)> and
+C<ngx_set_socket_errno(errno)> macros.
+
+
+
+
+
+The values of C<ngx_errno> and
+C<ngx_socket_errno> can be passed to the logging functions
+C<ngx_log_error()> and C<ngx_log_debugX()>, in
+which case system error text is added to the log message.
+
+
+
+
+
+Example using C<ngx_errno>:
+
+
+
+
+
+    
+    void
+    ngx_my_kill(ngx_pid_t pid, ngx_log_t *log, int signo)
+    {
+        ngx_err_t  err;
+    
+        if (kill(pid, signo) == -1) {
+            err = ngx_errno;
+    
+            ngx_log_error(NGX_LOG_ALERT, log, err, "kill(%P, %d) failed", pid, signo);
+    
+            if (err == NGX_ESRCH) {
+                return 2;
+            }
+    
+            return 1;
+        }
+    
+        return 0;
+    }
+
+
+
+
+=head1 Strings
+
+
+=head2 Overview
+
+
+
+For C strings, nginx uses the unsigned character type pointer
+C<u_char *>.
+
+
+
+
+
+The nginx string type C<ngx_str_t> is defined as follows:
+
+
+
+
+
+    
+    typedef struct {
+        size_t      len;
+        u_char     *data;
+    } ngx_str_t;
+
+
+
+
+
+The C<len> field holds the string length and
+C<data> holds the string data.
+The string, held in C<ngx_str_t>, may or may not be
+null-terminated after the C<len> bytes.
+In most cases it’s not.
+However, in certain parts of the code (for example, when parsing configuration),
+C<ngx_str_t> objects are known to be null-terminated, which
+simplifies string comparison and makes it easier to pass the strings to
+syscalls.
+
+
+
+
+
+The string operations in nginx are declared in
+F<srcE<sol>coreE<sol>ngx_string.h>
+Some of them are wrappers around standard C functions:
+
+
+
+
+
+
+=over
+
+
+
+
+=item *
+
+C<ngx_strcmp()>
+
+
+
+=item *
+
+C<ngx_strncmp()>
+
+
+
+=item *
+
+C<ngx_strstr()>
+
+
+
+=item *
+
+C<ngx_strlen()>
+
+
+
+=item *
+
+C<ngx_strchr()>
+
+
+
+=item *
+
+C<ngx_memcmp()>
+
+
+
+=item *
+
+C<ngx_memset()>
+
+
+
+=item *
+
+C<ngx_memcpy()>
+
+
+
+=item *
+
+C<ngx_memmove()>
+
+
+
+=back
+
+
+
+
+
+
+
+
+Other string functions are nginx-specific
+
+
+
+
+
+
+=over
+
+
+
+
+=item *
+
+C<ngx_memzero()> — Fills memory with zeroes.
+
+
+
+=item *
+
+C<ngx_cpymem()> — Does the same as
+C<ngx_memcpy()>, but returns the final destination address
+This one is handy for appending multiple strings in a row.
+
+
+
+=item *
+
+C<ngx_movemem()> — Does the same as
+C<ngx_memmove()>, but returns the final destination address.
+
+
+
+=item *
+
+C<ngx_strlchr()> — Searches for a character in a string,
+delimited by two pointers.
+
+
+=back
+
+
+
+
+
+
+
+The following functions perform case conversion and comparison:
+
+
+
+
+
+
+=over
+
+
+
+
+=item *
+
+C<ngx_tolower()>
+
+
+
+=item *
+
+C<ngx_toupper()>
+
+
+
+=item *
+
+C<ngx_strlow()>
+
+
+
+=item *
+
+C<ngx_strcasecmp()>
+
+
+
+=item *
+
+C<ngx_strncasecmp()>
+
+
+
+=back
+
+
+
+
+
+
+
+The following macros simplify string initialization:
+
+
+
+
+=over
+
+
+
+
+=item *
+
+C<ngx_string(text)> — static initializer for the
+C<ngx_str_t> type from the C string literal
+C<text>
+
+
+
+=item *
+
+C<ngx_null_string> — static empty string initializer for the
+C<ngx_str_t> type
+
+
+
+=item *
+
+C<ngx_str_set(str, text)> — initializes string
+C<str> of C<ngx_str_t *> type with the C string
+literal C<text>
+
+
+
+=item *
+
+C<ngx_str_null(str)> — initializes string C<str>
+of C<ngx_str_t *> type with the empty string
+
+
+
+=back
+
+
+
+
+=head2 Formatting
+
+
+
+The following formatting functions support nginx-specific types:
+
+
+
+
+
+
+
+=over
+
+
+
+
+=item *
+
+C<ngx_sprintf(buf, fmt, ...)>
+
+
+
+=item *
+
+C<ngx_snprintf(buf, max, fmt, ...)>
+
+
+
+=item *
+
+C<ngx_slprintf(buf, last, fmt, ...)>
+
+
+
+=item *
+
+C<ngx_vslprint(buf, last, fmt, args)>
+
+
+
+=item *
+
+C<ngx_vsnprint(buf, max, fmt, args)>
+
+
+
+=back
+
+
+
+
+
+
+
+The full list of formatting options, supported by these functions is
+in F<srcE<sol>coreE<sol>ngx_string.c>. Some of them are:
+
+
+
+
+
+=over
+
+
+
+
+=item *
+
+C<%O> — C<off_t>
+
+
+
+=item *
+
+C<%T> — C<time_t>
+
+
+
+=item *
+
+C<%z> — C<ssize_t>
+
+
+
+=item *
+
+C<%i> — C<ngx_int_t>
+
+
+
+=item *
+
+C<%p> — C<void *>
+
+
+
+=item *
+
+C<%V> — C<ngx_str_t *>
+
+
+
+=item *
+
+C<%s> — C<u_char *> (null-terminated)
+
+
+
+=item *
+
+C<%*s> — C<size_t + u_char *>
+
+
+
+=back
+
+
+
+
+
+
+You can prepend C<u> on most types to make them unsigned.
+To convert output to hex, use C<X> or C<x>.
+
+
+
+
+
+For example:
+
+
+    
+    u_char      buf[NGX_INT_T_LEN];
+    size_t      len;
+    ngx_uint_t  n;
+    
+    /* set n here */
+    
+    len = ngx_sprintf(buf, "%ui", n) — buf;
+
+
+
+
+
+
+
+=head2 Numeric conversion
+
+
+
+Several functions for numeric conversion are implemented in nginx.
+The first four each convert a string of given length to a positive integer of
+the indicated type.
+They return C<NGX_ERROR> on error.
+
+
+=over
+
+
+
+
+=item *
+
+C<ngx_atoi(line, n)> — C<ngx_int_t>
+
+
+
+=item *
+
+C<ngx_atosz(line, n)> — C<ssize_t>
+
+
+
+=item *
+
+C<ngx_atoof(line, n)> — C<off_t>
+
+
+
+=item *
+
+C<ngx_atotm(line, n)> — C<time_t>
+
+
+
+=back
+
+
+
+
+
+
+
+There are two additional numeric conversion functions.
+Like the first four, they return C<NGX_ERROR> on error.
+
+
+=over
+
+
+
+
+=item *
+
+C<ngx_atofp(line, n, point)> — Converts a fixed point floating
+number of given length to a positive integer of type
+C<ngx_int_t>.
+The result is shifted left by C<point> decimal
+positions.
+The string representation of the number is expected to have no more
+than C<points> fractional digits.
+For example, C<ngx_atofp("10.5", 4, 2)> returns
+C<1050>.
+
+
+
+=item *
+
+C<ngx_hextoi(line, n)> — Converts a hexadecimal representation
+of a positive integer to C<ngx_int_t>.
+
+
+
+=back
+
+
+
+
+
+
+=head2 Regular expressions
+
+
+
+The regular expressions interface in nginx is a wrapper around
+the L<PCRE|http://www.pcre.org>
+library.
+The corresponding header file is F<srcE<sol>coreE<sol>ngx_regex.h>.
+
+
+
+
+
+To use a regular expression for string matching, it first needs to be
+compiled, which is usually done at the configuration phase.
+Note that since PCRE support is optional, all code using the interface must
+be protected by the surrounding C<NGX_PCRE> macro:
+
+
+    
+    #if (NGX_PCRE)
+    ngx_regex_t          *re;
+    ngx_regex_compile_t   rc;
+    
+    u_char                errstr[NGX_MAX_CONF_ERRSTR];
+    
+    ngx_str_t  value = ngx_string("message (\\d\\d\\d).*Codeword is '(?<cw>\\w+)'");
+    
+    ngx_memzero(&rc, sizeof(ngx_regex_compile_t));
+    
+    rc.pattern = value;
+    rc.pool = cf->pool;
+    rc.err.len = NGX_MAX_CONF_ERRSTR;
+    rc.err.data = errstr;
+    /* rc.options are passed as is to pcre_compile() */
+    
+    if (ngx_regex_compile(&rc) != NGX_OK) {
+        ngx_conf_log_error(NGX_LOG_EMERG, cf, 0, "%V", &rc.err);
+        return NGX_CONF_ERROR;
+    }
+    
+    re = rc.regex;
+    #endif
+
+
+After successful compilation, the C<captures> and
+C<named_captures> fields in the
+C<ngx_regex_compile_t> structure contain the count of all
+captures and named captures, respectively, found in the regular expression.
+
+
+
+
+
+The compiled regular expression can then be used for matching against strings:
+
+    
+    ngx_int_t  n;
+    int        captures[(1 + rc.captures) * 3];
+    
+    ngx_str_t input = ngx_string("This is message 123. Codeword is 'foobar'.");
+    
+    n = ngx_regex_exec(re, &input, captures, (1 + rc.captures) * 3);
+    if (n >= 0) {
+        /* string matches expression */
+    
+    } else if (n == NGX_REGEX_NO_MATCHED) {
+        /* no match was found */
+    
+    } else {
+        /* some error */
+        ngx_log_error(NGX_LOG_ALERT, log, 0, ngx_regex_exec_n " failed: %i", n);
+    }
+
+
+The arguments to C<ngx_regex_exec()> are the compiled regular
+expression C<re>, the string to match C<s>,
+an optional array of integers to hold any C<captures> that are
+found, and the array's C<size>.
+The size of the C<captures> array must be a multiple of three,
+as required by the
+L<PCRE API|http://www.pcre.org/original/doc/html/pcreapi.html>.
+In the example, the size is calculated from the total number of captures plus
+C<1>one for the matched string itself.
+
+
+
+
+
+If there are matches, captures can be accessed as follows:
+
+    
+    u_char     *p;
+    size_t      size;
+    ngx_str_t   name, value;
+    
+    /* all captures */
+    for (i = 0; i < n * 2; i += 2) {
+        value.data = input.data + captures[i];
+        value.len = captures[i + 1] — captures[i];
+    }
+    
+    /* accessing named captures */
+    
+    size = rc.name_size;
+    p = rc.names;
+    
+    for (i = 0; i < rc.named_captures; i++, p += size) {
+    
+        /* capture name */
+        name.data = &p[2];
+        name.len = ngx_strlen(name.data);
+    
+        n = 2 * ((p[0] << 8) + p[1]);
+    
+        /* captured value */
+        value.data = &input.data[captures[n]];
+        value.len = captures[n + 1] — captures[n];
+    }
+
+
+
+
+
+
+
+The C<ngx_regex_exec_array()> function accepts the array of
+C<ngx_regex_elt_t> elements (which are just compiled regular
+expressions with associated names), a string to match, and a log.
+The function applies expressions from the array to the string until
+either a match is found or no more expressions are left.
+The return value is C<NGX_OK> when there is a match and
+C<NGX_DECLINED> otherwise, or C<NGX_ERROR>
+in case of error.
+
+
+
+
+=head1 Time
+
+
+
+The C<ngx_time_t> structure represents time with three separate
+types for seconds, milliseconds, and the GMT offset:
+
+    
+    typedef struct {
+        time_t      sec;
+        ngx_uint_t  msec;
+        ngx_int_t   gmtoff;
+    } ngx_time_t;
+
+
+The C<ngx_tm_t> structure is an alias for
+C<struct tm> on UNIX platforms and C<SYSTEMTIME>
+on Windows.
+
+
+
+
+
+To obtain the current time, it is usually sufficient to access one of the
+available global variables, representing the cached time value in the desired
+format.
+For example, the C<ngx_current_msec> variable holds the number
+of milliseconds elapsed since Epoch and truncated to
+C<ngx_msec_t>.
+
+
+
+
+
+The available string representations are:
+
+
+=over
+
+
+
+
+=item *
+
+C<ngx_cached_err_log_time> — Used in error log entries:
+C<"1970E<sol>09E<sol>28 12:00:00">
+
+
+
+=item *
+
+C<ngx_cached_http_log_time> — Used in HTTP access log entries:
+C<"28E<sol>SepE<sol>1970:12:00:00 +0600">
+
+
+
+=item *
+
+C<ngx_cached_syslog_time> — Used in syslog entries:
+C<"Sep 28 12:00:00">
+
+
+
+=item *
+
+C<ngx_cached_http_time> — Used in HTTP headers:
+C<"Mon, 28 Sep 1970 06:00:00 GMT">
+
+
+
+=item *
+
+C<ngx_cached_http_log_iso8601> — The ISO 8601
+standard format:
+C<"1970-09-28T12:00:00+06:00">
+
+
+
+=back
+
+
+
+
+
+
+
+The C<ngx_time()> and C<ngx_timeofday()> macros
+return the current time value in seconds and are the preferred way to access
+the cached time value.
+
+
+
+
+
+To obtain the time explicitly, use C<ngx_gettimeofday()>,
+which updates its argument (pointer to
+C<struct timeval>).
+The time is always updated when nginx returns to the event loop from system
+calls.
+To update the time immediately, call C<ngx_time_update()>,
+or C<ngx_time_sigsafe_update()> if updating the time in the
+signal handler context.
+
+
+
+
+
+The following functions convert C<time_t> into the indicated
+broken-down time representation.
+The first function in each pair converts C<time_t> to
+C<ngx_tm_t> and the second (with the C<_libc_>
+infix) to C<struct tm>:
+
+
+=over
+
+
+
+
+=item *
+
+C<ngx_gmtime(), ngx_libc_gmtime()> — Time expressed as UTC
+
+
+
+=item *
+
+C<ngx_localtime(), ngx_libc_localtime()> — Time expressed
+relative to the local time zone
+
+
+
+=back
+
+
+
+The C<ngx_http_time(buf, time)> function returns a string
+representation suitable for use in HTTP headers (for example,
+C<"Mon, 28 Sep 1970 06:00:00 GMT">).
+The C<ngx_http_cookie_time(buf, time)> returns a string
+representation function returns a string representation suitable
+for HTTP cookies (C<"Thu, 31-Dec-37 23:55:55 GMT">).
+
+
+
+
+=head1 Containers
+
+
+=head2 Array
+
+
+
+The nginx array type C<ngx_array_t> is defined as follows
+
+
+
+
+
+    
+    typedef struct {
+        void        *elts;
+        ngx_uint_t   nelts;
+        size_t       size;
+        ngx_uint_t   nalloc;
+        ngx_pool_t  *pool;
+    } ngx_array_t;
+
+
+
+
+
+The elements of the array are available in the C<elts> field.
+The C<nelts> field holds the number of elements.
+The C<size> field holds the size of a single element and is set
+when the array is initialized.
+
+
+
+
+
+Use the C<ngx_array_create(pool, n, size)> call to create an
+array in a pool, and the C<ngx_array_init(array, pool, n, size)>
+call to initialize an array object that has already been allocated.
+
+
+
+
+
+    
+    ngx_array_t  *a, b;
+    
+    /* create an array of strings with preallocated memory for 10 elements */
+    a = ngx_array_create(pool, 10, sizeof(ngx_str_t));
+    
+    /* initialize string array for 10 elements */
+    ngx_array_init(&b, pool, 10, sizeof(ngx_str_t));
+
+
+
+
+
+Use the following functions to add elements to an array:
+
+
+
+
+
+
+=over
+
+
+
+
+=item *
+
+C<ngx_array_push(a)> adds one tail element and returns pointer
+to it
+
+
+
+=item *
+
+C<ngx_array_push_n(a, n)> adds C<n> tail elements
+and returns pointer to the first one
+
+
+
+=back
+
+
+
+
+
+
+
+If the currently allocated amount of memory is not large enough to accommodate
+the new elements, a new block of memory is allocated and the existing elements
+are copied to it.
+The new memory block is normally twice as large as the existing one.
+
+
+
+
+
+    
+    s = ngx_array_push(a);
+    ss = ngx_array_push_n(&b, 3);
+
+
+
+
+=head2 List
+
+
+
+In nginx a list is a sequence of arrays, optimized for inserting a potentially
+large number of items.
+The C<ngx_list_t> list type is defined as follows:
+
+
+
+
+
+    
+    typedef struct {
+        ngx_list_part_t  *last;
+        ngx_list_part_t   part;
+        size_t            size;
+        ngx_uint_t        nalloc;
+        ngx_pool_t       *pool;
+    } ngx_list_t;
+
+
+
+
+
+The actual items are stored in list parts, which are defined as follows:
+
+
+
+
+
+    
+    typedef struct ngx_list_part_s  ngx_list_part_t;
+    
+    struct ngx_list_part_s {
+        void             *elts;
+        ngx_uint_t        nelts;
+        ngx_list_part_t  *next;
+    };
+
+
+
+
+
+Before use, a list must be initialized by calling
+C<ngx_list_init(list, pool, n, size)> or created by calling
+C<ngx_list_create(pool, n, size)>.
+Both functions take as arguments the size of a single item and a number of
+items per list part.
+To add an item to a list, use the C<ngx_list_push(list)>
+function.
+To iterate over the items, directly access the list fields as shown in the
+example:
+
+
+
+
+
+    
+    ngx_str_t        *v;
+    ngx_uint_t        i;
+    ngx_list_t       *list;
+    ngx_list_part_t  *part;
+    
+    list = ngx_list_create(pool, 100, sizeof(ngx_str_t));
+    if (list == NULL) { /* error */ }
+    
+    /* add items to the list */
+    
+    v = ngx_list_push(list);
+    if (v == NULL) { /* error */ }
+    ngx_str_set(v, "foo");
+    
+    v = ngx_list_push(list);
+    if (v == NULL) { /* error */ }
+    ngx_str_set(v, "bar");
+    
+    /* iterate over the list */
+    
+    part = &list->part;
+    v = part->elts;
+    
+    for (i = 0; /* void */; i++) {
+    
+        if (i >= part->nelts) {
+            if (part->next == NULL) {
+                break;
+            }
+    
+            part = part->next;
+            v = part->elts;
+            i = 0;
+        }
+    
+        ngx_do_smth(&v[i]);
+    }
+
+
+
+
+
+Lists are primarily used for HTTP input and output headers.
+
+
+
+
+
+Lists do not support item removal.
+However, when needed, items can internally be marked as missing without actually
+being removed from the list.
+For example, to mark HTTP output headers (which are stored as
+C<ngx_table_elt_t> objects) as missing, set the
+C<hash> field in C<ngx_table_elt_t> to
+zero.
+Items marked in this way are explicitly skipped when the headers are iterated
+over.
+
+
+
+
+=head2 Queue
+
+
+
+In nginx a queue is an intrusive doubly linked list, with each node defined as
+follows:
+
+
+
+
+
+    
+    typedef struct ngx_queue_s  ngx_queue_t;
+    
+    struct ngx_queue_s {
+        ngx_queue_t  *prev;
+        ngx_queue_t  *next;
+    };
+
+
+
+
+
+The head queue node is not linked with any data.
+Use the C<ngx_queue_init(q)> call to initialize the list head
+before use.
+Queues support the following operations:
+
+
+
+
+
+
+=over
+
+
+
+
+=item *
+
+C<ngx_queue_insert_head(h, x)>,
+C<ngx_queue_insert_tail(h, x)> — Insert a new node
+
+
+
+=item *
+
+C<ngx_queue_remove(x)> — Remove a queue node
+
+
+
+=item *
+
+C<ngx_queue_split(h, q, n)> — Split a queue at a node,
+returning the queue tail in a separate queue
+
+
+
+=item *
+
+C<ngx_queue_add(h, n)> — Add a second queue to the first queue
+
+
+
+=item *
+
+C<ngx_queue_head(h)>,
+C<ngx_queue_last(h)> — Get first or last queue node
+
+
+
+=item *
+
+C<ngx_queue_sentinel(h)> - Get a queue sentinel object to end
+iteration at
+
+
+
+=item *
+
+C<ngx_queue_data(q, type, link)> — Get a reference to the
+beginning of a queue node data structure, considering the queue field offset in
+it
+
+
+
+=back
+
+
+
+
+
+
+
+An example:
+
+
+
+
+
+    
+    typedef struct {
+        ngx_str_t    value;
+        ngx_queue_t  queue;
+    } ngx_foo_t;
+    
+    ngx_foo_t    *f;
+    ngx_queue_t   values, *q;
+    
+    ngx_queue_init(&values);
+    
+    f = ngx_palloc(pool, sizeof(ngx_foo_t));
+    if (f == NULL) { /* error */ }
+    ngx_str_set(&f->value, "foo");
+    
+    ngx_queue_insert_tail(&values, &f->queue);
+    
+    /* insert more nodes here */
+    
+    for (q = ngx_queue_head(&values);
+         q != ngx_queue_sentinel(&values);
+         q = ngx_queue_next(q))
+    {
+        f = ngx_queue_data(q, ngx_foo_t, queue);
+    
+        ngx_do_smth(&f->value);
+    }
+
+
+
+
+=head2 Red-Black tree
+
+
+
+The F<srcE<sol>coreE<sol>ngx_rbtree.h> header file provides access to the
+effective implementation of red-black trees.
+
+
+
+
+
+    
+    typedef struct {
+        ngx_rbtree_t       rbtree;
+        ngx_rbtree_node_t  sentinel;
+    
+        /* custom per-tree data here */
+    } my_tree_t;
+    
+    typedef struct {
+        ngx_rbtree_node_t  rbnode;
+    
+        /* custom per-node data */
+        foo_t              val;
+    } my_node_t;
+
+
+
+
+
+To deal with a tree as a whole, you need two nodes: root and sentinel.
+Typically, they are added to a custom structure, allowing you to
+organize your data into a tree in which the leaves contain a link to or embed
+your data.
+
+
+
+
+
+To initialize a tree:
+
+
+
+
+
+    
+    my_tree_t  root;
+    
+    ngx_rbtree_init(&root.rbtree, &root.sentinel, insert_value_function);
+
+
+
+
+
+To traverse a tree and insert new values, use the
+"C<insert_value>" functions.
+For example, the C<ngx_str_rbtree_insert_value> function deals
+with the C<ngx_str_t> type.
+Its arguments are pointers to a root node of an insertion, the newly created
+node to be added, and a tree sentinel.
+
+
+
+
+
+    
+    void ngx_str_rbtree_insert_value(ngx_rbtree_node_t *temp,
+                                     ngx_rbtree_node_t *node,
+                                     ngx_rbtree_node_t *sentinel)
+
+
+
+
+
+
+The traversal is pretty straightforward and can be demonstrated with the
+following lookup function pattern:
+
+
+
+
+
+    
+    my_node_t *
+    my_rbtree_lookup(ngx_rbtree_t *rbtree, foo_t *val, uint32_t hash)
+    {
+        ngx_int_t           rc;
+        my_node_t          *n;
+        ngx_rbtree_node_t  *node, *sentinel;
+    
+        node = rbtree->root;
+        sentinel = rbtree->sentinel;
+    
+        while (node != sentinel) {
+    
+            n = (my_node_t *) node;
+    
+            if (hash != node->key) {
+                node = (hash < node->key) ? node->left : node->right;
+                continue;
+            }
+    
+            rc = compare(val, node->val);
+    
+            if (rc < 0) {
+                node = node->left;
+                continue;
+            }
+    
+            if (rc > 0) {
+                node = node->right;
+                continue;
+            }
+    
+            return n;
+        }
+    
+        return NULL;
+    }
+
+
+
+
+
+The C<compare()> function is a classic comparator function that
+returns a value less than, equal to, or greater than zero.
+To speed up lookups and avoid comparing user objects that can be big, an integer
+hash field is used.
+
+
+
+
+
+To add a node to a tree, allocate a new node, initialize it and call
+C<ngx_rbtree_insert()>:
+
+
+
+
+
+    
+        my_node_t          *my_node;
+        ngx_rbtree_node_t  *node;
+    
+        my_node = ngx_palloc(...);
+        init_custom_data(&my_node->val);
+    
+        node = &my_node->rbnode;
+        node->key = create_key(my_node->val);
+    
+        ngx_rbtree_insert(&root->rbtree, node);
+
+
+
+
+
+To remove a node, call the C<ngx_rbtree_delete()> function:
+
+
+
+
+
+    
+    ngx_rbtree_delete(&root->rbtree, node);
+
+
+
+
+=head2 Hash
+
+
+
+Hash table functions are declared in F<srcE<sol>coreE<sol>ngx_hash.h>.
+Both exact and wildcard matching are supported.
+The latter requires extra setup and is described in a separate section below.
+
+
+
+
+
+Before initializing a hash, you need to know the number of elements it will
+hold so that nginx can build it optimally.
+Two parameters that need to be configured are C<max_size>
+and C<bucket_size>, as detailed in a separate
+L<document|hash>.
+They are usually configurable by the user.
+Hash initialization settings are stored with the
+C<ngx_hash_init_t> type, and the hash itself is
+C<ngx_hash_t>:
+
+    
+    ngx_hash_t       foo_hash;
+    ngx_hash_init_t  hash;
+    
+    hash.hash = &foo_hash;
+    hash.key = ngx_hash_key;
+    hash.max_size = 512;
+    hash.bucket_size = ngx_align(64, ngx_cacheline_size);
+    hash.name = "foo_hash";
+    hash.pool = cf->pool;
+    hash.temp_pool = cf->temp_pool;
+
+
+The C<key> is a pointer to a function that creates the hash
+integer key from a string.
+There are two generic key-creation functions:
+C<ngx_hash_key(data, len)> and
+C<ngx_hash_key_lc(data, len)>.
+The latter converts a string to all lowercase characters, so the passed string
+must be writeable.
+If that is not true, pass the C<NGX_HASH_READONLY_KEY> flag
+to the function, initializing the key array (see below).
+
+
+
+
+
+The hash keys are stored in C<ngx_hash_keys_arrays_t> and
+are initialized with C<ngx_hash_keys_array_init(arr, type)>:
+The second parameter (C<type>) controls the amount of resources
+preallocated for the hash and can be either C<NGX_HASH_SMALL> or
+C<NGX_HASH_LARGE>.
+The latter is appropriate if you expect the hash to contain thousands of
+elements.
+
+
+    
+    ngx_hash_keys_arrays_t  foo_keys;
+    
+    foo_keys.pool = cf->pool;
+    foo_keys.temp_pool = cf->temp_pool;
+    
+    ngx_hash_keys_array_init(&foo_keys, NGX_HASH_SMALL);
+
+
+
+
+
+
+
+To insert keys into a hash keys array, use the
+C<ngx_hash_add_key(keys_array, key, value, flags)> function:
+
+    
+    ngx_str_t k1 = ngx_string("key1");
+    ngx_str_t k2 = ngx_string("key2");
+    
+    ngx_hash_add_key(&foo_keys, &k1, &my_data_ptr_1, NGX_HASH_READONLY_KEY);
+    ngx_hash_add_key(&foo_keys, &k2, &my_data_ptr_2, NGX_HASH_READONLY_KEY);
+
+
+
+
+
+
+
+To build the hash table, call the
+C<ngx_hash_init(hinit, key_names, nelts)> function:
+
+
+    
+    ngx_hash_init(&hash, foo_keys.keys.elts, foo_keys.keys.nelts);
+
+
+
+The function fails if C<max_size> or
+C<bucket_size> parameters are not big enough.
+
+
+
+
+
+When the hash is built, use the
+C<ngx_hash_find(hash, key, name, len)> function to look up
+elements:
+
+    
+    my_data_t   *data;
+    ngx_uint_t   key;
+    
+    key = ngx_hash_key(k1.data, k1.len);
+    
+    data = ngx_hash_find(&foo_hash, key, k1.data, k1.len);
+    if (data == NULL) {
+        /* key not found */
+    }
+
+
+
+
+
+
+
+=head3 Wildcard matching
+
+
+
+To create a hash that works with wildcards, use the
+C<ngx_hash_combined_t> type.
+It includes the hash type described above and has two additional keys arrays:
+C<dns_wc_head> and C<dns_wc_tail>.
+The initialization of basic properties is similar to a regular hash:
+
+    
+    ngx_hash_init_t      hash
+    ngx_hash_combined_t  foo_hash;
+    
+    hash.hash = &foo_hash.hash;
+    hash.key = ...;
+
+
+
+
+
+
+
+It is possible to add wildcard keys using the
+C<NGX_HASH_WILDCARD_KEY> flag:
+
+    
+    /* k1 = ".example.org"; */
+    /* k2 = "foo.*";        */
+    ngx_hash_add_key(&foo_keys, &k1, &data1, NGX_HASH_WILDCARD_KEY);
+    ngx_hash_add_key(&foo_keys, &k2, &data2, NGX_HASH_WILDCARD_KEY);
+
+
+The function recognizes wildcards and adds keys into the corresponding arrays.
+Please refer to the
+L<ngx_http_map_module> module
+documentation for the description of the wildcard syntax and the
+matching algorithm.
+
+
+
+
+
+Depending on the contents of added keys, you may need to initialize up to three
+key arrays: one for exact matching (described above), and two more to enable
+matching starting from the head or tail of a string:
+
+    
+    if (foo_keys.dns_wc_head.nelts) {
+    
+        ngx_qsort(foo_keys.dns_wc_head.elts,
+                  (size_t) foo_keys.dns_wc_head.nelts,
+                  sizeof(ngx_hash_key_t),
+                  cmp_dns_wildcards);
+    
+        hash.hash = NULL;
+        hash.temp_pool = pool;
+    
+        if (ngx_hash_wildcard_init(&hash, foo_keys.dns_wc_head.elts,
+                                   foo_keys.dns_wc_head.nelts)
+            != NGX_OK)
+        {
+            return NGX_ERROR;
+        }
+    
+        foo_hash.wc_head = (ngx_hash_wildcard_t *) hash.hash;
+    }
+
+
+The keys array needs to be sorted, and initialization results must be added
+to the combined hash.
+The initialization of C<dns_wc_tail> array is done similarly.
+
+
+
+
+
+The lookup in a combined hash is handled by the
+C<ngx_hash_find_combined(chash, key, name, len)>:
+
+    
+    /* key = "bar.example.org"; — will match ".example.org" */
+    /* key = "foo.example.com"; — will match "foo.*"        */
+    
+    hkey = ngx_hash_key(key.data, key.len);
+    res = ngx_hash_find_combined(&foo_hash, hkey, key.data, key.len);
+
+
+
+
+
+
+=head1 Memory management
+
+
+=head2 Heap
+
+
+
+To allocate memory from system heap, use the following functions:
+
+
+
+
+
+
+=over
+
+
+
+
+=item *
+
+C<ngx_alloc(size, log)> — Allocate memory from system heap.
+This is a wrapper around C<malloc()> with logging support.
+Allocation error and debugging information is logged to C<log>.
+
+
+
+=item *
+
+C<ngx_calloc(size, log)> — Allocate memory from system heap
+like C<ngx_alloc()>, but fill memory with zeros after
+allocation.
+
+
+
+=item *
+
+C<ngx_memalign(alignment, size, log)> — Allocate aligned memory
+from system heap.
+This is a wrapper around C<posix_memalign()>
+on those platforms that provide that function.
+Otherwise implementation falls back to C<ngx_alloc()> which
+provides maximum alignment.
+
+
+
+=item *
+
+C<ngx_free(p)> — Free allocated memory.
+This is a wrapper around C<free()>
+
+
+
+=back
+
+
+
+
+
+
+=head2 Pool
+
+
+
+Most nginx allocations are done in pools.
+Memory allocated in an nginx pool is freed automatically when the pool is
+destroyed.
+This provides good allocation performance and makes memory control easy.
+
+
+
+
+
+A pool internally allocates objects in continuous blocks of memory.
+Once a block is full, a new one is allocated and added to the pool memory
+block list.
+When the requested allocation is too large to fit into a block, the request
+is forwarded to the system allocator and the
+returned pointer is stored in the pool for further deallocation.
+
+
+
+
+
+The type for nginx pools is C<ngx_pool_t>.
+The following operations are supported:
+
+
+
+
+
+
+=over
+
+
+
+
+=item *
+
+C<ngx_create_pool(size, log)> — Create a pool with specified
+block size.
+The pool object returned is allocated in the pool as well.
+
+
+
+=item *
+
+C<ngx_destroy_pool(pool)> — Free all pool memory, including
+the pool object itself.
+
+
+
+=item *
+
+C<ngx_palloc(pool, size)> — Allocate aligned memory from the
+specified pool.
+
+
+
+=item *
+
+C<ngx_pcalloc(pool, size)> — Allocate aligned memory
+from the specified pool and fill it with zeroes.
+
+
+
+=item *
+
+C<ngx_pnalloc(pool, size)> — Allocate unaligned memory from the
+specified pool.
+Mostly used for allocating strings.
+
+
+
+=item *
+
+C<ngx_pfree(pool, p)> — Free memory that was previously
+allocated in the specified pool.
+Only allocations that result from requests forwarded to the system allocator
+can be freed.
+
+
+
+=back
+
+
+
+
+
+
+    
+    u_char      *p;
+    ngx_str_t   *s;
+    ngx_pool_t  *pool;
+    
+    pool = ngx_create_pool(1024, log);
+    if (pool == NULL) { /* error */ }
+    
+    s = ngx_palloc(pool, sizeof(ngx_str_t));
+    if (s == NULL) { /* error */ }
+    ngx_str_set(s, "foo");
+    
+    p = ngx_pnalloc(pool, 3);
+    if (p == NULL) { /* error */ }
+    ngx_memcpy(p, "foo", 3);
+
+
+
+
+
+Chain links (C<ngx_chain_t>) are actively used in nginx,
+so the nginx pool implementation provides a way to reuse them.
+The C<chain> field of C<ngx_pool_t> keeps a
+list of previously allocated links ready for reuse.
+For efficient allocation of a chain link in a pool, use the
+C<ngx_alloc_chain_link(pool)> function.
+This function looks up a free chain link in the pool list and allocates a new
+chain link if the pool list is empty.
+To free a link, call the C<ngx_free_chain(pool, cl)> function.
+
+
+
+
+
+Cleanup handlers can be registered in a pool.
+A cleanup handler is a callback with an argument which is called when pool is
+destroyed.
+A pool is usually tied to a specific nginx object (like an HTTP request) and is
+destroyed when the object reaches the end of its lifetime.
+Registering a pool cleanup is a convenient way to release resources, close
+file descriptors or make final adjustments to the shared data associated with
+the main object.
+
+
+
+
+
+To register a pool cleanup, call
+C<ngx_pool_cleanup_add(pool, size)>, which returns a
+C<ngx_pool_cleanup_t> pointer to
+be filled in by the caller.
+Use the C<size> argument to allocate context for the cleanup
+handler.
+
+
+
+
+
+    
+    ngx_pool_cleanup_t  *cln;
+    
+    cln = ngx_pool_cleanup_add(pool, 0);
+    if (cln == NULL) { /* error */ }
+    
+    cln->handler = ngx_my_cleanup;
+    cln->data = "foo";
+    
+    ...
+    
+    static void
+    ngx_my_cleanup(void *data)
+    {
+        u_char  *msg = data;
+    
+        ngx_do_smth(msg);
+    }
+
+
+
+
+=head2 Shared memory
+
+
+
+Shared memory is used by nginx to share common data between processes.
+The C<ngx_shared_memory_add(cf, name, size, tag)> function adds
+a new shared memory entry C<ngx_shm_zone_t> to a cycle.
+The function receives the C<name> and C<size>
+of the zone.
+Each shared zone must have a unique name.
+If a shared zone entry with the provided C<name> and
+C<tag> already exists, the existing zone entry is reused.
+The function fails with an error if an existing entry with the same name has a
+different tag.
+Usually, the address of the module structure is passed as
+C<tag>, making it possible to reuse shared zones by name within
+one nginx module.
+
+
+
+
+
+The shared memory entry structure C<ngx_shm_zone_t> has the
+following fields:
+
+
+
+
+
+
+=over
+
+
+
+
+=item *
+
+C<init> — Initialization callback, called after the shared zone
+is mapped to actual memory
+
+
+
+=item *
+
+C<data> — Data context, used to pass arbitrary data to the
+C<init> callback
+
+
+
+=item *
+
+C<noreuse> — Flag that disables reuse of a shared zone from the
+old cycle
+
+
+
+=item *
+
+C<tag> — Shared zone tag
+
+
+
+=item *
+
+C<shm> — Platform-specific object of type
+C<ngx_shm_t>, having at least the following fields:
+
+=over
+
+
+
+
+=item *
+
+C<addr> — Mapped shared memory address, initially NULL
+
+
+
+=item *
+
+C<size> — Shared memory size
+
+
+
+=item *
+
+C<name> — Shared memory name
+
+
+
+=item *
+
+C<log> — Shared memory log
+
+
+
+=item *
+
+C<exists> — Flag that indicates shared memory was inherited
+from the master process (Windows-specific)
+
+
+
+=back
+
+
+
+
+
+=back
+
+
+
+
+
+
+
+Shared zone entries are mapped to actual memory in
+C<ngx_init_cycle()> after the configuration is parsed.
+On POSIX systems, the C<mmap()> syscall is used to create the
+shared anonymous mapping.
+On Windows, the C<CreateFileMapping()>E<sol>
+C<MapViewOfFileEx()> pair is used.
+
+
+
+
+
+For allocating in shared memory, nginx provides the slab pool
+C<ngx_slab_pool_t> type.
+A slab pool for allocating memory is automatically created in each nginx shared
+zone.
+The pool is located in the beginning of the shared zone and can be accessed by
+the expression C<(ngx_slab_pool_t *) shm_zone-E<gt>shm.addr>.
+To allocate memory in a shared zone, call either
+C<ngx_slab_alloc(pool, size)> or
+C<ngx_slab_calloc(pool, size)>.
+To free memory, call C<ngx_slab_free(pool, p)>.
+
+
+
+
+
+Slab pool divides all shared zone into pages.
+Each page is used for allocating objects of the same size.
+The specified size must be a power of 2, and greater than the minimum size of
+8 bytes.
+Nonconforming values are rounded up.
+A bitmask for each page tracks which blocks are in use and which are free for
+allocation.
+For sizes greater than a half page (which is usually 2048 bytes), allocation is
+done an entire page at a time
+
+
+
+
+
+To protect data in shared memory from concurrent access, use the mutex
+available in the C<mutex> field of
+C<ngx_slab_pool_t>.
+A mutex is most commonly used by the slab pool while allocating and freeing
+memory, but it can be used to protect any other user data structures allocated
+in the shared zone.
+To lock or unlock a mutex, call
+C<ngx_shmtx_lock(E<amp>shpool-E<gt>mutex)> or
+C<ngx_shmtx_unlock(E<amp>shpool-E<gt>mutex)> respectively.
+
+
+
+
+
+    
+    ngx_str_t        name;
+    ngx_foo_ctx_t   *ctx;
+    ngx_shm_zone_t  *shm_zone;
+    
+    ngx_str_set(&name, "foo");
+    
+    /* allocate shared zone context */
+    ctx = ngx_pcalloc(cf->pool, sizeof(ngx_foo_ctx_t));
+    if (ctx == NULL) {
+        /* error */
+    }
+    
+    /* add an entry for 64k shared zone */
+    shm_zone = ngx_shared_memory_add(cf, &name, 65536, &ngx_foo_module);
+    if (shm_zone == NULL) {
+        /* error */
+    }
+    
+    /* register init callback and context */
+    shm_zone->init = ngx_foo_init_zone;
+    shm_zone->data = ctx;
+    
+    
+    ...
+    
+    
+    static ngx_int_t
+    ngx_foo_init_zone(ngx_shm_zone_t *shm_zone, void *data)
+    {
+        ngx_foo_ctx_t  *octx = data;
+    
+        size_t            len;
+        ngx_foo_ctx_t    *ctx;
+        ngx_slab_pool_t  *shpool;
+    
+        value = shm_zone->data;
+    
+        if (octx) {
+            /* reusing a shared zone from old cycle */
+            ctx->value = octx->value;
+            return NGX_OK;
+        }
+    
+        shpool = (ngx_slab_pool_t *) shm_zone->shm.addr;
+    
+        if (shm_zone->shm.exists) {
+            /* initialize shared zone context in Windows nginx worker */
+            ctx->value = shpool->data;
+            return NGX_OK;
+        }
+    
+        /* initialize shared zone */
+    
+        ctx->value = ngx_slab_alloc(shpool, sizeof(ngx_uint_t));
+        if (ctx->value == NULL) {
+            return NGX_ERROR;
+        }
+    
+        shpool->data = ctx->value;
+    
+        return NGX_OK;
+    }
+
+
+
+
+=head1 Logging
+
+
+
+For logging nginx uses C<ngx_log_t> objects.
+The nginx logger supports several types of output:
+
+
+=over
+
+
+
+
+=item *
+
+stderr — Logging to standard error (stderr)
+
+
+
+=item *
+
+file — Logging to a file
+
+
+
+=item *
+
+syslog — Logging to syslog
+
+
+
+=item *
+
+memory — Logging to internal memory storage for development purposes; the memory
+can be accessed later with a debugger
+
+
+
+=back
+
+
+
+
+
+
+
+A logger instance can be a chain of loggers, linked to each other with
+the C<next> field.
+In this case, each message is written to all loggers in the chain.
+
+
+
+
+
+For each logger, a severity level controls which messages are written to the
+log (only events assigned that level or higher are logged).
+The following severity levels are supported:
+
+
+
+
+
+
+=over
+
+
+
+
+=item *
+
+ C<NGX_LOG_EMERG>
+
+
+
+=item *
+
+ C<NGX_LOG_ALERT>
+
+
+
+=item *
+
+ C<NGX_LOG_CRIT>
+
+
+
+=item *
+
+ C<NGX_LOG_ERR>
+
+
+
+=item *
+
+ C<NGX_LOG_WARN>
+
+
+
+=item *
+
+ C<NGX_LOG_NOTICE>
+
+
+
+=item *
+
+ C<NGX_LOG_INFO>
+
+
+
+=item *
+
+ C<NGX_LOG_DEBUG>
+
+
+
+=back
+
+
+
+
+
+
+
+For debug logging, the debug mask is checked as well.
+The debug masks are:
+
+
+
+
+
+
+=over
+
+
+
+
+=item *
+
+ C<NGX_LOG_DEBUG_CORE>
+
+
+
+=item *
+
+ C<NGX_LOG_DEBUG_ALLOC>
+
+
+
+=item *
+
+ C<NGX_LOG_DEBUG_MUTEX>
+
+
+
+=item *
+
+ C<NGX_LOG_DEBUG_EVENT>
+
+
+
+=item *
+
+ C<NGX_LOG_DEBUG_HTTP>
+
+
+
+=item *
+
+ C<NGX_LOG_DEBUG_MAIL>
+
+
+
+=item *
+
+ C<NGX_LOG_DEBUG_STREAM>
+
+
+
+=back
+
+
+
+
+
+
+
+Normally, loggers are created by existing nginx code from
+C<error_log> directives and are available at nearly every stage
+of processing in cycle, configuration, client connection and other objects.
+
+
+
+
+
+Nginx provides the following logging macros:
+
+
+
+
+
+
+=over
+
+
+
+
+=item *
+
+C<ngx_log_error(level, log, err, fmt, ...)> — Error logging
+
+
+
+=item *
+
+C<ngx_log_debug0(level, log, err, fmt)>,
+C<ngx_log_debug1(level, log, err, fmt, arg1)> etc — Debug
+logging with up to eight supported formatting arguments
+
+
+
+=back
+
+
+
+
+
+
+
+A log message is formatted in a buffer of size
+C<NGX_MAX_ERROR_STR> (currently, 2048 bytes) on stack.
+The message is prepended with the severity level, process ID (PID), connection
+ID (stored in C<log-E<gt>connection>), and the system error text.
+For non-debug messages C<log-E<gt>handler> is called as well to
+prepend more specific information to the log message.
+HTTP module sets C<ngx_http_log_error()> function as log
+handler to log client and server addresses, current action (stored in
+C<log-E<gt>action>), client request line, server name etc.
+
+
+
+
+    
+    /* specify what is currently done */
+    log->action = "sending mp4 to client”;
+    
+    /* error and debug log */
+    ngx_log_error(NGX_LOG_INFO, c->log, 0, "client prematurely
+                  closed connection”);
+    
+    ngx_log_debug2(NGX_LOG_DEBUG_HTTP, mp4->file.log, 0,
+                   "mp4 start:%ui, length:%ui”, mp4->start, mp4->length);
+
+
+
+
+
+The example above results in log entries like these:
+
+
+
+
+
+    
+    2016/09/16 22:08:52 [info] 17445#0: *1 client prematurely closed connection while
+    sending mp4 to client, client: 127.0.0.1, server: , request: "GET /file.mp4 HTTP/1.1”
+    2016/09/16 23:28:33 [debug] 22140#0: *1 mp4 start:0, length:10000
+
+
+
+
+=head1 Cycle
+
+
+
+A cycle object stores the nginx runtime context created from a specific
+configuration.
+Its type is C<ngx_cycle_t>.
+The current cycle is referenced by the C<ngx_cycle> global
+variable and inherited by nginx workers as they start.
+Each time the nginx configuration is reloaded, a new cycle is created from the
+new nginx configuration; the old cycle is usually deleted after the new one is
+successfully created.
+
+
+
+
+
+A cycle is created by the C<ngx_init_cycle()> function, which
+takes the previous cycle as its argument.
+The function locates the previous cycle's configuration file and inherits as
+many resources as possible from the previous cycle.
+A placeholder cycle called "init cycle" is created as nginx start, then is
+replaced by an actual cycle built from configuration.
+
+
+
+
+
+Members of the cycle include:
+
+
+
+
+
+
+=over
+
+
+
+
+=item *
+
+C<pool> — Cycle pool.
+Created for each new cycle.
+
+
+
+=item *
+
+C<log> — Cycle log.
+Initially inherited from the old cycle, it is set to point to
+C<new_log> after the configuration is read.
+
+
+
+=item *
+
+C<new_log> — Cycle log, created by the configuration.
+It's affected by the root-scope C<error_log> directive.
+
+
+
+=item *
+
+C<connections>, C<connection_n> —
+Array of connections of type C<ngx_connection_t>, created by
+the event module while initializing each nginx worker.
+The C<worker_connections> directive in the nginx configuration
+sets the number of connections C<connection_n>.
+
+
+
+=item *
+
+C<free_connections>,
+C<free_connection_n> — List and number of currently available
+connections.
+If no connections are available, an nginx worker refuses to accept new clients
+or connect to upstream servers.
+
+
+
+=item *
+
+C<files>, C<files_n> — Array for mapping file
+descriptors to nginx connections.
+This mapping is used by the event modules, having the
+C<NGX_USE_FD_EVENT> flag (currently, it's
+C<poll> and C<devpoll>).
+
+
+
+=item *
+
+C<conf_ctx> — Array of core module configurations.
+The configurations are created and filled during reading of nginx configuration
+files.
+
+
+
+=item *
+
+C<modules>, C<modules_n> — Array of modules
+of type C<ngx_module_t>, both static and dynamic, loaded by
+the current configuration.
+
+
+
+=item *
+
+C<listening> — Array of listening objects of type
+C<ngx_listening_t>.
+Listening objects are normally added by the C<listen>
+directive of different modules which call the
+C<ngx_create_listening()> function.
+Listen sockets are created based on the listening objects.
+
+
+
+=item *
+
+C<paths> — Array of paths of type C<ngx_path_t>.
+Paths are added by calling the function C<ngx_add_path()> from
+modules which are going to operate on certain directories.
+These directories are created by nginx after reading configuration, if missing.
+Moreover, two handlers can be added for each path:
+
+
+=over
+
+
+
+
+=item *
+
+path loader — Executes only once in 60 seconds after starting or reloading
+nginx.
+Normally, the loader reads the directory and stores data in nginx shared
+memory.
+The handler is called from the dedicated nginx process “nginx cache loader”.
+
+
+
+=item *
+
+path manager — Executes periodically.
+Normally, the manager removes old files from the directory and updates nginx
+memory to reflect the changes.
+The handler is called from the dedicated “nginx cache manager” process.
+
+
+
+=back
+
+
+
+
+
+=item *
+
+C<open_files> — List of open file objects of type
+C<ngx_open_file_t>, which are created by calling the function
+C<ngx_conf_open_file()>.
+Currently, nginx uses this kind of open files for logging.
+After reading the configuration, nginx opens all files in the
+C<open_files> list and stores each file descriptor in the
+object's C<fd> field.
+The files are opened in append mode and are created if missing.
+The files in the list are reopened by nginx workers upon receiving the
+reopen signal (most often C<USR1>).
+In this case the descriptor in the C<fd> field is changed to a
+new value.
+
+
+
+=item *
+
+C<shared_memory> — List of shared memory zones, each added by
+calling the C<ngx_shared_memory_add()> function.
+Shared zones are mapped to the same address range in all nginx processes and
+are used to share common data, for example the HTTP cache in-memory tree.
+
+
+
+=back
+
+
+
+
+
+
+=head1 Buffer
+
+
+
+For inputE<sol>output operations, nginx provides the buffer type
+C<ngx_buf_t>.
+Normally, it's used to hold data to be written to a destination or read from a
+source.
+A buffer can reference data in memory or in a file and it's technically
+possible for a buffer to reference both at the same time.
+Memory for the buffer is allocated separately and is not related to the buffer
+structure C<ngx_buf_t>.
+
+
+
+
+
+The C<ngx_buf_t> structure has the following fields:
+
+
+
+
+
+
+=over
+
+
+
+
+=item *
+
+C<start>, C<end> — The boundaries of the memory
+block allocated for the buffer.
+
+
+
+=item *
+
+C<pos>, C<last> — The boundaries of the memory
+buffer; normally a subrange of C<start> ..
+C<end>.
+
+
+
+=item *
+
+C<file_pos>, C<file_last> — The boundaries of a
+file buffer, expressed as offsets from the beginning of the file.
+
+
+
+=item *
+
+C<tag> — Unique value used to distinguish buffers; created by
+different nginx modules, usually for the purpose of buffer reuse.
+
+
+
+=item *
+
+C<file> — File object.
+
+
+
+=item *
+
+C<temporary> — Flag indicating that the buffer references
+writable memory.
+
+
+
+=item *
+
+C<memory> — Flag indicating that the buffer references read-only
+memory.
+
+
+
+=item *
+
+C<in_file> — Flag indicating that the buffer references data
+in a file.
+
+
+
+=item *
+
+C<flush> — Flag indicating that all data prior to the buffer
+need to be flushed.
+
+
+
+=item *
+
+C<recycled> — Flag indicating that the buffer can be reused and
+needs to be consumed as soon as possible.
+
+
+
+=item *
+
+C<sync> — Flag indicating that the buffer carries no data or
+special signal like C<flush> or C<last_buf>.
+By default nginx considers such buffers an error condition, but this flag tells
+nginx to skip the error check.
+
+
+
+=item *
+
+C<last_buf> — Flag indicating that the buffer is the last in
+output.
+
+
+
+=item *
+
+C<last_in_chain> — Flag indicating that there are no more data
+buffers in a request or subrequest.
+
+
+
+=item *
+
+C<shadow> — Reference to another ("shadow") buffer related to
+the current buffer, usually in the sense that the buffer uses data from the
+shadow.
+When the buffer is consumed, the shadow buffer is normally also marked as
+consumed.
+
+
+
+=item *
+
+C<last_shadow> — Flag indicating that the buffer is the last
+one that references a particular shadow buffer.
+
+
+
+=item *
+
+C<temp_file> — Flag indicating that the buffer is in a temporary
+file.
+
+
+
+=back
+
+
+
+
+
+
+
+For input and output operations buffers are linked in chains.
+A chain is a sequence of chain links of type C<ngx_chain_t>,
+defined as follows:
+
+
+
+
+
+    
+    typedef struct ngx_chain_s  ngx_chain_t;
+    
+    struct ngx_chain_s {
+        ngx_buf_t    *buf;
+        ngx_chain_t  *next;
+    };
+
+
+
+
+
+Each chain link keeps a reference to its buffer and a reference to the next
+chain link.
+
+
+
+
+
+An example of using buffers and chains:
+
+
+
+
+
+    
+    ngx_chain_t *
+    ngx_get_my_chain(ngx_pool_t *pool)
+    {
+        ngx_buf_t    *b;
+        ngx_chain_t  *out, *cl, **ll;
+    
+        /* first buf */
+        cl = ngx_alloc_chain_link(pool);
+        if (cl == NULL) { /* error */ }
+    
+        b = ngx_calloc_buf(pool);
+        if (b == NULL) { /* error */ }
+    
+        b->start = (u_char *) "foo";
+        b->pos = b->start;
+        b->end = b->start + 3;
+        b->last = b->end;
+        b->memory = 1; /* read-only memory */
+    
+        cl->buf = b;
+        out = cl;
+        ll = &cl->next;
+    
+        /* second buf */
+        cl = ngx_alloc_chain_link(pool);
+        if (cl == NULL) { /* error */ }
+    
+        b = ngx_create_temp_buf(pool, 3);
+        if (b == NULL) { /* error */ }
+    
+        b->last = ngx_cpymem(b->last, "foo", 3);
+    
+        cl->buf = b;
+        cl->next = NULL;
+        *ll = cl;
+    
+        return out;
+    }
+
+
+
+
+=head1 Networking
+
+
+=head2 Connection
+
+
+
+The connection type C<ngx_connection_t> is a wrapper around a
+socket descriptor.
+It includes the following fields:
+
+
+
+
+
+
+=over
+
+
+
+
+=item *
+
+C<fd> — Socket descriptor
+
+
+
+=item *
+
+C<data> — Arbitrary connection context.
+Normally, it is a pointer to a higher-level object built on top of the
+connection, such as an HTTP request or a Stream session.
+
+
+
+=item *
+
+C<read>, C<write> — Read and write events for
+the connection.
+
+
+
+=item *
+
+C<recv>, C<send>,
+C<recv_chain>, C<send_chain> — IE<sol>O operations
+for the connection.
+
+
+
+=item *
+
+C<pool> — Connection pool.
+
+
+
+=item *
+
+C<log> — Connection log.
+
+
+
+=item *
+
+C<sockaddr>, C<socklen>,
+C<addr_text> — Remote socket address in binary and text forms.
+
+
+
+=item *
+
+C<local_sockaddr>, C<local_socklen> — Local
+socket address in binary form.
+Initially, these fields are empty.
+Use the C<ngx_connection_local_sockaddr()> function to get the
+local socket address.
+
+
+
+=item *
+
+C<proxy_protocol_addr>, C<proxy_protocol_port>
+- PROXY protocol client address and port, if the PROXY protocol is enabled for
+the connection.
+
+
+
+=item *
+
+C<ssl> — SSL context for the connection.
+
+
+
+=item *
+
+C<reusable> — Flag indicating the connection is in a state that
+makes it eligible for reuse.
+
+
+
+=item *
+
+C<close> — Flag indicating that the connection is being reused
+and needs to be closed.
+
+
+
+=back
+
+
+
+
+
+
+
+An nginx connection can transparently encapsulate the SSL layer.
+In this case the connection's C<ssl> field holds a pointer to an
+C<ngx_ssl_connection_t> structure, keeping all SSL-related data
+for the connection, including C<SSL_CTX> and
+C<SSL>.
+The C<recv>, C<send>,
+C<recv_chain>, and C<send_chain> handlers are
+set to SSL-enabled functions as well.
+
+
+
+
+
+The C<worker_connections> directive in the nginx configuration
+limits the number of connections per nginx worker.
+All connection structures are precreated when a worker starts and stored in
+the C<connections> field of the cycle object.
+To retrieve a connection structure, use the
+C<ngx_get_connection(s, log)> function.
+It takes as its C<s> argument a socket descriptor, which needs
+to be wrapped in a connection structure.
+
+
+
+
+
+Because the number of connections per worker is limited, nginx provides a
+way to grab connections that are currently in use.
+To enable or disable reuse of a connection, call the
+C<ngx_reusable_connection(c, reusable)> function.
+Calling C<ngx_reusable_connection(c, 1)> sets the
+C<reuse> flag in the connection structure and inserts the
+connection into the C<reusable_connections_queue> of the cycle.
+Whenever C<ngx_get_connection()> finds out there are no
+available connections in the cycle's C<free_connections> list,
+it calls C<ngx_drain_connections()> to release a
+specific number of reusable connections.
+For each such connection, the C<close> flag is set and its read
+handler is called which is supposed to free the connection by calling
+C<ngx_close_connection(c)> and make it available for reuse.
+To exit the state when a connection can be reused
+C<ngx_reusable_connection(c, 0)> is called.
+HTTP client connections are an example of reusable connections in nginx; they
+are marked as reusable until the first request byte is received from the client.
+
+
+
+
+=head1 Events
+
+
+=head2 Event
+
+
+
+Event object C<ngx_event_t> in nginx provides a mechanism
+for notification that a specific event has occurred.
+
+
+
+
+
+Fields in C<ngx_event_t> include:
+
+
+
+
+
+
+=over
+
+
+
+
+=item *
+
+C<data> — Arbitrary event context used in event handlers,
+usually as pointer to a connection related to the event.
+
+
+
+=item *
+
+C<handler> — Callback function to be invoked when the event
+happens.
+
+
+
+=item *
+
+C<write> — Flag indicating a write event.
+Absence of the flag indicates a read event.
+
+
+
+=item *
+
+C<active> — Flag indicating that the event is registered for
+receiving IE<sol>O notifications, normally from notification mechanisms like
+C<epoll>, C<kqueue>, C<poll>.
+
+
+
+=item *
+
+C<ready> — Flag indicating that the event has received an
+IE<sol>O notification.
+
+
+
+=item *
+
+C<delayed> — Flag indicating that IE<sol>O is delayed due to rate
+limiting.
+
+
+
+=item *
+
+C<timer> — Red-black tree node for inserting the event into
+the timer tree.
+
+
+
+=item *
+
+C<timer_set> — Flag indicating that the event timer is set and
+not yet expired.
+
+
+
+=item *
+
+C<timedout> — Flag indicating that the event timer has expired.
+
+
+
+=item *
+
+C<eof> — Flag indicating that EOF occurred while reading data.
+
+
+
+=item *
+
+C<pending_eof> — Flag indicating that EOF is pending on the
+socket, even though there may be some data available before it.
+The flag is delivered via the C<EPOLLRDHUP>
+C<epoll> event or
+C<EV_EOF> C<kqueue> flag.
+
+
+
+=item *
+
+C<error> — Flag indicating that an error occurred during
+reading (for a read event) or writing (for a write event).
+
+
+
+=item *
+
+C<cancelable> — Timer event flag indicating that the event
+should be ignored while shutting down the worker.
+Graceful worker shutdown is delayed until there are no non-cancelable timer
+events scheduled.
+
+
+
+=item *
+
+C<posted> — Flag indicating that the event is posted to a queue.
+
+
+
+=item *
+
+C<queue> — Queue node for posting the event to a queue.
+
+
+
+=back
+
+
+
+
+
+
+=head2 I/O events
+
+
+
+Each connection obtained by calling the C<ngx_get_connection()>
+function has two attached events, C<c-E<gt>read> and
+C<c-E<gt>write>, which are used for receiving notification that the
+socket is ready for reading or writing.
+All such events operate in Edge-Triggered mode, meaning that they only trigger
+notifications when the state of the socket changes.
+For example, doing a partial read on a socket does not make nginx deliver a
+repeated read notification until more data arrives on the socket.
+Even when the underlying IE<sol>O notification mechanism is essentially
+Level-Triggered (C<poll>, C<select> etc), nginx
+converts the notifications to Edge-Triggered.
+To make nginx event notifications consistent across all notifications systems
+on different platforms, the functions
+C<ngx_handle_read_event(rev, flags)> and
+C<ngx_handle_write_event(wev, lowat)> must be called after
+handling an IE<sol>O socket notification or calling any IE<sol>O functions on that socket.
+Normally, the functions are called once at the end of each read or write
+event handler.
+
+
+
+
+=head2 Timer events
+
+
+
+An event can be set to send a notification when a timeout expires.
+The function C<ngx_add_timer(ev, timer)> sets a timeout for an
+event, C<ngx_del_timer(ev)> deletes a previously set timeout.
+The global timeout red-black tree C<ngx_event_timer_rbtree>
+stores all timeouts currently set.
+The key in the tree is of type C<ngx_msec_t> and is the time
+when the event expires, expressed in milliseconds since the midnight on of
+January 1, 1970 modulus C<ngx_msec_t> max value.
+The tree structure enables fast insertion and deletion operations, as well as
+access to the nearest timeouts, which nginx uses to find out how long to wait
+for IE<sol>O events and for expiring timeout events.
+
+
+
+
+=head2 Posted events
+
+
+
+An event can be posted which means that its handler will be called at some
+point later within the current event loop iteration.
+Posting events is a good practice for simplifying code and escaping stack
+overflows.
+Posted events are held in a post queue.
+The C<ngx_post_event(ev, q)> mscro posts the event
+C<ev> to the post queue C<q>.
+The C<ngx_delete_posted_event(ev)> macro deletes the event
+C<ev> from the queue it's currently posted in.
+Normally, events are posted to the C<ngx_posted_events> queue,
+which is processed late in the event loop — after all IE<sol>O and timer
+events are already handled.
+The function C<ngx_event_process_posted()> is called to process
+an event queue.
+It calls event handlers until the queue is not empty.
+This means that a posted event handler can post more events to be processed
+within the current event loop iteration.
+
+
+
+
+
+An example:
+
+
+
+
+
+    
+    void
+    ngx_my_connection_read(ngx_connection_t *c)
+    {
+        ngx_event_t  *rev;
+    
+        rev = c->read;
+    
+        ngx_add_timer(rev, 1000);
+    
+        rev->handler = ngx_my_read_handler;
+    
+        ngx_my_read(rev);
+    }
+    
+    
+    void
+    ngx_my_read_handler(ngx_event_t *rev)
+    {
+        ssize_t            n;
+        ngx_connection_t  *c;
+        u_char             buf[256];
+    
+        if (rev->timedout) { /* timeout expired */ }
+    
+        c = rev->data;
+    
+        while (rev->ready) {
+            n = c->recv(c, buf, sizeof(buf));
+    
+            if (n == NGX_AGAIN) {
+                break;
+            }
+    
+            if (n == NGX_ERROR) { /* error */ }
+    
+            /* process buf */
+        }
+    
+        if (ngx_handle_read_event(rev, 0) != NGX_OK) { /* error */ }
+    }
+
+
+
+
+=head2 Event loop
+
+
+
+Except for the nginx master process, all nginx processes do IE<sol>O and so have an
+event loop.
+(The nginx master process instead spends most of its time in the
+ C<sigsuspend()> call waiting for signals to arrive.)
+The nginx event loop is implemented in the
+C<ngx_process_events_and_timers()> function, which is called
+repeatedly until the process exits.
+
+
+
+
+
+The event loop has the following stages:
+
+
+=over
+
+
+
+
+=item *
+
+Find the timeout that is closest to expiring, by calling
+C<ngx_event_find_timer()>.
+This function finds the leftmost node in the timer tree and returns the
+number of milliseconds until the node expires.
+
+
+
+=item *
+
+Process IE<sol>O events by calling a handler, specific to the event notification
+mechanism, chosen by nginx configuration.
+This handler waits for at least one IE<sol>O event to happen, but only until the next
+timeout expires.
+When a read or write event occurs, the C<ready>
+flag is set and the event's handler is called.
+For Linux, the C<ngx_epoll_process_events()> handler
+is normally used, which calls C<epoll_wait()> to wait for IE<sol>O
+events.
+
+
+
+=item *
+
+Expire timers by calling C<ngx_event_expire_timers()>.
+The timer tree is iterated from the leftmost element to the right until an
+unexpired timeout is found.
+For each expired node the C<timedout> event flag is set,
+the C<timer_set> flag is reset, and the event handler is called
+
+
+
+=item *
+
+Process posted events by calling C<ngx_event_process_posted()>.
+The function repeatedly removes the first element from the posted events
+queue and calls the element's handler, until the queue is empty.
+
+
+
+=back
+
+
+
+
+
+
+
+All nginx processes handle signals as well.
+Signal handlers only set global variables which are checked after the
+C<ngx_process_events_and_timers()> call.
+
+
+
+
+=head1 Processes
+
+
+
+There are several types of processes in nginx.
+The type of a process is kept in the C<ngx_process>
+global variable, and is one of the following:
+
+
+
+
+=over
+
+
+
+
+=item *
+
+
+
+
+C<NGX_PROCESS_MASTER> — The master process, which reads the
+NGINX configuration, creates cycles, and starts and controls child processes.
+It does not perform any IE<sol>O and responds only to signals.
+Its cycle function is C<ngx_master_process_cycle()>.
+
+
+
+
+
+
+
+=item *
+
+
+
+
+C<NGX_PROCESS_WORKER> — The worker process, which handles client
+connections.
+It is started by the master process and responds to its signals and channel
+commands as well.
+Its cycle function is C<ngx_worker_process_cycle()>.
+There can be multiple worker processes, as configured by the
+C<worker_processes> directive.
+
+
+
+
+
+
+=item *
+
+
+
+
+C<NGX_PROCESS_SINGLE> — The single process, which exists only in
+C<master_process off> mode, and is the only process running in
+that mode.
+It creates cycles (like the master process does) and handles client connections
+(like the worker process does).
+Its cycle function is C<ngx_single_process_cycle()>.
+
+
+
+
+
+
+=item *
+
+
+
+
+C<NGX_PROCESS_HELPER> — The helper process, of which currently
+there are two types: cache manager and cache loader.
+The cycle function for both is
+C<ngx_cache_manager_process_cycle()>.
+
+
+
+
+
+
+=back
+
+
+
+
+
+The nginx processes handle the following signals:
+
+
+
+
+=over
+
+
+
+
+=item *
+
+
+
+
+C<NGX_SHUTDOWN_SIGNAL> (C<SIGQUIT> on most
+systems) — Gracefully shutdown.
+Upon receiving this signal, the master process sends a shutdown signal to all
+child processes.
+When no child processes are left, the master destroys the cycle pool and exits.
+When a worker process receives this signal, it closes all listening sockets and
+waits until there are no non-cancelable events scheduled, then destroys the
+cycle pool and exits.
+When the cache manager or the cache loader process receives this signal, it
+exits immediately.
+The C<ngx_quit> variable is set to C<1> when a
+process receives this signal, and is immediately reset after being processed.
+The C<ngx_exiting> variable is set to C<1> while
+a worker process is in the shutdown state.
+
+
+
+
+
+
+=item *
+
+
+
+
+C<NGX_TERMINATE_SIGNAL> (C<SIGTERM> on most
+systems) — Terminate.
+Upon receiving this signal, the master process sends a terminate signal to all
+child processes.
+If a child process does not exit within 1 second, the master process sends the
+C<SIGKILL> signal to kill it.
+When no child processes are left, the master process destroys the cycle pool and
+exits.
+When a worker process, the cache manager process or the cache loader process
+receives this signal, it destroys the cycle pool and exits.
+The variable C<ngx_terminate> is set to C<1>
+when this signal is received.
+
+
+
+
+
+
+=item *
+
+
+
+
+C<NGX_NOACCEPT_SIGNAL> (C<SIGWINCH> on most
+systems) - Shut down all worker and helper processes.
+Upon receiving this signal, the master process shuts down its child processes.
+If a previously started new nginx binary exits, the child processes of the old
+master are started again.
+When a worker process receives this signal, it shuts down in debug mode
+set by the C<debug_points> directive.
+
+
+
+
+
+
+
+=item *
+
+
+
+
+C<NGX_RECONFIGURE_SIGNAL> (C<SIGHUP> on most
+systems) - Reconfigure.
+Upon receiving this signal, the master process re-reads the configuration and
+creates a new cycle based on it.
+If the new cycle is created successfully, the old cycle is deleted and new
+child processes are started.
+Meanwhile, the old child processes receive the
+C<NGX_SHUTDOWN_SIGNAL> signal.
+In single-process mode, nginx creates a new cycle, but keeps the old one until
+there are no longer clients with active connections tied to it.
+The worker and helper processes ignore this signal.
+
+
+
+
+
+
+=item *
+
+
+
+
+C<NGX_REOPEN_SIGNAL> (C<SIGUSR1> on most
+systems) — Reopen files.
+The master process sends this signal to workers, which reopen all
+C<open_files> related to the cycle.
+
+
+
+
+
+
+=item *
+
+
+
+
+C<NGX_CHANGEBIN_SIGNAL> (C<SIGUSR2> on most
+systems) — Change the nginx binary.
+The master process starts a new nginx binary and passes in a list of all listen
+sockets.
+The text-format list, passed in the C<“NGINX”> environment
+variable, consists of descriptor numbers separated with semicolons.
+The new nginx binary reads the C<“NGINX”> variable and adds the
+sockets to its init cycle.
+Other processes ignore this signal.
+
+
+
+
+
+
+=back
+
+
+
+
+
+While all nginx worker processes are able to receive and properly handle POSIX
+signals, the master process does not use the standard C<kill()>
+syscall to pass signals to workers and helpers.
+Instead, nginx uses inter-process socket pairs which allow sending messages
+between all nginx processes.
+Currently, however, messages are only sent from the master to its children.
+The messages carry the standard signals.
+
+
+
+
+=head1 Threads
+
+
+
+It is possible to offload into a separate thread tasks that would otherwise
+block the nginx worker process.
+For example, nginx can be configured to use threads to perform
+L<file IE<sol>O|ngx_http_core_module>.
+Another use case is a library that doesn't have asynchronous interface
+and thus cannot be normally used with nginx.
+Keep in mind that the threads interface is a helper for the existing
+asynchronous approach to processing client connections, and by no means
+intended as a replacement.
+
+
+
+
+
+To deal with synchronization, the following wrappers over
+C<pthreads> primitives are available:
+
+
+=over
+
+
+
+
+=item *
+
+C<typedef pthread_mutex_t  ngx_thread_mutex_t;>
+
+
+=over
+
+
+
+
+=item *
+
+C<ngx_int_t
+ngx_thread_mutex_create(ngx_thread_mutex_t *mtx, ngx_log_t *log);>
+
+
+
+=item *
+
+C<ngx_int_t
+ngx_thread_mutex_destroy(ngx_thread_mutex_t *mtx, ngx_log_t *log);>
+
+
+
+=item *
+
+C<ngx_int_t
+ngx_thread_mutex_lock(ngx_thread_mutex_t *mtx, ngx_log_t *log);>
+
+
+
+=item *
+
+C<ngx_int_t
+ngx_thread_mutex_unlock(ngx_thread_mutex_t *mtx, ngx_log_t *log);>
+
+
+
+=back
+
+
+
+
+
+
+=item *
+
+C<typedef pthread_cond_t  ngx_thread_cond_t;>
+
+
+=over
+
+
+
+
+=item *
+
+C<ngx_int_t
+ngx_thread_cond_create(ngx_thread_cond_t *cond, ngx_log_t *log);>
+
+
+
+=item *
+
+C<ngx_int_t
+ngx_thread_cond_destroy(ngx_thread_cond_t *cond, ngx_log_t *log);>
+
+
+
+=item *
+
+C<ngx_int_t
+ngx_thread_cond_signal(ngx_thread_cond_t *cond, ngx_log_t *log);>
+
+
+
+=item *
+
+C<ngx_int_t
+ngx_thread_cond_wait(ngx_thread_cond_t *cond, ngx_thread_mutex_t *mtx,
+ngx_log_t *log);>
+
+
+
+=back
+
+
+
+
+
+
+=back
+
+
+
+
+
+
+
+
+Instead of creating a new thread for each task, nginx implements
+a L<ngx_core_module> strategy.
+Multiple thread pools may be configured for different purposes
+(for example, performing IE<sol>O on different sets of disks).
+Each thread pool is created at startup and contains a limited number of threads
+that process a queue of tasks.
+When a task is completed, a predefined completion handler is called.
+
+
+
+
+
+The C<srcE<sol>coreE<sol>ngx_thread_pool.h> header file contains
+relevant definitions:
+
+    
+    struct ngx_thread_task_s {
+        ngx_thread_task_t   *next;
+        ngx_uint_t           id;
+        void                *ctx;
+        void               (*handler)(void *data, ngx_log_t *log);
+        ngx_event_t          event;
+    };
+    
+    typedef struct ngx_thread_pool_s  ngx_thread_pool_t;
+    
+    ngx_thread_pool_t *ngx_thread_pool_add(ngx_conf_t *cf, ngx_str_t *name);
+    ngx_thread_pool_t *ngx_thread_pool_get(ngx_cycle_t *cycle, ngx_str_t *name);
+    
+    ngx_thread_task_t *ngx_thread_task_alloc(ngx_pool_t *pool, size_t size);
+    ngx_int_t ngx_thread_task_post(ngx_thread_pool_t *tp, ngx_thread_task_t *task);
+    
+
+
+At configuration time, a module willing to use threads has to obtain a
+reference to a thread pool by calling
+C<ngx_thread_pool_add(cf, name)>, which either creates a
+new thread pool with the given C<name> or returns a reference
+to the pool with that name if it already exists.
+
+
+
+
+
+To add a C<task> into a queue of a specified thread pool
+C<tp> at runtime, use the
+C<ngx_thread_task_post(tp, task)> function.
+
+To execute a function in a thread, pass parameters and setup a completion
+handler using the C<ngx_thread_task_t> structure:
+
+    
+    typedef struct {
+        int    foo;
+    } my_thread_ctx_t;
+    
+    
+    static void
+    my_thread_func(void *data, ngx_log_t *log)
+    {
+        my_thread_ctx_t *ctx = data;
+    
+        /* this function is executed in a separate thread */
+    }
+    
+    
+    static void
+    my_thread_completion(ngx_event_t *ev)
+    {
+        my_thread_ctx_t *ctx = ev->data;
+    
+        /* executed in nginx event loop */
+    }
+    
+    
+    ngx_int_t
+    my_task_offload(my_conf_t *conf)
+    {
+        my_thread_ctx_t    *ctx;
+        ngx_thread_task_t  *task;
+    
+        task = ngx_thread_task_alloc(conf->pool, sizeof(my_thread_ctx_t));
+        if (task == NULL) {
+            return NGX_ERROR;
+        }
+    
+        ctx = task->ctx;
+    
+        ctx->foo = 42;
+    
+        task->handler = my_thread_func;
+        task->event.handler = my_thread_completion;
+        task->event.data = ctx;
+    
+        if (ngx_thread_task_post(conf->thread_pool, task) != NGX_OK) {
+            return NGX_ERROR;
+        }
+    
+        return NGX_OK;
+    }
+
+
+
+
+
+
+
+=head1 Modules
+
+
+=head2 Adding new modules
+
+
+
+Each standalone nginx module resides in a separate directory that contains
+at least two files:
+C<config> and a file with the module source code.
+The C<config> file contains all information needed for nginx to
+integrate the module, for example:
+
+    
+    ngx_module_type=CORE
+    ngx_module_name=ngx_foo_module
+    ngx_module_srcs="$ngx_addon_dir/ngx_foo_module.c"
+    
+    . auto/module
+    
+    ngx_addon_name=$ngx_module_name
+
+
+The C<config> file is a POSIX shell script that can set
+and access the following variables:
+
+=over
+
+
+
+
+=item *
+
+C<ngx_module_type> — Type of module to build.
+Possible values are C<CORE>, C<HTTP>,
+C<HTTP_FILTER>, C<HTTP_INIT_FILTER>,
+C<HTTP_AUX_FILTER>, C<MAIL>,
+C<STREAM>, or C<MISC>.
+
+
+
+=item *
+
+C<ngx_module_name> — Module names.
+To build multiple modules from a set of source files, specify a
+whitespace-separated list of names.
+The first name indicates the name of the output binary for the dynamic module.
+The names in the list must match the names used in the source code.
+
+
+
+=item *
+
+C<ngx_addon_name> — Name of the module as it appears in output
+on the console from the configure script.
+
+
+
+=item *
+
+C<ngx_module_srcs> — Whitespace-separated list of source
+files used to compile the module.
+The C<$ngx_addon_dir> variable can be used to represent the path
+to the module directory.
+
+
+
+=item *
+
+C<ngx_module_incs> — Include paths required to build the module
+
+
+
+=item *
+
+C<ngx_module_deps> — Whitespace-separated list of the module's
+dependencies.
+Usually, it is the list of header files.
+
+
+
+=item *
+
+C<ngx_module_libs> — Whitespace-separated list of libraries to
+link with the module.
+For example, use C<ngx_module_libs=-lpthread> to link
+C<libpthread> library.
+The following macros can be used to link against the same libraries as
+nginx:
+C<LIBXSLT>, C<LIBGD>, C<GEOIP>,
+C<PCRE>, C<OPENSSL>, C<MD5>,
+C<SHA1>, C<ZLIB>, and C<PERL>.
+
+
+
+=item *
+
+C<ngx_module_link> — Variable set by the build system to
+C<DYNAMIC> for a dynamic module or C<ADDON>
+for a static module and used to determine different actions to perform
+depending on linking type.
+
+
+
+=item *
+
+C<ngx_module_order> — Load order for the module;
+useful for the C<HTTP_FILTER> and
+C<HTTP_AUX_FILTER> module types.
+The format for this option is a whitespace-separated list of modules.
+All modules in the list following the current module's name end up after it in
+the global list of modules, which sets up the order for modules initialization.
+For filter modules later initialization means earlier execution.
+
+
+
+The following modules are typically used as references.
+The C<ngx_http_copy_filter_module> reads the data for other
+filter modules and is placed near the bottom of the list so that it is one of
+the first to be executed.
+The C<ngx_http_write_filter_module> writes the data to the
+client socket and is placed near the top of the list, and is the last to be
+executed.
+
+
+
+
+
+By default, filter modules are placed before the
+C<ngx_http_copy_filter> in the module list so that the filter
+handler is executed after the copy filter handler.
+For other module types the default is the empty string.
+
+
+
+
+
+
+=back
+
+
+
+To compile a module into nginx statically, use the
+C<--add-module=E<sol>pathE<sol>toE<sol>module> argument to the configure
+script.
+To compile a module for later dynamic loading into nginx, use the
+C<--add-dynamic-module=E<sol>pathE<sol>toE<sol>module> argument.
+
+
+
+
+=head2 Core Modules
+
+
+
+Modules are the building blocks of nginx, and most of its functionality is
+implemented as modules.
+The module source file must contain a global variable of type
+C<ngx_module_t>, which is defined as follows:
+
+    
+    struct ngx_module_s {
+    
+        /* private part is omitted */
+    
+        void                 *ctx;
+        ngx_command_t        *commands;
+        ngx_uint_t            type;
+    
+        ngx_int_t           (*init_master)(ngx_log_t *log);
+    
+        ngx_int_t           (*init_module)(ngx_cycle_t *cycle);
+    
+        ngx_int_t           (*init_process)(ngx_cycle_t *cycle);
+        ngx_int_t           (*init_thread)(ngx_cycle_t *cycle);
+        void                (*exit_thread)(ngx_cycle_t *cycle);
+        void                (*exit_process)(ngx_cycle_t *cycle);
+    
+        void                (*exit_master)(ngx_cycle_t *cycle);
+    
+        /* stubs for future extensions are omitted */
+    };
+
+
+The omitted private part includes the module version and a signature and is
+filled using the predefined macro C<NGX_MODULE_V1>.
+
+
+
+
+
+Each module keeps its private data in the C<ctx> field,
+recognizes the configuration directives, specified in the
+C<commands> array, and can be invoked at certain stages of
+nginx lifecycle.
+The module lifecycle consists of the following events:
+
+
+=over
+
+
+
+
+=item *
+
+Configuration directive handlers are called as they appear
+in configuration files in the context of the master process.
+
+
+
+=item *
+
+After the configuration is parsed successfully, C<init_module>
+handler is called in the context of the master process.
+The C<init_module> handler is called in the master process each
+time a configuration is loaded.
+
+
+
+=item *
+
+The master process creates one or more worker processes and the
+C<init_process> handler is called in each of them.
+
+
+
+=item *
+
+When a worker process receives the shutdown or terminate command from the
+master, it invokes the C<exit_process> handler.
+
+
+
+=item *
+
+The master process calls the C<exit_master> handler before
+exiting.
+
+
+
+=back
+
+
+
+Because threads are used in nginx only as a supplementary IE<sol>O facility with its
+own API, C<init_thread> and C<exit_thread>
+handlers are not currently called.
+There is also no C<init_master> handler, because it would be
+unnecessary overhead.
+
+
+
+
+
+The module C<type> defines exactly what is stored in the
+C<ctx> field.
+Its value is one of the following types:
+
+=over
+
+
+
+=item *
+C<NGX_CORE_MODULE>
+
+=item *
+C<NGX_EVENT_MODULE>
+
+=item *
+C<NGX_HTTP_MODULE>
+
+=item *
+C<NGX_MAIL_MODULE>
+
+=item *
+C<NGX_STREAM_MODULE>
+
+=back
+
+
+The C<NGX_CORE_MODULE> is the most basic and thus the most
+generic and most low-level type of module.
+The other module types are implemented on top of it and provide a more
+convenient way to deal with corresponding domains, like handling events or HTTP
+requests.
+
+
+
+
+
+The set of core modules includes C<ngx_core_module>,
+C<ngx_errlog_module>, C<ngx_regex_module>,
+C<ngx_thread_pool_module> and
+C<ngx_openssl_module> modules.
+The HTTP module, the stream module, the mail module and event modules are core
+modules too.
+The context of a core module is defined as:
+
+    
+    typedef struct {
+        ngx_str_t             name;
+        void               *(*create_conf)(ngx_cycle_t *cycle);
+        char               *(*init_conf)(ngx_cycle_t *cycle, void *conf);
+    } ngx_core_module_t;
+
+
+where the C<name> is a module name string,
+C<create_conf> and C<init_conf>
+are pointers to functions that create and initialize module configuration
+respectively.
+For core modules, nginx calls C<create_conf> before parsing
+a new configuration and C<init_conf> after all configuration
+is parsed successfully.
+The typical C<create_conf> function allocates memory for the
+configuration and sets default values.
+
+
+
+
+
+For example, a simplistic module called C<ngx_foo_module> might
+look like this:
+
+    
+    /*
+     * Copyright (C) Author.
+     */
+    
+    
+    #include <ngx_config.h>
+    #include <ngx_core.h>
+    
+    
+    typedef struct {
+        ngx_flag_t  enable;
+    } ngx_foo_conf_t;
+    
+    
+    static void *ngx_foo_create_conf(ngx_cycle_t *cycle);
+    static char *ngx_foo_init_conf(ngx_cycle_t *cycle, void *conf);
+    
+    static char *ngx_foo_enable(ngx_conf_t *cf, void *post, void *data);
+    static ngx_conf_post_t  ngx_foo_enable_post = { ngx_foo_enable };
+    
+    
+    static ngx_command_t  ngx_foo_commands[] = {
+    
+        { ngx_string("foo_enabled"),
+          NGX_MAIN_CONF|NGX_DIRECT_CONF|NGX_CONF_FLAG,
+          ngx_conf_set_flag_slot,
+          0,
+          offsetof(ngx_foo_conf_t, enable),
+          &ngx_foo_enable_post },
+    
+          ngx_null_command
+    };
+    
+    
+    static ngx_core_module_t  ngx_foo_module_ctx = {
+        ngx_string("foo"),
+        ngx_foo_create_conf,
+        ngx_foo_init_conf
+    };
+    
+    
+    ngx_module_t  ngx_foo_module = {
+        NGX_MODULE_V1,
+        &ngx_foo_module_ctx,                   /* module context */
+        ngx_foo_commands,                      /* module directives */
+        NGX_CORE_MODULE,                       /* module type */
+        NULL,                                  /* init master */
+        NULL,                                  /* init module */
+        NULL,                                  /* init process */
+        NULL,                                  /* init thread */
+        NULL,                                  /* exit thread */
+        NULL,                                  /* exit process */
+        NULL,                                  /* exit master */
+        NGX_MODULE_V1_PADDING
+    };
+    
+    
+    static void *
+    ngx_foo_create_conf(ngx_cycle_t *cycle)
+    {
+        ngx_foo_conf_t  *fcf;
+    
+        fcf = ngx_pcalloc(cycle->pool, sizeof(ngx_foo_conf_t));
+        if (fcf == NULL) {
+            return NULL;
+        }
+    
+        fcf->enable = NGX_CONF_UNSET;
+    
+        return fcf;
+    }
+    
+    
+    static char *
+    ngx_foo_init_conf(ngx_cycle_t *cycle, void *conf)
+    {
+        ngx_foo_conf_t *fcf = conf;
+    
+        ngx_conf_init_value(fcf->enable, 0);
+    
+        return NGX_CONF_OK;
+    }
+    
+    
+    static char *
+    ngx_foo_enable(ngx_conf_t *cf, void *post, void *data)
+    {
+        ngx_flag_t  *fp = data;
+    
+        if (*fp == 0) {
+            return NGX_CONF_OK;
+        }
+    
+        ngx_log_error(NGX_LOG_NOTICE, cf->log, 0, "Foo Module is enabled");
+    
+        return NGX_CONF_OK;
+    }
+
+
+
+
+
+
+=head2 Configuration Directives
+
+
+
+The C<ngx_command_t> type defines a single configuration
+directive.
+Each module that supports configuration provides an array of such structures
+that describe how to process arguments and what handlers to call:
+
+    
+    typedef struct ngx_command_s  ngx_command_t;
+    
+    struct ngx_command_s {
+        ngx_str_t             name;
+        ngx_uint_t            type;
+        char               *(*set)(ngx_conf_t *cf, ngx_command_t *cmd, void *conf);
+        ngx_uint_t            conf;
+        ngx_uint_t            offset;
+        void                 *post;
+    };
+
+
+Terminate the array with the special value C<ngx_null_command>.
+The C<name> is the name of a directive as it appears
+in the configuration file, for example "worker_processes" or "listen".
+The C<type> is a bit-field of flags that specify the number of
+arguments the directive takes, its type, and the context in which it appears.
+The flags are:
+
+
+=over
+
+
+
+
+=item *
+
+C<NGX_CONF_NOARGS> — Directive takes no arguments.
+
+
+
+=item *
+
+C<NGX_CONF_1MORE> — Directive takes one or more arguments.
+
+
+
+=item *
+
+C<NGX_CONF_2MORE> — Directive takes two or more arguments.
+
+
+
+=item *
+
+C<NGX_CONF_TAKE1>..C<NGX_CONF_TAKE7> —
+Directive takes exactly the indicated number of arguments.
+
+
+
+=item *
+
+C<NGX_CONF_TAKE12>, C<NGX_CONF_TAKE13>,
+C<NGX_CONF_TAKE23>, C<NGX_CONF_TAKE123>,
+C<NGX_CONF_TAKE1234> — Directive may take different number of
+arguments.
+Options are limited to the given numbers.
+For example, C<NGX_CONF_TAKE12> means it takes one or two
+arguments.
+
+
+
+=back
+
+
+
+The flags for directive types are:
+
+
+=over
+
+
+
+
+=item *
+
+C<NGX_CONF_BLOCK> — Directive is a block, that is, it can
+contain other directives within its opening and closing curly braces, or even
+implement its own parser to handle contents inside.
+
+
+
+=item *
+
+C<NGX_CONF_FLAG> — Directive takes a boolean value, either
+C<on> or C<off>.
+
+
+
+=back
+
+
+
+A directive's context defines where it may appear in the configuration:
+
+
+=over
+
+
+
+
+=item *
+
+C<NGX_MAIN_CONF> — In the top level context.
+
+
+
+=item *
+
+C<NGX_HTTP_MAIN_CONF> — In the C<http> block.
+
+
+
+=item *
+
+C<NGX_HTTP_SRV_CONF> — In a C<server> block
+within the C<http> block.
+
+
+
+=item *
+
+C<NGX_HTTP_LOC_CONF> — In a C<location> block
+within the C<http> block.
+
+
+
+=item *
+
+C<NGX_HTTP_UPS_CONF> — In an C<upstream> block
+within the C<http> block.
+
+
+
+=item *
+
+C<NGX_HTTP_SIF_CONF> — In an C<if> block within
+a C<server> block in the C<http> block.
+
+
+
+=item *
+
+C<NGX_HTTP_LIF_CONF> — In an C<if> block within
+a C<location> block in the C<http> block.
+
+
+
+=item *
+
+C<NGX_HTTP_LMT_CONF> — In a C<limit_except>
+block within the C<http> block.
+
+
+
+=item *
+
+C<NGX_STREAM_MAIN_CONF> — In the C<stream>
+block.
+
+
+
+=item *
+
+C<NGX_STREAM_SRV_CONF> — In a C<server> block
+within the C<stream> block.
+
+
+
+=item *
+
+C<NGX_STREAM_UPS_CONF> — In an C<upstream> block
+within the C<stream> block.
+
+
+
+=item *
+
+C<NGX_MAIL_MAIN_CONF> — In the C<mail> block.
+
+
+
+=item *
+
+C<NGX_MAIL_SRV_CONF> — In a C<server> block
+within the C<mail> block.
+
+
+
+=item *
+
+C<NGX_EVENT_CONF> — In the C<event> block.
+
+
+
+=item *
+
+C<NGX_DIRECT_CONF> — Used by modules that don't
+create a hierarchy of contexts and only have one global configuration.
+This configuration is passed to the handler as the C<conf>
+argument.
+
+
+=back
+
+
+
+The configuration parser uses these flags to throw an error in case of
+a misplaced directive and calls directive handlers supplied with a proper
+configuration pointer, so that the same directives in different locations can
+store their values in distinct places.
+
+
+
+
+
+The C<set> field defines a handler that processes a directive
+and stores parsed values into the corresponding configuration.
+There's a number of functions that perform common conversions:
+
+
+=over
+
+
+
+
+=item *
+
+C<ngx_conf_set_flag_slot> — Converts the literal strings
+C<on> and C<off> into an
+C<ngx_flag_t> value with values 1 or 0, respectively.
+
+
+
+=item *
+
+C<ngx_conf_set_str_slot> — Stores a string as a value of the
+C<ngx_str_t> type.
+
+
+
+=item *
+
+C<ngx_conf_set_str_array_slot> — Appends a value to an array
+C<ngx_array_t> of strings C<ngx_str_t>.
+The array is created if does not already exist.
+
+
+
+=item *
+
+C<ngx_conf_set_keyval_slot> — Appends a key-value pair to an
+array C<ngx_array_t> of key-value pairs
+C<ngx_keyval_t>.
+The first string becomes the key and the second the value.
+The array is created if it does not already exist.
+
+
+
+=item *
+
+C<ngx_conf_set_num_slot> — Converts a directive's argument
+to an C<ngx_int_t> value.
+
+
+
+=item *
+
+C<ngx_conf_set_size_slot> — Converts a
+L<size|syntax> to a C<size_t> value
+expressed in bytes.
+
+
+
+=item *
+
+C<ngx_conf_set_off_slot> — Converts an
+L<offset|syntax> to an C<off_t> value
+expressed in bytes.
+
+
+
+=item *
+
+C<ngx_conf_set_msec_slot> — Converts a
+L<time|syntax> to an C<ngx_msec_t> value
+expressed in milliseconds.
+
+
+
+=item *
+
+C<ngx_conf_set_sec_slot> — Converts a
+L<time|syntax> to a C<time_t> value
+expressed in in seconds.
+
+
+
+=item *
+
+C<ngx_conf_set_bufs_slot> — Converts the two supplied arguments
+into an C<ngx_bufs_t> object that holds the number and
+L<size|syntax> of buffers.
+
+
+
+=item *
+
+C<ngx_conf_set_enum_slot> — Converts the supplied argument
+into an C<ngx_uint_t> value.
+The null-terminated array of C<ngx_conf_enum_t> passed in the
+C<post> field defines the acceptable strings and corresponding
+integer values.
+
+
+
+=item *
+
+C<ngx_conf_set_bitmask_slot> — Converts the supplied arguments
+into an C<ngx_uint_t> value.
+The mask values for each argument are ORed producing the result.
+The null-terminated array of C<ngx_conf_bitmask_t> passed in the
+C<post> field defines the acceptable strings and corresponding
+mask values.
+
+
+
+=item *
+
+C<set_path_slot> — Converts the supplied arguments to an
+C<ngx_path_t> value and performs all required initializations.
+For details, see the documentation for the
+L<proxy_temp_path|ngx_http_proxy_module> directive.
+
+
+
+=item *
+
+C<set_access_slot> — Converts the supplied arguments to a file
+permissions mask.
+For details, see the documentation for the
+L<proxy_store_access|ngx_http_proxy_module> directive.
+
+
+
+=back
+
+
+
+
+
+
+
+
+The C<conf> field defines which configuration structure is
+passed to the directory handler.
+Core modules only have the global configuration and set
+C<NGX_DIRECT_CONF> flag to access it.
+Modules like HTTP, Stream or Mail create hierarchies of configurations.
+For example, a module's configuration is created for C<server>,
+C<location> and C<if> scopes.
+
+
+=over
+
+
+
+=item *
+
+C<NGX_HTTP_MAIN_CONF_OFFSET> — Configuration for the
+C<http> block.
+
+
+
+=item *
+
+C<NGX_HTTP_SRV_CONF_OFFSET> — Configuration for a
+C<server> block within the C<http> block.
+
+
+
+=item *
+
+C<NGX_HTTP_LOC_CONF_OFFSET> — Configuration for a
+C<location> block within the C<http>.
+
+
+
+=item *
+
+C<NGX_STREAM_MAIN_CONF_OFFSET> — Configuration for the
+C<stream> block.
+
+
+
+=item *
+
+C<NGX_STREAM_SRV_CONF_OFFSET> — Configuration for a
+C<server> block within the C<stream> block.
+
+
+
+=item *
+
+C<NGX_MAIL_MAIN_CONF_OFFSET> — Configuration for the
+C<mail> block.
+
+
+
+=item *
+
+C<NGX_MAIL_SRV_CONF_OFFSET> — Configuration for a
+C<server> block within the C<mail> block.
+
+
+
+=back
+
+
+
+
+
+
+
+
+The C<offset> defines the offset of a field in a module
+configuration structure that holds values for this particular directive.
+The typical use is to employ the C<offsetof()> macro.
+
+
+
+
+
+The C<post> field has two purposes: it may be used to define
+a handler to be called after the main handler has completed, or to pass
+additional data to the main handler.
+In the first case, the C<ngx_conf_post_t> structure needs to
+be initialized with a pointer to the handler, for example:
+
+    
+    static char *ngx_do_foo(ngx_conf_t *cf, void *post, void *data);
+    static ngx_conf_post_t  ngx_foo_post = { ngx_do_foo };
+
+
+The C<post> argument is the C<ngx_conf_post_t>
+object itself, and the C<data> is a pointer to the value,
+converted from arguments by the main handler with the appropriate type.
+
+
+
+
+=head1 HTTP
+
+
+=head2 Connection
+
+
+
+Each HTTP client connection runs through the following stages:
+
+
+
+
+=over
+
+
+
+
+=item *
+
+C<ngx_event_accept()> accepts a client TCP connection.
+This handler is called in response to a read notification on a listen socket.
+A new C<ngx_connecton_t> object is created at this stage
+to wrap the newly accepted client socket.
+Each nginx listener provides a handler to pass the new connection object to.
+For HTTP connections it's C<ngx_http_init_connection(c)>.
+
+
+
+=item *
+
+C<ngx_http_init_connection()> performs early initialization of
+the HTTP connection.
+At this stage an C<ngx_http_connection_t> object is created for
+the connection and its reference is stored in the connection's
+C<data> field.
+Later it will be replaced by an HTTP request object.
+A PROXY protocol parser and the SSL handshake are started at
+this stage as well.
+
+
+
+=item *
+
+C<ngx_http_wait_request_handler()> read event handler
+is called when data is available on the client socket.
+At this stage an HTTP request object C<ngx_http_request_t> is
+created and set to the connection's C<data> field.
+
+
+
+=item *
+
+C<ngx_http_process_request_line()> read event handler
+reads client request line.
+The handler is set by C<ngx_http_wait_request_handler()>.
+The data is read into connection's C<buffer>.
+The size of the buffer is initially set by the directive
+L<ngx_http_core_module>.
+The entire client header is supposed to fit in the buffer.
+If the initial size is not sufficient, a bigger buffer is allocated,
+with the capacity set by the C<large_client_header_buffers>
+directive.
+
+
+
+=item *
+
+C<ngx_http_process_request_headers()> read event handler,
+is set after C<ngx_http_process_request_line()> to read
+the client request header.
+
+
+
+=item *
+
+C<ngx_http_core_run_phases()> is called when the request header
+is completely read and parsed.
+This function runs request phases from
+C<NGX_HTTP_POST_READ_PHASE> to
+C<NGX_HTTP_CONTENT_PHASE>.
+The last phase is intended to generate a response and pass it along the filter
+chain.
+The response is not necessarily sent to the client at this phase.
+It might remain buffered and be sent at the finalization stage.
+
+
+
+=item *
+
+C<ngx_http_finalize_request()> is usually called when the
+request has generated all the output or produced an error.
+In the latter case an appropriate error page is looked up and used as the
+response.
+If the response is not completely sent to the client by this point, an
+HTTP writer C<ngx_http_writer()> is activated to finish
+sending outstanding data.
+
+
+
+=item *
+
+C<ngx_http_finalize_connection()> is called when the complete
+response has been sent to the client and the request can be destroyed.
+If the client connection keepalive feature is enabled,
+C<ngx_http_set_keepalive()> is called, which destroys the
+current request and waits for the next request on the connection.
+Otherwise, C<ngx_http_close_request()> destroys both the
+request and the connection.
+
+
+
+=back
+
+
+
+
+=head2 Request
+
+
+
+For each client HTTP request the C<ngx_http_request_t> object is
+created.  Some of the fields of this object are:
+
+
+
+
+=over
+
+
+
+
+=item *
+
+
+
+
+C<connection> — Pointer to a C<ngx_connection_t>
+client connection object.
+Several requests can reference the same connection object at the same time -
+one main request and its subrequests.
+After a request is deleted, a new request can be created on the same connection.
+
+
+
+
+
+Note that for HTTP connections C<ngx_connection_t>'s
+C<data> field points back to the request.
+Such requests are called active, as opposed to the other requests tied to the
+connection.
+An active request is used to handle client connection events and is allowed to
+output its response to the client.
+Normally, each request becomes active at some point so that it can send its
+output.
+
+
+
+
+
+
+=item *
+
+
+
+
+C<ctx> — Array of HTTP module contexts.
+Each module of type C<NGX_HTTP_MODULE> can store any value
+(normally, a pointer to a structure) in the request.
+The value is stored in the C<ctx> array at the module's
+C<ctx_index> position.
+The following macros provide a convenient way to get and set request contexts:
+
+
+
+
+=over
+
+
+
+
+=item *
+
+C<ngx_http_get_module_ctx(r, module)> — Returns
+the C<module>'s context
+
+
+
+=item *
+
+C<ngx_http_set_ctx(r, c, module)> — Sets C<c>
+as the C<module>'s context
+
+
+
+=back
+
+
+
+
+
+
+=item *
+
+C<main_conf>, C<srv_conf>,
+C<loc_conf> — Arrays of current request
+configurations.
+Configurations are stored at the module's C<ctx_index>
+positions.
+
+
+
+=item *
+
+C<read_event_handler>, C<write_event_handler> -
+Read and write event handlers for the request.
+Normally, both the read and write event handlers for an HTTP connection
+are set to C<ngx_http_request_handler()>.
+This function calls the C<read_event_handler> and
+C<write_event_handler> handlers for the currently
+active request.
+
+
+
+=item *
+
+C<cache> — Request cache object for caching the
+upstream response.
+
+
+
+=item *
+
+C<upstream> — Request upstream object for proxying.
+
+
+
+=item *
+
+C<pool> — Request pool.
+The request object itself is allocated in this pool, which is destroyed when
+the request is deleted.
+For allocations that need to be available throughout the client connection's
+lifetime, use C<ngx_connection_t>'s pool instead.
+
+
+
+=item *
+
+C<header_in> — Buffer into which the client HTTP request
+header is read.
+
+
+
+=item *
+
+C<headers_in>, C<headers_out> — Input and
+output HTTP headers objects.
+Both objects contain the C<headers> field of type
+C<ngx_list_t> for keeping the raw list of headers.
+In addition to that, specific headers are available for getting and setting as
+separate fields, for example C<content_length_n>,
+C<status> etc.
+
+
+
+=item *
+
+C<request_body> — Client request body object.
+
+
+
+=item *
+
+C<start_sec>, C<start_msec> — Time point when
+the request was created, used for tracking request duration.
+
+
+
+=item *
+
+C<method>, C<method_name> — Numeric and text
+representation of the client HTTP request method.
+Numeric values for methods are defined in
+C<srcE<sol>httpE<sol>ngx_http_request.h> with the macros
+C<NGX_HTTP_GET>, C<NGX_HTTP_HEAD>,
+C<NGX_HTTP_POST>, etc.
+
+
+
+=item *
+
+C<http_protocol>  — Client HTTP protocol version in its
+original text form (“HTTPE<sol>1.0”, “HTTPE<sol>1.1” etc).
+
+
+
+=item *
+
+C<http_version>  — Client HTTP protocol version in
+numeric form  (C<NGX_HTTP_VERSION_10>,
+C<NGX_HTTP_VERSION_11>, etc.).
+
+
+
+=item *
+
+C<http_major>, C<http_minor>  — Client HTTP
+protocol version in numeric form split into major and minor parts.
+
+
+
+=item *
+
+C<request_line>, C<unparsed_uri> — Request line
+and URI in the original client request.
+
+
+
+=item *
+
+C<uri>, C<args>, C<exten> —
+URI, arguments and file extension for the current request.
+The URI value here might differ from the original URI sent by the client due to
+normalization.
+Throughout request processing, these values can change as internal redirects
+are performed.
+
+
+
+=item *
+
+C<main> — Pointer to a main request object.
+This object is created to process a client HTTP request, as opposed to
+subrequests, which are created to perform a specific subtask within the main
+request.
+
+
+
+=item *
+
+C<parent> — Pointer to the parent request of a subrequest.
+
+
+
+=item *
+
+C<postponed> — List of output buffers and subrequests, in the
+order in which they are sent and created.
+The list is used by the postpone filter to provide consistent request output
+when parts of it are created by subrequests.
+
+
+
+=item *
+
+C<post_subrequest> — Pointer to a handler with the context
+to be called when a subrequest gets finalized.
+Unused for main requests.
+
+
+
+=item *
+
+
+
+
+C<posted_requests> — List of requests to be started or
+resumed, which is done by calling the request's
+C<write_event_handler>.
+Normally, this handler holds the request main function, which at first runs
+request phases and then produces the output.
+
+
+
+
+
+A request is usually posted by the
+C<ngx_http_post_request(r, NULL)> call.
+It is always posted to the main request C<posted_requests> list.
+The function C<ngx_http_run_posted_requests(c)> runs all
+requests that are posted in the main request of the passed
+connection's active request.
+All event handlers call C<ngx_http_run_posted_requests>,
+which can lead to new posted requests.
+Normally, it is called after invoking a request's read or write handler.
+
+
+
+
+
+
+=item *
+
+C<phase_handler> — Index of current request phase.
+
+
+
+=item *
+
+C<ncaptures>, C<captures>,
+C<captures_data> — Regex captures produced
+by the last regex match of the request.
+A regex match can occur at a number of places during request processing:
+map lookup, server lookup by SNI or HTTP Host, rewrite, proxy_redirect, etc.
+Captures produced by a lookup are stored in the above mentioned fields.
+The field C<ncaptures> holds the number of captures,
+C<captures> holds captures boundaries and
+C<captures_data> holds the string against which the regex was
+matched and which is used to extract captures.
+After each new regex match, request captures are reset to hold new values.
+
+
+
+=item *
+
+C<count> — Request reference counter.
+The field only makes sense for the main request.
+Increasing the counter is done by simple C<r-E<gt>main-E<gt>count++>.
+To decrease the counter, call
+C<ngx_http_finalize_request(r, rc)>.
+Creating of a subrequest and running the request body read process both
+increment the counter.
+
+
+
+=item *
+
+C<subrequests> — Current subrequest nesting level.
+Each subrequest inherits its parent's nesting level, decreased by one.
+An error is generated if the value reaches zero.
+The value for the main request is defined by the
+C<NGX_HTTP_MAX_SUBREQUESTS> constant.
+
+
+
+=item *
+
+C<uri_changes> — Number of URI changes remaining for
+the request.
+The total number of times a request can change its URI is limited by the
+C<NGX_HTTP_MAX_URI_CHANGES> constant.
+With each change the value is decremented until it reaches zero, at which time
+an error is generated.
+Rewrites and internal redirects to normal or named locations are considered URI
+changes.
+
+
+
+=item *
+
+C<blocked> — Counter of blocks held on the request.
+While this value is non-zero, the request cannot be terminated.
+Currently, this value is increased by pending AIO operations (POSIX AIO and
+thread operations) and active cache lock.
+
+
+
+=item *
+
+C<buffered> — Bitmask showing which modules have buffered the
+output produced by the request.
+A number of filters can buffer output; for example, sub_filter can buffer data
+because of a partial string match, copy filter can buffer data because of the
+lack of free output buffers etc.
+As long as this value is non-zero, the request is not finalized
+pending the flush.
+
+
+
+=item *
+
+C<header_only> — Flag indicating that the output does not
+require a body.
+For example, this flag is used by HTTP HEAD requests.
+
+
+
+=item *
+
+
+
+C<keepalive> — Flag indicating whether client connection
+keepalive is supported.
+The value is inferred from the HTTP version and the value of the
+C<Connection> header.
+
+
+
+
+
+=item *
+
+C<header_sent> — Flag indicating that the output header
+has already been sent by the request.
+
+
+
+=item *
+
+C<internal> — Flag indicating that the current request
+is internal.
+To enter the internal state, a request must pass through an internal
+redirect or be a subrequest.
+Internal requests are allowed to enter internal locations.
+
+
+
+=item *
+
+C<allow_ranges> — Flag indicating that a partial response
+can be sent to the client, as requested by the HTTP Range header.
+
+
+
+=item *
+
+C<subrequest_ranges> — Flag indicating that a partial response
+can be sent while a subrequest is being processed.
+
+
+
+=item *
+
+C<single_range> — Flag indicating that only a single continuous
+range of output data can be sent to the client.
+This flag is usually set when sending a stream of data, for example from a
+proxied server, and the entire response is not available in one buffer.
+
+
+
+=item *
+
+C<main_filter_need_in_memory>,
+C<filter_need_in_memory> — Flags
+requesting that the output produced in memory buffers rather than files.
+This is a signal to the copy filter to read data from file buffers even if
+sendfile is enabled.
+The difference between the two flags is the location of the filter modules that
+set them.
+Filters called before the postpone filter in the filter chain set
+C<filter_need_in_memory>, requesting that only the current
+request output come in memory buffers.
+Filters called later in the filter chain set
+C<main_filter_need_in_memory>, requesting that
+both the main request and all subrequests read files in memory
+while sending output.
+
+
+
+=item *
+
+C<filter_need_temporary> — Flag requesting that the request
+output be produced in temporary buffers, but not in readonly memory buffers or
+file buffers.
+This is used by filters which may change output directly in the buffers where
+it's sent.
+
+
+=back
+
+
+
+
+=head2 Configuration
+
+
+
+Each HTTP module can have three types of configuration:
+
+
+
+
+=over
+
+
+
+
+=item *
+
+Main configuration — Applies to the entire C<http> block.
+Functions as global settings for a module.
+
+
+
+=item *
+
+Server configuration — Applies to a single C<server> block.
+Functions as server-specific settings for a module.
+
+
+
+=item *
+
+Location configuration — Applies to a single C<location>,
+C<if> or C<limit_except> block.
+Functions as location-specific settings for a module.
+
+
+
+=back
+
+
+
+
+
+Configuration structures are created at the nginx configuration stage by
+calling functions, which allocate the structures, initialize them
+and merge them.
+The following example shows how to create a simple location
+configuration for a module.
+The configuration has one setting, C<foo>, of type
+unsigned integer.
+
+
+
+
+    
+    typedef struct {
+        ngx_uint_t  foo;
+    } ngx_http_foo_loc_conf_t;
+    
+    
+    static ngx_http_module_t  ngx_http_foo_module_ctx = {
+        NULL,                                  /* preconfiguration */
+        NULL,                                  /* postconfiguration */
+    
+        NULL,                                  /* create main configuration */
+        NULL,                                  /* init main configuration */
+    
+        NULL,                                  /* create server configuration */
+        NULL,                                  /* merge server configuration */
+    
+        ngx_http_foo_create_loc_conf,          /* create location configuration */
+        ngx_http_foo_merge_loc_conf            /* merge location configuration */
+    };
+    
+    
+    static void *
+    ngx_http_foo_create_loc_conf(ngx_conf_t *cf)
+    {
+        ngx_http_foo_loc_conf_t  *conf;
+    
+        conf = ngx_pcalloc(cf->pool, sizeof(ngx_http_foo_loc_conf_t));
+        if (conf == NULL) {
+            return NULL;
+        }
+    
+        conf->foo = NGX_CONF_UNSET_UINT;
+    
+        return conf;
+    }
+    
+    
+    static char *
+    ngx_http_foo_merge_loc_conf(ngx_conf_t *cf, void *parent, void *child)
+    {
+        ngx_http_foo_loc_conf_t *prev = parent;
+        ngx_http_foo_loc_conf_t *conf = child;
+    
+        ngx_conf_merge_uint_value(conf->foo, prev->foo, 1);
+    }
+
+
+
+
+
+As seen in the example, the C<ngx_http_foo_create_loc_conf()>
+function creates a new configuration structure, and
+C<ngx_http_foo_merge_loc_conf()> merges a configuration with
+configuration from a higher level.
+In fact, server and location configuration do not exist only at the server and
+location levels, but are also created for all levels above them.
+Specifically, a server configuration is also created at the main level and
+location configurations are created at the main, server, and location levels.
+These configurations make it possible to specify server- and location-specific
+settings at any level of an nginx configuration file.
+Eventually configurations are merged down.
+A number of macros like C<NGX_CONF_UNSET> and
+C<NGX_CONF_UNSET_UINT> are provided
+for indicating a missing setting and ignoring it while merging.
+Standard nginx merge macros like C<ngx_conf_merge_value()> and
+C<ngx_conf_merge_uint_value()> provide a convenient way to
+merge a setting and set the default value if none of the configurations
+provided an explicit value.
+For complete list of macros for different types, see
+C<srcE<sol>coreE<sol>ngx_conf_file.h>.
+
+
+
+
+
+The following macros are available.
+for accessing configuration for HTTP modules at configuration time.
+They all take C<ngx_conf_t> reference as the first argument.
+
+
+
+
+=over
+
+
+
+
+=item *
+
+C<ngx_http_conf_get_module_main_conf(cf, module)>
+
+
+
+=item *
+
+C<ngx_http_conf_get_module_srv_conf(cf, module)>
+
+
+
+=item *
+
+C<ngx_http_conf_get_module_loc_conf(cf, module)>
+
+
+
+=back
+
+
+
+
+
+The following example gets a pointer to a location configuration of
+standard nginx core module
+L<ngx_http_core_module|ngx_http_core_module>
+and replaces the location content handler kept
+in the C<handler> field of the structure.
+
+
+
+
+    
+    static ngx_int_t ngx_http_foo_handler(ngx_http_request_t *r);
+    
+    
+    static ngx_command_t  ngx_http_foo_commands[] = {
+    
+        { ngx_string("foo"),
+          NGX_HTTP_LOC_CONF|NGX_CONF_NOARGS,
+          ngx_http_foo,
+          0,
+          0,
+          NULL },
+    
+          ngx_null_command
+    };
+    
+    
+    static char *
+    ngx_http_foo(ngx_conf_t *cf, ngx_command_t *cmd, void *conf)
+    {
+        ngx_http_core_loc_conf_t  *clcf;
+    
+        clcf = ngx_http_conf_get_module_loc_conf(cf, ngx_http_core_module);
+        clcf->handler = ngx_http_bar_handler;
+    
+        return NGX_CONF_OK;
+    }
+
+
+
+
+
+The following macros are available for accessing configuration for HTTP
+modules at runtime.
+
+
+
+
+=over
+
+
+
+
+=item *
+
+C<ngx_http_get_module_main_conf(r, module)>
+
+
+
+=item *
+
+C<ngx_http_get_module_srv_conf(r, module)>
+
+
+
+=item *
+
+C<ngx_http_get_module_loc_conf(r, module)>
+
+
+
+=back
+
+
+
+
+
+These macros receive a reference to an HTTP request
+C<ngx_http_request_t>.
+The main configuration of a request never changes.
+Server configuration can change from the default after
+the virtual server for the request is chosen.
+Location configuration selected for processing a request can change multiple
+times as a result of a rewrite operation or internal redirect.
+The following example shows how to access a module's HTTP configuration at
+runtime.
+
+
+
+
+    
+    static ngx_int_t
+    ngx_http_foo_handler(ngx_http_request_t *r)
+    {
+        ngx_http_foo_loc_conf_t  *flcf;
+    
+        flcf = ngx_http_get_module_loc_conf(r, ngx_http_foo_module);
+    
+        ...
+    }
+
+
+
+
+=head2 Phases
+
+
+
+Each HTTP request passes through a sequence of phases.
+In each phase a distinct type of processing is performed on the request.
+Module-specific handlers can be registered in most phases,
+and many standard nginx modules register their phase handlers as a way
+to get called at a specific stage of request processing.
+Phases are processed successively and the phase handlers are called
+once the request reaches the phase.
+Following is the list of nginx HTTP phases.
+
+
+
+
+=over
+
+
+
+
+=item *
+
+C<NGX_HTTP_POST_READ_PHASE> — First phase.
+The L<ngx_http_realip_module|ngx_http_realip_module>
+registers its handler at this phase to enable
+substitution of client addresses before any other module is invoked.
+
+
+
+=item *
+
+C<NGX_HTTP_SERVER_REWRITE_PHASE> — Phase where
+rewrite directives defined in a C<server> block
+(but outside a C<location> block) are processed.
+The
+L<ngx_http_rewrite_module|ngx_http_rewrite_module>
+installs its handler at this phase.
+
+
+
+=item *
+
+C<NGX_HTTP_FIND_CONFIG_PHASE> — Special phase
+where a location is chosen based on the request URI.
+Before this phase, the default location for the relevant virtual server
+is assigned to the request, and any module requesting a location configuration
+receives the configuration for the default server location.
+This phase a assigns a new location to the request.
+No additional handlers can be registered at this phase.
+
+
+
+=item *
+
+C<NGX_HTTP_REWRITE_PHASE> — Same as
+C<NGX_HTTP_SERVER_REWRITE_PHASE>, but for
+rewrite rules defined in the location, chosen in the previous phase.
+
+
+
+=item *
+
+C<NGX_HTTP_POST_REWRITE_PHASE> — Special phase
+where the request is redirected to a new location if its URI changed
+during a rewrite.
+This is implemented by the request going through
+the C<NGX_HTTP_FIND_CONFIG_PHASE> again.
+No additional handlers can be registered at this phase.
+
+
+
+=item *
+
+C<NGX_HTTP_PREACCESS_PHASE> — A common phase for different
+types of handlers, not associated with access control.
+The standard nginx modules
+L<ngx_http_limit_conn_module|ngx_http_limit_conn_module> and
+L<ngx_http_limit_req_module|ngx_http_limit_req_module> register their handlers at this phase.
+
+
+
+=item *
+
+C<NGX_HTTP_ACCESS_PHASE> — Phase where it is verified
+that the client is authorized to make the request.
+Standard nginx modules such as
+L<ngx_http_access_module|ngx_http_access_module> and
+L<ngx_http_auth_basic_module|ngx_http_auth_basic_module> register their handlers at this phase.
+By default the client must pass the authorization check of all handlers
+registered at this phase for the request to continue to the next phase.
+The L<ngx_http_core_module> directive,
+can be used to permit processing to continue if any of the phase handlers
+authorizes the client.
+
+
+
+=item *
+
+C<NGX_HTTP_POST_ACCESS_PHASE> — Special phase where the
+L<satisfy any|ngx_http_core_module>
+directive is processed.
+If some access phase handlers denied access and none explictly allowed it, the
+request is finalized.
+No additional handlers can be registered at this phase.
+
+
+
+=item *
+
+C<NGX_HTTP_PRECONTENT_PHASE> — Phase for handlers to be called
+prior to generating content.
+Standard modules such as
+L<ngx_http_try_files_module|ngx_http_core_module> and
+L<ngx_http_mirror_module|ngx_http_mirror_module>
+register their handlers at this phase.
+
+
+
+=item *
+
+C<NGX_HTTP_CONTENT_PHASE> — Phase where the response
+is normally generated.
+Multiple nginx standard modules register their handlers at this phase,
+including
+L<ngx_http_index_module|ngx_http_index_module> or
+C<ngx_http_static_module>.
+They are called sequentially until one of them produces
+the output.
+It's also possible to set content handlers on a per-location basis.
+If the
+L<ngx_http_core_module|ngx_http_core_module>'s
+location configuration has C<handler> set, it is
+called as the content handler and the handlers installed at this phase
+are ignored.
+
+
+
+=item *
+
+C<NGX_HTTP_LOG_PHASE> — Phase where request logging
+is performed.
+Currently, only the
+L<ngx_http_log_module|ngx_http_log_module>
+registers its handler
+at this stage for access logging.
+Log phase handlers are called at the very end of request processing, right
+before freeing the request.
+
+
+
+=back
+
+
+
+
+
+Following is the example of a preaccess phase handler.
+
+
+
+
+    
+    static ngx_http_module_t  ngx_http_foo_module_ctx = {
+        NULL,                                  /* preconfiguration */
+        ngx_http_foo_init,                     /* postconfiguration */
+    
+        NULL,                                  /* create main configuration */
+        NULL,                                  /* init main configuration */
+    
+        NULL,                                  /* create server configuration */
+        NULL,                                  /* merge server configuration */
+    
+        NULL,                                  /* create location configuration */
+        NULL                                   /* merge location configuration */
+    };
+    
+    
+    static ngx_int_t
+    ngx_http_foo_handler(ngx_http_request_t *r)
+    {
+        ngx_str_t  *ua;
+    
+        ua = r->headers_in->user_agent;
+    
+        if (ua == NULL) {
+            return NGX_DECLINED;
+        }
+    
+        /* reject requests with "User-Agent: foo" */
+        if (ua->value.len == 3 && ngx_strncmp(ua->value.data, "foo", 3) == 0) {
+            return NGX_HTTP_FORBIDDEN;
+        }
+    
+        return NGX_DECLINED;
+    }
+    
+    
+    static ngx_int_t
+    ngx_http_foo_init(ngx_conf_t *cf)
+    {
+        ngx_http_handler_pt        *h;
+        ngx_http_core_main_conf_t  *cmcf;
+    
+        cmcf = ngx_http_conf_get_module_main_conf(cf, ngx_http_core_module);
+    
+        h = ngx_array_push(&cmcf->phases[NGX_HTTP_PREACCESS_PHASE].handlers);
+        if (h == NULL) {
+            return NGX_ERROR;
+        }
+    
+        *h = ngx_http_foo_handler;
+    
+        return NGX_OK;
+    }
+
+
+
+
+
+Phase handlers are expected to return specific codes:
+
+
+
+
+=over
+
+
+
+
+=item *
+
+C<NGX_OK> — Proceed to the next phase.
+
+
+
+=item *
+
+C<NGX_DECLINED> — Proceed to the next handler of the current
+phase.
+If the current handler is the last in the current phase,
+move to the next phase.
+
+
+
+=item *
+
+C<NGX_AGAIN>, C<NGX_DONE> — Suspend
+phase handling until some future event which can be
+an asynchronous IE<sol>O operation or just a delay, for example.
+It is assumed, that phase handling will be resumed later by calling
+C<ngx_http_core_run_phases()>.
+
+
+
+=item *
+
+Any other value returned by the phase handler is treated as a request
+finalization code, in particular, an HTTP response code.
+The request is finalized with the code provided.
+
+
+
+=back
+
+
+
+
+
+For some phases, return codes are treated in a slightly different way.
+At the content phase, any return code other that
+C<NGX_DECLINED> is considered a finalization code.
+Any return code from the location content handlers is considered a
+finalization code.
+At the access phase, in
+L<satisfy any|ngx_http_core_module>
+mode,
+any return code other than C<NGX_OK>,
+C<NGX_DECLINED>, C<NGX_AGAIN>,
+C<NGX_DONE> is considered a denial.
+If no subsequent access handlers allow or deny access with a different
+code, the denial code will become the finalization code.
+
+
+
+
+=head2 Variables
+
+
+=head3 Accessing existing variables
+
+
+
+Variables can be referenced by index (this is the most common method)
+or name (see below).
+The index is created at configuration stage, when a variable is added
+to the configuration.
+To obtain the variable index, use
+C<ngx_http_get_variable_index()>:
+
+    
+    ngx_str_t  name;  /* ngx_string("foo") */
+    ngx_int_t  index;
+    
+    index = ngx_http_get_variable_index(cf, &name);
+
+
+Here, C<cf> is a pointer to nginx configuration and
+C<name> points to a string containing the variable name.
+The function returns C<NGX_ERROR> on error or a valid index
+otherwise, which is typically stored somewhere in the module's
+configuration for future use.
+
+
+
+
+
+All HTTP variables are evaluated in the context of a given HTTP request,
+and results are specific to and cached in that HTTP request.
+All functions that evaluate variables return the
+C<ngx_http_variable_value_t> type, representing
+the variable value:
+
+    
+    typedef ngx_variable_value_t  ngx_http_variable_value_t;
+    
+    typedef struct {
+        unsigned    len:28;
+    
+        unsigned    valid:1;
+        unsigned    no_cacheable:1;
+        unsigned    not_found:1;
+        unsigned    escape:1;
+    
+        u_char     *data;
+    } ngx_variable_value_t;
+
+
+where:
+
+=over
+
+
+
+
+=item *
+
+C<len> — The length of the value
+
+
+
+=item *
+
+C<data> — The value itself
+
+
+
+=item *
+
+C<valid> — The value is valid
+
+
+
+=item *
+
+C<not_found> — The variable was not found and thus
+the C<data> and C<len> fields are irrelevant;
+this can happen, for example, with variables like C<$arg_foo>
+when a corresponding argument was not passed in a request
+
+
+
+=item *
+
+C<no_cacheable> — Do not cache result
+
+
+
+=item *
+
+C<escape> — Used internally by the logging module to mark
+values that require escaping on output.
+
+
+
+=back
+
+
+
+
+
+
+
+The C<ngx_http_get_flushed_variable()>
+and C<ngx_http_get_indexed_variable()> functions
+are used to obtain the value of a variable.
+They have the same interface - accepting an HTTP request C<r>
+as a context for evaluating the variable and an C<index>
+that identifies it.
+An example of typical usage:
+
+    
+    ngx_http_variable_value_t  *v;
+    
+    v = ngx_http_get_flushed_variable(r, index);
+    
+    if (v == NULL || v->not_found) {
+        /* we failed to get value or there is no such variable, handle it */
+        return NGX_ERROR;
+    }
+    
+    /* some meaningful value is found */
+
+
+The difference between functions is that the
+C<ngx_http_get_indexed_variable()> returns a cached value
+and C<ngx_http_get_flushed_variable()> flushes the cache for
+non-cacheable variables.
+
+
+
+
+
+Some modules, such as SSI and Perl, need to deal with variables for which the
+name is not known at configuration time.
+An index therefore cannot be used to access them, but the
+C<ngx_http_get_variable(r, name, key)> function
+is available.
+It searches for a variable with a given
+C<name> and its hash C<key> derived
+from the name.
+
+
+
+
+=head3 Creating variables
+
+
+
+To create a variable, use the C<ngx_http_add_variable()>
+function.
+It takes as arguments a configuration (where the variable is registered),
+the variable name and flags that control the function's behaviour:
+
+
+=over
+
+
+
+=item *
+C<NGX_HTTP_VAR_CHANGEABLE> — Enables redefinition of
+the variable: there is no conflict if another module defines a variable with
+the same name.
+This allows the
+L<ngx_http_rewrite_module> directive
+to override variables.
+
+
+
+=item *
+C<NGX_HTTP_VAR_NOCACHEABLE> — Disables caching,
+which is useful for variables such as C<$time_local>.
+
+
+
+=item *
+C<NGX_HTTP_VAR_NOHASH> — Indicates that
+this variable is only accessible by index, not by name.
+This is a small optimization for use when it is known that the
+variable is not needed in modules like SSI or Perl.
+
+
+
+=item *
+C<NGX_HTTP_VAR_PREFIX> — The name of the
+variable is a prefix.
+In this case, a handler must implement additional logic to obtain the value
+of a specific variable.
+For example, all “C<arg_>” variables are processed by the
+same handler, which performs lookup in request arguments and returns the value
+of a specific argument.
+
+
+
+=back
+
+
+
+The function returns NULL in case of error or a pointer to
+C<ngx_http_variable_t> otherwise:
+
+    
+    struct ngx_http_variable_s {
+        ngx_str_t                     name;
+        ngx_http_set_variable_pt      set_handler;
+        ngx_http_get_variable_pt      get_handler;
+        uintptr_t                     data;
+        ngx_uint_t                    flags;
+        ngx_uint_t                    index;
+    };
+
+
+
+The C<get> and C<set> handlers
+are called to obtain or set the variable value,
+C<data> is passed to variable handlers, and
+C<index> holds assigned variable index used to reference
+the variable.
+
+
+
+
+
+Usually, a null-terminated static array of
+C<ngx_http_variable_t> structures is created
+by a module and processed at the preconfiguration stage to add variables
+into the configuration, for example:
+
+    
+    static ngx_http_variable_t  ngx_http_foo_vars[] = {
+    
+        { ngx_string("foo_v1"), NULL, ngx_http_foo_v1_variable, 0, 0, 0 },
+    
+          ngx_http_null_variable
+    };
+    
+    static ngx_int_t
+    ngx_http_foo_add_variables(ngx_conf_t *cf)
+    {
+        ngx_http_variable_t  *var, *v;
+    
+        for (v = ngx_http_foo_vars; v->name.len; v++) {
+            var = ngx_http_add_variable(cf, &v->name, v->flags);
+            if (var == NULL) {
+                return NGX_ERROR;
+            }
+    
+            var->get_handler = v->get_handler;
+            var->data = v->data;
+        }
+    
+        return NGX_OK;
+    }
+
+
+This function in the example is used to initialize
+the C<preconfiguration>
+field of the HTTP module context and is called before the parsing of HTTP
+configuration, so that the parser can refer to these variables.
+
+
+
+
+
+The C<get> handler is responsible for evaluating a variable
+in the context of a specific request, for example:
+
+    
+    static ngx_int_t
+    ngx_http_variable_connection(ngx_http_request_t *r,
+        ngx_http_variable_value_t *v, uintptr_t data)
+    {
+        u_char  *p;
+    
+        p = ngx_pnalloc(r->pool, NGX_ATOMIC_T_LEN);
+        if (p == NULL) {
+            return NGX_ERROR;
+        }
+    
+        v->len = ngx_sprintf(p, "%uA", r->connection->number) - p;
+        v->valid = 1;
+        v->no_cacheable = 0;
+        v->not_found = 0;
+        v->data = p;
+    
+        return NGX_OK;
+    }
+
+
+It returns C<NGX_ERROR> in case of internal error
+(for example, failed memory allocation) or C<NGX_OK> otherwise.
+To learn the status of variable evaluation, inspect the flags
+in C<ngx_http_variable_value_t> (see the description
+above).
+
+
+
+
+
+The C<set> handler allows setting the property
+referenced by the variable.
+For example, the set handler of the C<$limit_rate> variable
+modifies the request's C<limit_rate> field:
+
+    
+    ...
+    { ngx_string("limit_rate"), ngx_http_variable_request_set_size,
+      ngx_http_variable_request_get_size,
+      offsetof(ngx_http_request_t, limit_rate),
+      NGX_HTTP_VAR_CHANGEABLE|NGX_HTTP_VAR_NOCACHEABLE, 0 },
+    ...
+    
+    static void
+    ngx_http_variable_request_set_size(ngx_http_request_t *r,
+        ngx_http_variable_value_t *v, uintptr_t data)
+    {
+        ssize_t    s, *sp;
+        ngx_str_t  val;
+    
+        val.len = v->len;
+        val.data = v->data;
+    
+        s = ngx_parse_size(&val);
+    
+        if (s == NGX_ERROR) {
+            ngx_log_error(NGX_LOG_ERR, r->connection->log, 0,
+                          "invalid size \"%V\"", &val);
+            return;
+        }
+    
+        sp = (ssize_t *) ((char *) r + data);
+    
+        *sp = s;
+    
+        return;
+    }
+
+
+
+
+
+
+
+=head2 Complex values
+
+
+
+A complex value, despite its name, provides an easy way to evaluate
+expressions which can contain text, variables, and their combination.
+
+
+
+
+
+The complex value description in
+C<ngx_http_compile_complex_value> is compiled at the
+configuration stage into C<ngx_http_complex_value_t>
+which is used at runtime to obtain results of expression evaluation.
+
+
+    
+    ngx_str_t                         *value;
+    ngx_http_complex_value_t           cv;
+    ngx_http_compile_complex_value_t   ccv;
+    
+    value = cf->args->elts; /* directive arguments */
+    
+    ngx_memzero(&ccv, sizeof(ngx_http_compile_complex_value_t));
+    
+    ccv.cf = cf;
+    ccv.value = &value[1];
+    ccv.complex_value = &cv;
+    ccv.zero = 1;
+    ccv.conf_prefix = 1;
+    
+    if (ngx_http_compile_complex_value(&ccv) != NGX_OK) {
+        return NGX_CONF_ERROR;
+    }
+
+
+
+Here, C<ccv> holds all parameters that are required to
+initialize the complex value C<cv>:
+
+
+=over
+
+
+
+
+=item *
+
+C<cf> — Configuration pointer
+
+
+
+=item *
+
+C<value> — String to be parsed (input)
+
+
+
+=item *
+
+C<complex_value> — Compiled value (output)
+
+
+
+=item *
+
+C<zero> — Flag that enables zero-terminating value
+
+
+
+=item *
+
+C<conf_prefix> — Prefixes the result with the
+configuration prefix (the directory where nginx is currently looking for
+configuration)
+
+
+
+=item *
+
+C<root_prefix> — Prefixes the result with the root prefix
+(the normal nginx installation prefix)
+
+
+
+=back
+
+
+The C<zero> flag is useful when results are to be passed to
+libraries that require zero-terminated strings, and prefixes are handy when
+dealing with filenames.
+
+
+
+
+
+Upon successful compilation, C<cv.lengths>
+contains information about the presence of variables
+in the expression.
+The NULL value means that the expression contained static text only,
+and so can be stored in a simple string rather than as a complex value.
+
+
+
+
+
+The C<ngx_http_set_complex_value_slot()> is a convenient
+function used to initialize a complex value completely in the directive
+declaration itself.
+
+
+
+
+
+At runtime, a complex value can be calculated using the
+C<ngx_http_complex_value()> function:
+
+    
+    ngx_str_t  res;
+    
+    if (ngx_http_complex_value(r, &cv, &res) != NGX_OK) {
+        return NGX_ERROR;
+    }
+
+
+Given the request C<r> and previously compiled
+value C<cv>, the function evaluates the
+expression and writes the result to C<res>.
+
+
+
+
+=head2 Request redirection
+
+
+
+An HTTP request is always connected to a location via the
+C<loc_conf> field of the C<ngx_http_request_t>
+structure.
+This means that at any point the location configuration of any module can be
+retrieved from the request by calling
+C<ngx_http_get_module_loc_conf(r, module)>.
+Request location can change several times during the request's lifetime.
+Initially, a default server location of the default server is assigned to a
+request.
+If the request switches to a different server (chosen by the HTTP
+C<Host> header or SSL SNI extension), the request switches to the
+default location of that server as well.
+The next change of the location takes place at the
+C<NGX_HTTP_FIND_CONFIG_PHASE> request phase.
+At this phase a location is chosen by request URI among all non-named locations
+configured for the server.
+The
+L<ngx_http_rewrite_module|ngx_http_rewrite_module>
+can change the request URI at the
+C<NGX_HTTP_REWRITE_PHASE> request phase as a result of
+the L<rewrite|ngx_http_rewrite_module>
+directive and send the request back
+to the C<NGX_HTTP_FIND_CONFIG_PHASE> phase for selection of a
+new location based on the new URI.
+
+
+
+
+
+It is also possible to redirect a request to a new location at any point by
+calling one of
+C<ngx_http_internal_redirect(r, uri, args)> or
+C<ngx_http_named_location(r, name)>.
+
+
+
+
+
+The C<ngx_http_internal_redirect(r, uri, args)> function changes
+the request URI and returns the request to the
+C<NGX_HTTP_SERVER_REWRITE_PHASE> phase.
+The request proceeds with a server default location.
+Later at C<NGX_HTTP_FIND_CONFIG_PHASE> a new location is chosen
+based on the new request URI.
+
+
+
+
+
+The following example performs an internal redirect with the new request
+arguments.
+
+
+
+
+    
+    ngx_int_t
+    ngx_http_foo_redirect(ngx_http_request_t *r)
+    {
+        ngx_str_t  uri, args;
+    
+        ngx_str_set(&uri, "/foo");
+        ngx_str_set(&args, "bar=1");
+    
+        return ngx_http_internal_redirect(r, &uri, &args);
+    }
+
+
+
+
+
+The function C<ngx_http_named_location(r, name)> redirects
+a request to a named location.  The name of the location is passed as the
+argument.
+The location is looked up among all named locations of the current
+server, after which the requests switches to the
+C<NGX_HTTP_REWRITE_PHASE> phase.
+
+
+
+
+
+The following example performs a redirect to a named location @foo.
+
+
+
+
+    
+    ngx_int_t
+    ngx_http_foo_named_redirect(ngx_http_request_t *r)
+    {
+        ngx_str_t  name;
+    
+        ngx_str_set(&name, "foo");
+    
+        return ngx_http_named_location(r, &name);
+    }
+
+
+
+
+
+Both functions - C<ngx_http_internal_redirect(r, uri, args)>
+and C<ngx_http_named_location(r, name)> can be called when
+nginx modules have already stored some contexts in a request's
+C<ctx> field.
+It's possible for these contexts to become inconsistent with the new
+location configuration.
+To prevent inconsistency, all request contexts are
+erased by both redirect functions.
+
+
+
+
+
+Calling C<ngx_http_internal_redirect(r, uri, args)>
+or C<ngx_http_named_location(r, name)> increases the request
+C<count>.
+For consistent request reference counting, call
+C<ngx_http_finalize_request(r, NGX_DONE)> after redirecting the
+request.
+This will finalize current request code path and decrease the counter.
+
+
+
+
+
+Redirected and rewritten requests become internal and can access the
+L<internal|ngx_http_core_module>
+locations.
+Internal requests have the C<internal> flag set.
+
+
+
+
+=head2 Subrequests
+
+
+
+Subrequests are primarily used to insert output of one request into another,
+possibly mixed with other data.
+A subrequest looks like a normal request, but shares some data with its parent.
+In particular, all fields related to client input are shared
+because a subrequest does not receive any other input from the client.
+The request field C<parent> for a subrequest contains a link
+to its parent request and is NULL for the main request.
+The field C<main> contains a link to the main request in
+a group of requests.
+
+
+
+
+
+A subrequest starts in the C<NGX_HTTP_SERVER_REWRITE_PHASE>
+phase.
+It passes through the same subsequent phases as a normal request and is
+assigned a location based on its own URI.
+
+
+
+
+
+The output header in a subrequest is always ignored.
+The C<ngx_http_postpone_filter> places the subrequest's
+output body in the right position relative to other data produced
+by the parent request.
+
+
+
+
+
+Subrequests are related to the concept of active requests.
+A request C<r> is considered active if
+C<c-E<gt>data == r>, where C<c> is the client
+connection object.
+At any given point, only the active request in a request group is allowed
+to output its buffers to the client.
+An inactive request can still send its output to the filter chain, but it
+does not pass beyond the C<ngx_http_postpone_filter> and
+remains buffered by that filter until the request becomes active.
+Here are some rules of request activation:
+
+
+
+
+=over
+
+
+
+
+=item *
+
+Initially, the main request is active.
+
+
+
+=item *
+
+The first subrequest of an active request becomes active right after creation.
+
+
+
+=item *
+
+The C<ngx_http_postpone_filter> activates the next request
+in the active request's subrequest list, once all data prior to that request
+are sent.
+
+
+
+=item *
+
+When a request is finalized, its parent is activated.
+
+
+
+=back
+
+
+
+
+
+Create a subrequest by calling the function
+C<ngx_http_subrequest(r, uri, args, psr, ps, flags)>, where
+C<r> is the parent request, C<uri> and
+C<args> are the URI and arguments of the
+subrequest, C<psr> is the output parameter, which receives the
+newly created subrequest reference, C<ps> is a callback object
+for notifying the parent request that the subrequest is being finalized, and
+C<flags> is bitmask of flags.
+The following flags are available:
+
+
+
+
+=over
+
+
+
+
+=item *
+
+C<NGX_HTTP_SUBREQUEST_IN_MEMORY> - Output is not
+sent to the client, but rather stored in memory.
+The flag only affects subrequests which are processed by one of the proxying
+modules.
+After a subrequest is finalized its output is available in
+a C<r-E<gt>upstream-E<gt>buffer> of type C<ngx_buf_t>.
+
+
+
+=item *
+
+C<NGX_HTTP_SUBREQUEST_WAITED> - The subrequest's
+C<done> flag is set even if the subrequest is not active when
+it is finalized.
+This subrequest flag is used by the SSI filter.
+
+
+
+=item *
+
+C<NGX_HTTP_SUBREQUEST_CLONE> - The subrequest is created as a
+clone of its parent.
+It is started at the same location and proceeds from the same phase as the
+parent request.
+
+
+
+=back
+
+
+
+
+
+The following example creates a subrequest with the URI
+of C<E<sol>foo>.
+
+
+
+
+    
+    ngx_int_t            rc;
+    ngx_str_t            uri;
+    ngx_http_request_t  *sr;
+    
+    ...
+    
+    ngx_str_set(&uri, "/foo");
+    
+    rc = ngx_http_subrequest(r, &uri, NULL, &sr, NULL, 0);
+    if (rc == NGX_ERROR) {
+        /* error */
+    }
+
+
+
+
+
+This example clones the current request and sets a finalization callback for the
+subrequest.
+
+
+
+
+    
+    ngx_int_t
+    ngx_http_foo_clone(ngx_http_request_t *r)
+    {
+        ngx_http_request_t          *sr;
+        ngx_http_post_subrequest_t  *ps;
+    
+        ps = ngx_palloc(r->pool, sizeof(ngx_http_post_subrequest_t));
+        if (ps == NULL) {
+            return NGX_ERROR;
+        }
+    
+        ps->handler = ngx_http_foo_subrequest_done;
+        ps->data = "foo";
+    
+        return ngx_http_subrequest(r, &r->uri, &r->args, &sr, ps,
+                                   NGX_HTTP_SUBREQUEST_CLONE);
+    }
+    
+    
+    ngx_int_t
+    ngx_http_foo_subrequest_done(ngx_http_request_t *r, void *data, ngx_int_t rc)
+    {
+        char  *msg = (char *) data;
+    
+        ngx_log_error(NGX_LOG_INFO, r->connection->log, 0,
+                      "done subrequest r:%p msg:%s rc:%i", r, msg, rc);
+    
+        return rc;
+    }
+
+
+
+
+
+Subrequests are normally created in a body filter, in which case their output
+can be treated like the output from any explicit request.
+This means that eventually the output of a subrequest is sent to the client,
+after all explicit buffers that are passed before subrequest creation and
+before any buffers that are passed after creation.
+This ordering is preserved even for large hierarchies of subrequests.
+The following example inserts output from a subrequest after all request data
+buffers, but before the final buffer with the C<last_buf> flag.
+
+
+
+
+    
+    ngx_int_t
+    ngx_http_foo_body_filter(ngx_http_request_t *r, ngx_chain_t *in)
+    {
+        ngx_int_t                   rc;
+        ngx_buf_t                  *b;
+        ngx_uint_t                  last;
+        ngx_chain_t                *cl, out;
+        ngx_http_request_t         *sr;
+        ngx_http_foo_filter_ctx_t  *ctx;
+    
+        ctx = ngx_http_get_module_ctx(r, ngx_http_foo_filter_module);
+        if (ctx == NULL) {
+            return ngx_http_next_body_filter(r, in);
+        }
+    
+        last = 0;
+    
+        for (cl = in; cl; cl = cl->next) {
+            if (cl->buf->last_buf) {
+                cl->buf->last_buf = 0;
+                cl->buf->last_in_chain = 1;
+                cl->buf->sync = 1;
+                last = 1;
+            }
+        }
+    
+        /* Output explicit output buffers */
+    
+        rc = ngx_http_next_body_filter(r, in);
+    
+        if (rc == NGX_ERROR || !last) {
+            return rc;
+        }
+    
+        /*
+         * Create the subrequest.  The output of the subrequest
+         * will automatically be sent after all preceding buffers,
+         * but before the last_buf buffer passed later in this function.
+         */
+    
+        if (ngx_http_subrequest(r, ctx->uri, NULL, &sr, NULL, 0) != NGX_OK) {
+            return NGX_ERROR;
+        }
+    
+        ngx_http_set_ctx(r, NULL, ngx_http_foo_filter_module);
+    
+        /* Output the final buffer with the last_buf flag */
+    
+        b = ngx_calloc_buf(r->pool);
+        if (b == NULL) {
+            return NGX_ERROR;
+        }
+    
+        b->last_buf = 1;
+    
+        out.buf = b;
+        out.next = NULL;
+    
+        return ngx_http_output_filter(r, &out);
+    }
+
+
+
+
+
+A subrequest can also be created for other purposes than data output.
+For example, the L<ngx_http_auth_request_module|ngx_http_auth_request_module> module
+creates a subrequest at the C<NGX_HTTP_ACCESS_PHASE> phase.
+To disable output at this point, the
+C<header_only> flag is set on the subrequest.
+This prevents the subrequest body from being sent to the client.
+Note that the subrequest's header is never sent to the client.
+The result of the subrequest can be analyzed in the callback handler.
+
+
+
+
+=head2 Request finalization
+
+
+
+An HTTP request is finalized by calling the function
+C<ngx_http_finalize_request(r, rc)>.
+It is usually finalized by the content handler after all output buffers
+are sent to the filter chain.
+At this point all of the output might not be sent to the client,
+with some of it remaining buffered somewhere along the filter chain.
+If it is, the C<ngx_http_finalize_request(r, rc)> function
+automatically installs a special handler C<ngx_http_writer(r)>
+to finish sending the output.
+A request is also finalized in case of an error or if a standard HTTP response
+code needs to be returned to the client.
+
+
+
+
+
+The function C<ngx_http_finalize_request(r, rc)> expects the
+following C<rc> values:
+
+
+
+
+=over
+
+
+
+
+=item *
+
+C<NGX_DONE> - Fast finalization.
+Decrement the request C<count> and destroy the request if it
+reaches zero.
+The client connection can be used for more requests after the current request
+is destroyed.
+
+
+
+=item *
+
+C<NGX_ERROR>, C<NGX_HTTP_REQUEST_TIME_OUT>
+(C<408>), C<NGX_HTTP_CLIENT_CLOSED_REQUEST>
+(C<499>) - Error finalization.
+Terminate the request as soon as possible and close the client connection.
+
+
+
+=item *
+
+C<NGX_HTTP_CREATED> (C<201>),
+C<NGX_HTTP_NO_CONTENT> (C<204>), codes greater
+than or equal to C<NGX_HTTP_SPECIAL_RESPONSE>
+(C<300>) - Special response finalization.
+For these values nginx either sends to the client a default response page for
+the code or performs the internal redirect to an
+L<ngx_http_core_module> location if that
+is configured for the code.
+
+
+
+=item *
+
+Other codes are considered successful finalization codes and might activate the
+request writer to finish sending the response body.
+Once the body is completely sent, the request C<count>
+is decremented.
+If it reaches zero, the request is destroyed, but the client connection can
+still be used for other requests.
+If C<count> is positive, there are unfinished activities
+within the request, which will be finalized at a later point.
+
+
+
+=back
+
+
+
+
+=head2 Request body
+
+
+
+For dealing with the body of a client request, nginx provides the
+C<ngx_http_read_client_request_body(r, post_handler)> and
+C<ngx_http_discard_request_body(r)> functions.
+The first function reads the request body and makes it available via the
+C<request_body> request field.
+The second function instructs nginx to discard (read and ignore) the request
+body.
+One of these functions must be called for every request.
+Normally, the content handler makes the call.
+
+
+
+
+
+Reading or discarding the client request body from a subrequest is not allowed.
+It must always be done in the main request.
+When a subrequest is created, it inherits the parent's
+C<request_body> object which can be used by the subrequest if
+the main request has previously read the request body.
+
+
+
+
+
+The function
+C<ngx_http_read_client_request_body(r, post_handler)> starts
+the process of reading the request body.
+When the body is completely read, the C<post_handler> callback
+is called to continue processing the request.
+If the request body is missing or has already been read, the callback is called
+immediately.
+The function
+C<ngx_http_read_client_request_body(r, post_handler)>
+allocates the C<request_body> request field of type
+C<ngx_http_request_body_t>.
+The field C<bufs> of this object keeps the result as a buffer
+chain.
+The body can be saved in memory buffers or file buffers, if the capacity
+specified by the
+L<ngx_http_core_module>
+directive is not enough to fit the entire body in memory.
+
+
+
+
+
+The following example reads a client request body and returns its size.
+
+
+
+
+    
+    ngx_int_t
+    ngx_http_foo_content_handler(ngx_http_request_t *r)
+    {
+        ngx_int_t  rc;
+    
+        rc = ngx_http_read_client_request_body(r, ngx_http_foo_init);
+    
+        if (rc >= NGX_HTTP_SPECIAL_RESPONSE) {
+            /* error */
+            return rc;
+        }
+    
+        return NGX_DONE;
+    }
+    
+    
+    void
+    ngx_http_foo_init(ngx_http_request_t *r)
+    {
+        off_t         len;
+        ngx_buf_t    *b;
+        ngx_int_t     rc;
+        ngx_chain_t  *in, out;
+    
+        if (r->request_body == NULL) {
+            ngx_http_finalize_request(r, NGX_HTTP_INTERNAL_SERVER_ERROR);
+            return;
+        }
+    
+        len = 0;
+    
+        for (in = r->request_body->bufs; in; in = in->next) {
+            len += ngx_buf_size(in->buf);
+        }
+    
+        b = ngx_create_temp_buf(r->pool, NGX_OFF_T_LEN);
+        if (b == NULL) {
+            ngx_http_finalize_request(r, NGX_HTTP_INTERNAL_SERVER_ERROR);
+            return;
+        }
+    
+        b->last = ngx_sprintf(b->pos, "%O", len);
+        b->last_buf = (r == r->main) ? 1: 0;
+        b->last_in_chain = 1;
+    
+        r->headers_out.status = NGX_HTTP_OK;
+        r->headers_out.content_length_n = b->last - b->pos;
+    
+        rc = ngx_http_send_header(r);
+    
+        if (rc == NGX_ERROR || rc > NGX_OK || r->header_only) {
+            ngx_http_finalize_request(r, rc);
+            return;
+        }
+    
+        out.buf = b;
+        out.next = NULL;
+    
+        rc = ngx_http_output_filter(r, &out);
+    
+        ngx_http_finalize_request(r, rc);
+    }
+
+
+
+
+
+The following fields of the request determine how the request body is read:
+
+
+
+
+=over
+
+
+
+
+=item *
+
+C<request_body_in_single_buf> - Read the body to a single memory
+buffer.
+
+
+
+=item *
+
+C<request_body_in_file_only> - Always read the body to a file,
+even if fits in the memory buffer.
+
+
+
+=item *
+
+C<request_body_in_persistent_file> - Do not unlink the file
+immediately after creation.
+A file with this flag can be moved to another directory.
+
+
+
+=item *
+
+C<request_body_in_clean_file> - Unlink the file when the
+request is finalized.
+This can be useful when a file was supposed to be moved to another directory
+but was not moved for some reason.
+
+
+
+=item *
+
+C<request_body_file_group_access> - Enable group access to the
+file by replacing the default 0600 access mask with 0660.
+
+
+
+=item *
+
+C<request_body_file_log_level> - Severity level at which to
+log file errors.
+
+
+
+=item *
+
+C<request_body_no_buffering> - Read the request body without
+buffering.
+
+
+
+=back
+
+
+
+
+
+The C<request_body_no_buffering> flag enables the
+unbuffered mode of reading a request body.
+In this mode, after calling
+C<ngx_http_read_client_request_body()>, the
+C<bufs> chain might keep only a part of the body.
+To read the next part, call the
+C<ngx_http_read_unbuffered_request_body(r)> function.
+The return value C<NGX_AGAIN> and the request flag
+C<reading_body> indicate that more data is available.
+If C<bufs> is NULL after calling this function, there is
+nothing to read at the moment.
+The request callback C<read_event_handler> will be called when
+the next part of request body is available.
+
+
+
+
+=head2 Response
+
+
+
+In nginx an HTTP response is produced by sending the response header followed by
+the optional response body.
+Both header and body are passed through a chain of filters and eventually get
+written to the client socket.
+An nginx module can install its handler into the header or body filter chain
+and process the output coming from the previous handler.
+
+
+
+
+
+=head3 Response header
+
+
+
+The C<ngx_http_send_header(r)>
+function sends the output header.
+Do not call this function until C<r-E<gt>headers_out>
+contains all of the data  required to produce the HTTP response header.
+The C<status> field in C<r-E<gt>headers_out>
+must always be set.
+If the response status indicates that a response body follows the header,
+C<content_length_n> can be set as well.
+The default value for this field is C<-1>,
+which means that the body size is unknown.
+In this case, chunked transfer encoding is used.
+To output an arbitrary header, append the C<headers> list.
+
+
+
+
+    
+    static ngx_int_t
+    ngx_http_foo_content_handler(ngx_http_request_t *r)
+    {
+        ngx_int_t         rc;
+        ngx_table_elt_t  *h;
+    
+        /* send header */
+    
+        r->headers_out.status = NGX_HTTP_OK;
+        r->headers_out.content_length_n = 3;
+    
+        /* X-Foo: foo */
+    
+        h = ngx_list_push(&r->headers_out.headers);
+        if (h == NULL) {
+            return NGX_ERROR;
+        }
+    
+        h->hash = 1;
+        ngx_str_set(&h->key, "X-Foo");
+        ngx_str_set(&h->value, "foo");
+    
+        rc = ngx_http_send_header(r);
+    
+        if (rc == NGX_ERROR || rc > NGX_OK || r->header_only) {
+            return rc;
+        }
+    
+        /* send body */
+    
+        ...
+    }
+
+
+
+
+=head3 Header filters
+
+
+
+The C<ngx_http_send_header(r)> function invokes the header
+filter chain by calling the first header filter handler stored in
+the C<ngx_http_top_header_filter> variable.
+It's assumed that every header handler calls the next handler in the chain
+until the final handler C<ngx_http_header_filter(r)> is called.
+The final header handler constructs the HTTP response based on
+C<r-E<gt>headers_out> and passes it to the
+C<ngx_http_writer_filter> for output.
+
+
+
+
+
+To add a handler to the header filter chain, store its address in
+the global variable C<ngx_http_top_header_filter>
+at configuration time.
+The previous handler address is normally stored in a static variable in a module
+and is called by the newly added handler before exiting.
+
+
+
+
+
+The following example of a header filter module adds the HTTP header
+"C<X-Foo: foo>" to every response with status
+C<200>.
+
+
+
+
+    
+    #include <ngx_config.h>
+    #include <ngx_core.h>
+    #include <ngx_http.h>
+    
+    
+    static ngx_int_t ngx_http_foo_header_filter(ngx_http_request_t *r);
+    static ngx_int_t ngx_http_foo_header_filter_init(ngx_conf_t *cf);
+    
+    
+    static ngx_http_module_t  ngx_http_foo_header_filter_module_ctx = {
+        NULL,                                   /* preconfiguration */
+        ngx_http_foo_header_filter_init,        /* postconfiguration */
+    
+        NULL,                                   /* create main configuration */
+        NULL,                                   /* init main configuration */
+    
+        NULL,                                   /* create server configuration */
+        NULL,                                   /* merge server configuration */
+    
+        NULL,                                   /* create location configuration */
+        NULL                                    /* merge location configuration */
+    };
+    
+    
+    ngx_module_t  ngx_http_foo_header_filter_module = {
+        NGX_MODULE_V1,
+        &ngx_http_foo_header_filter_module_ctx, /* module context */
+        NULL,                                   /* module directives */
+        NGX_HTTP_MODULE,                        /* module type */
+        NULL,                                   /* init master */
+        NULL,                                   /* init module */
+        NULL,                                   /* init process */
+        NULL,                                   /* init thread */
+        NULL,                                   /* exit thread */
+        NULL,                                   /* exit process */
+        NULL,                                   /* exit master */
+        NGX_MODULE_V1_PADDING
+    };
+    
+    
+    static ngx_http_output_header_filter_pt  ngx_http_next_header_filter;
+    
+    
+    static ngx_int_t
+    ngx_http_foo_header_filter(ngx_http_request_t *r)
+    {
+        ngx_table_elt_t  *h;
+    
+        /*
+         * The filter handler adds "X-Foo: foo" header
+         * to every HTTP 200 response
+         */
+    
+        if (r->headers_out.status != NGX_HTTP_OK) {
+            return ngx_http_next_header_filter(r);
+        }
+    
+        h = ngx_list_push(&r->headers_out.headers);
+        if (h == NULL) {
+            return NGX_ERROR;
+        }
+    
+        h->hash = 1;
+        ngx_str_set(&h->key, "X-Foo");
+        ngx_str_set(&h->value, "foo");
+    
+        return ngx_http_next_header_filter(r);
+    }
+    
+    
+    static ngx_int_t
+    ngx_http_foo_header_filter_init(ngx_conf_t *cf)
+    {
+        ngx_http_next_header_filter = ngx_http_top_header_filter;
+        ngx_http_top_header_filter = ngx_http_foo_header_filter;
+    
+        return NGX_OK;
+    }
+
+
+
+
+=head2 Response body
+
+
+
+To send the response body, call the
+C<ngx_http_output_filter(r, cl)> function.
+The function can be called multiple times.
+Each time, it sends a part of the response body in the form of a buffer chain.
+Set the C<last_buf> flag in the last body buffer.
+
+
+
+
+
+The following example produces a complete HTTP response with "foo" as its body.
+For the example to work as subrequest as well as a main request,
+the C<last_in_chain> flag is set in the last buffer
+of the output.
+The C<last_buf> flag is set only for the main request because
+the last buffer for a subrequest does not end the entire output.
+
+
+
+
+    
+    static ngx_int_t
+    ngx_http_bar_content_handler(ngx_http_request_t *r)
+    {
+        ngx_int_t     rc;
+        ngx_buf_t    *b;
+        ngx_chain_t   out;
+    
+        /* send header */
+    
+        r->headers_out.status = NGX_HTTP_OK;
+        r->headers_out.content_length_n = 3;
+    
+        rc = ngx_http_send_header(r);
+    
+        if (rc == NGX_ERROR || rc > NGX_OK || r->header_only) {
+            return rc;
+        }
+    
+        /* send body */
+    
+        b = ngx_calloc_buf(r->pool);
+        if (b == NULL) {
+            return NGX_ERROR;
+        }
+    
+        b->last_buf = (r == r->main) ? 1: 0;
+        b->last_in_chain = 1;
+    
+        b->memory = 1;
+    
+        b->pos = (u_char *) "foo";
+        b->last = b->pos + 3;
+    
+        out.buf = b;
+        out.next = NULL;
+    
+        return ngx_http_output_filter(r, &out);
+    }
+
+
+
+
+=head2 Body filters
+
+
+
+The function C<ngx_http_output_filter(r, cl)> invokes the
+body filter chain by calling the first body filter handler stored in
+the C<ngx_http_top_body_filter> variable.
+It's assumed that every body handler calls the next handler in the chain until
+the final handler C<ngx_http_write_filter(r, cl)> is called.
+
+
+
+
+
+A body filter handler receives a chain of buffers.
+The handler is supposed to process the buffers and pass a possibly new chain to
+the next handler.
+It's worth noting that the chain links C<ngx_chain_t> of the
+incoming chain belong to the caller, and must not be reused or changed.
+Right after the handler completes, the caller can use its output chain links
+to keep track of the buffers it has sent.
+To save the buffer chain or to substitute some buffers before passing to the
+next filter, a handler needs to allocate its own chain links.
+
+
+
+
+
+Following is an example of a simple body filter that counts the number of
+bytes in the body.
+The result is available as the C<$counter> variable which can be
+used in the access log.
+
+
+
+
+    
+    #include <ngx_config.h>
+    #include <ngx_core.h>
+    #include <ngx_http.h>
+    
+    
+    typedef struct {
+        off_t  count;
+    } ngx_http_counter_filter_ctx_t;
+    
+    
+    static ngx_int_t ngx_http_counter_body_filter(ngx_http_request_t *r,
+        ngx_chain_t *in);
+    static ngx_int_t ngx_http_counter_variable(ngx_http_request_t *r,
+        ngx_http_variable_value_t *v, uintptr_t data);
+    static ngx_int_t ngx_http_counter_add_variables(ngx_conf_t *cf);
+    static ngx_int_t ngx_http_counter_filter_init(ngx_conf_t *cf);
+    
+    
+    static ngx_http_module_t  ngx_http_counter_filter_module_ctx = {
+        ngx_http_counter_add_variables,        /* preconfiguration */
+        ngx_http_counter_filter_init,          /* postconfiguration */
+    
+        NULL,                                  /* create main configuration */
+        NULL,                                  /* init main configuration */
+    
+        NULL,                                  /* create server configuration */
+        NULL,                                  /* merge server configuration */
+    
+        NULL,                                  /* create location configuration */
+        NULL                                   /* merge location configuration */
+    };
+    
+    
+    ngx_module_t  ngx_http_counter_filter_module = {
+        NGX_MODULE_V1,
+        &ngx_http_counter_filter_module_ctx,   /* module context */
+        NULL,                                  /* module directives */
+        NGX_HTTP_MODULE,                       /* module type */
+        NULL,                                  /* init master */
+        NULL,                                  /* init module */
+        NULL,                                  /* init process */
+        NULL,                                  /* init thread */
+        NULL,                                  /* exit thread */
+        NULL,                                  /* exit process */
+        NULL,                                  /* exit master */
+        NGX_MODULE_V1_PADDING
+    };
+    
+    
+    static ngx_http_output_body_filter_pt  ngx_http_next_body_filter;
+    
+    static ngx_str_t  ngx_http_counter_name = ngx_string("counter");
+    
+    
+    static ngx_int_t
+    ngx_http_counter_body_filter(ngx_http_request_t *r, ngx_chain_t *in)
+    {
+        ngx_chain_t                    *cl;
+        ngx_http_counter_filter_ctx_t  *ctx;
+    
+        ctx = ngx_http_get_module_ctx(r, ngx_http_counter_filter_module);
+        if (ctx == NULL) {
+            ctx = ngx_pcalloc(r->pool, sizeof(ngx_http_counter_filter_ctx_t));
+            if (ctx == NULL) {
+                return NGX_ERROR;
+            }
+    
+            ngx_http_set_ctx(r, ctx, ngx_http_counter_filter_module);
+        }
+    
+        for (cl = in; cl; cl = cl->next) {
+            ctx->count += ngx_buf_size(cl->buf);
+        }
+    
+        return ngx_http_next_body_filter(r, in);
+    }
+    
+    
+    static ngx_int_t
+    ngx_http_counter_variable(ngx_http_request_t *r, ngx_http_variable_value_t *v,
+        uintptr_t data)
+    {
+        u_char                         *p;
+        ngx_http_counter_filter_ctx_t  *ctx;
+    
+        ctx = ngx_http_get_module_ctx(r, ngx_http_counter_filter_module);
+        if (ctx == NULL) {
+            v->not_found = 1;
+            return NGX_OK;
+        }
+    
+        p = ngx_pnalloc(r->pool, NGX_OFF_T_LEN);
+        if (p == NULL) {
+            return NGX_ERROR;
+        }
+    
+        v->data = p;
+        v->len = ngx_sprintf(p, "%O", ctx->count) - p;
+        v->valid = 1;
+        v->no_cacheable = 0;
+        v->not_found = 0;
+    
+        return NGX_OK;
+    }
+    
+    
+    static ngx_int_t
+    ngx_http_counter_add_variables(ngx_conf_t *cf)
+    {
+        ngx_http_variable_t  *var;
+    
+        var = ngx_http_add_variable(cf, &ngx_http_counter_name, 0);
+        if (var == NULL) {
+            return NGX_ERROR;
+        }
+    
+        var->get_handler = ngx_http_counter_variable;
+    
+        return NGX_OK;
+    }
+    
+    
+    static ngx_int_t
+    ngx_http_counter_filter_init(ngx_conf_t *cf)
+    {
+        ngx_http_next_body_filter = ngx_http_top_body_filter;
+        ngx_http_top_body_filter = ngx_http_counter_body_filter;
+    
+        return NGX_OK;
+    }
+
+
+
+
+=head2 Building filter modules
+
+
+
+When writing a body or header filter, pay special attention to the filter's
+position in the filter order.
+There's a number of header and body filters registered by nginx standard
+modules.
+The nginx standard modules register a number of head and body filters and it's
+important to register a new filter module in the right place with respect to
+them.
+Normally, modules register filters in their postconfiguration handlers.
+The order in which filters are called during processing is obviously the
+reverse of the order in which they are registered.
+
+
+
+
+
+For third-party filter modules nginx provides a special slot
+C<HTTP_AUX_FILTER_MODULES>.
+To register a filter module in this slot, set
+the C<ngx_module_type> variable to
+C<HTTP_AUX_FILTER> in the module's configuration.
+
+
+
+
+
+The following example shows a filter module config file assuming
+for a module with just
+one source file, C<ngx_http_foo_filter_module.c>.
+
+
+
+
+    
+    ngx_module_type=HTTP_AUX_FILTER
+    ngx_module_name=ngx_http_foo_filter_module
+    ngx_module_srcs="$ngx_addon_dir/ngx_http_foo_filter_module.c"
+    
+    . auto/module
+
+
+
+
+=head2 Buffer reuse
+
+
+
+When issuing or altering a stream of buffers, it's often desirable to reuse the
+allocated buffers.
+A standard and widely adopted approach in nginx code is to keep
+two buffer chains for this purpose:
+C<free> and C<busy>.
+The C<free> chain keeps all free buffers,
+which can be reused.
+The C<busy> chain keeps all buffers sent by the current
+module that are still in use by some other filter handler.
+A buffer is considered in use if its size is greater than zero.
+Normally, when a buffer is consumed by a filter, its C<pos>
+(or C<file_pos> for a file buffer) is moved towards
+C<last> (C<file_last> for a file buffer).
+Once a buffer is completely consumed, it's ready to be reused.
+To add newly freed buffers to the C<free> chain
+it's enough to iterate over the C<busy> chain and move the zero
+size buffers at the head of it to C<free>.
+This operation is so common that there is a special function for it,
+C<ngx_chain_update_chains(free, busy, out, tag)>.
+The function appends the output chain C<out> to
+C<busy> and moves free buffers from the top of
+C<busy> to C<free>.
+Only the buffers with the specified C<tag> are reused.
+This lets a module reuse only the buffers that it allocated itself.
+
+
+
+
+
+The following example is a body filter that inserts the string “foo” before each
+incoming buffer.
+The new buffers allocated by the module are reused if possible.
+Note that for this example to work properly, setting up a
+header filter
+and resetting C<content_length_n> to C<-1>
+is also required, but the relevant code is not provided here.
+
+
+
+
+    
+    typedef struct {
+        ngx_chain_t  *free;
+        ngx_chain_t  *busy;
+    }  ngx_http_foo_filter_ctx_t;
+    
+    
+    ngx_int_t
+    ngx_http_foo_body_filter(ngx_http_request_t *r, ngx_chain_t *in)
+    {
+        ngx_int_t                   rc;
+        ngx_buf_t                  *b;
+        ngx_chain_t                *cl, *tl, *out, **ll;
+        ngx_http_foo_filter_ctx_t  *ctx;
+    
+        ctx = ngx_http_get_module_ctx(r, ngx_http_foo_filter_module);
+        if (ctx == NULL) {
+            ctx = ngx_pcalloc(r->pool, sizeof(ngx_http_foo_filter_ctx_t));
+            if (ctx == NULL) {
+                return NGX_ERROR;
+            }
+    
+            ngx_http_set_ctx(r, ctx, ngx_http_foo_filter_module);
+        }
+    
+        /* create a new chain "out" from "in" with all the changes */
+    
+        ll = &out;
+    
+        for (cl = in; cl; cl = cl->next) {
+    
+            /* append "foo" in a reused buffer if possible */
+    
+            tl = ngx_chain_get_free_buf(r->pool, &ctx->free);
+            if (tl == NULL) {
+                return NGX_ERROR;
+            }
+    
+            b = tl->buf;
+            b->tag = (ngx_buf_tag_t) &ngx_http_foo_filter_module;
+            b->memory = 1;
+            b->pos = (u_char *) "foo";
+            b->last = b->pos + 3;
+    
+            *ll = tl;
+            ll = &tl->next;
+    
+            /* append the next incoming buffer */
+    
+            tl = ngx_alloc_chain_link(r->pool);
+            if (tl == NULL) {
+                return NGX_ERROR;
+            }
+    
+            tl->buf = cl->buf;
+            *ll = tl;
+            ll = &tl->next;
+        }
+    
+        *ll = NULL;
+    
+        /* send the new chain */
+    
+        rc = ngx_http_next_body_filter(r, out);
+    
+        /* update "busy" and "free" chains for reuse */
+    
+        ngx_chain_update_chains(r->pool, &ctx->free, &ctx->busy, &out,
+                                (ngx_buf_tag_t) &ngx_http_foo_filter_module);
+    
+        return rc;
+    }
+
+
+
+
+=head2 Load balancing
+
+
+
+The
+L<ngx_http_upstream_module|ngx_http_upstream_module>
+provides the basic functionality needed to pass requests to remote servers.
+Modules that implement specific protocols, such as HTTP or FastCGI, use
+this functionality.
+The module also provides an interface for creating custom
+load-balancing modules and implements a default round-robin method.
+
+
+
+
+
+The L<ngx_http_upstream_module>
+and L<ngx_http_upstream_module>
+modules implement alternative load-balancing methods, but
+are actually implemented as extensions of the upstream round-robin
+module and share a lot of code with it, such as the representation
+of a server group.
+The L<ngx_http_upstream_module> module
+is an independent module that extends upstream functionality.
+
+
+
+
+
+The
+L<ngx_http_upstream_module|ngx_http_upstream_module>
+can be configured explicitly by placing the corresponding
+L<ngx_http_upstream_module> block into
+the configuration file, or implicitly by using directives
+such as L<ngx_http_proxy_module>
+that accept a URL that gets evaluated at some point into a list of servers.
+The alternative load-balancing methods are available only with an explicit
+upstream configuration.
+The upstream module configuration has its own directive context
+C<NGX_HTTP_UPS_CONF>.
+The structure is defined as follows:
+
+    
+    struct ngx_http_upstream_srv_conf_s {
+        ngx_http_upstream_peer_t         peer;
+        void                           **srv_conf;
+    
+        ngx_array_t                     *servers;  /* ngx_http_upstream_server_t */
+    
+        ngx_uint_t                       flags;
+        ngx_str_t                        host;
+        u_char                          *file_name;
+        ngx_uint_t                       line;
+        in_port_t                        port;
+        ngx_uint_t                       no_port;  /* unsigned no_port:1 */
+    
+    #if (NGX_HTTP_UPSTREAM_ZONE)
+        ngx_shm_zone_t                  *shm_zone;
+    #endif
+    };
+
+
+
+
+=over
+
+
+
+
+=item *
+
+C<srv_conf> — Configuration context of upstream modules.
+
+
+
+=item *
+
+C<servers> — Array of
+C<ngx_http_upstream_server_t>, the result of parsing a set of
+L<ngx_http_upstream_module> directives
+in the C<upstream> block.
+
+
+
+=item *
+
+C<flags> — Flags that mostly mark which features
+are supported by the load-balancing method.
+The features are configured as parameters of
+the L<ngx_http_upstream_module> directive:
+
+
+
+=over
+
+
+
+
+=item *
+
+C<NGX_HTTP_UPSTREAM_CREATE> — Distinguishes explicitly
+defined upstreams from those that are automatically created by the
+L<ngx_http_proxy_module> directive
+and “friends”
+(FastCGI, SCGI, etc.)
+
+
+
+=item *
+
+C<NGX_HTTP_UPSTREAM_WEIGHT> — The “C<weight>”
+parameter is supported
+
+
+
+=item *
+
+C<NGX_HTTP_UPSTREAM_MAX_FAILS> — The
+“C<max_fails>” parameter is supported
+
+
+
+=item *
+
+C<NGX_HTTP_UPSTREAM_FAIL_TIMEOUT> —
+The “C<fail_timeout>” parameter is supported
+
+
+
+=item *
+
+C<NGX_HTTP_UPSTREAM_DOWN> — The “C<down>”
+parameter is supported
+
+
+
+=item *
+
+C<NGX_HTTP_UPSTREAM_BACKUP> — The “C<backup>”
+parameter is supported
+
+
+
+=item *
+
+C<NGX_HTTP_UPSTREAM_MAX_CONNS> — The
+“C<max_conns>” parameter is supported
+
+
+
+=back
+
+
+
+
+
+
+=item *
+
+C<host> — Name of the upstream.
+
+
+
+=item *
+
+C<file_name, line> — Name of the configuration file
+and the line where the C<upstream> block is located.
+
+
+
+=item *
+
+C<port> and C<no_port> — Not used for
+explicitly defined upstream groups.
+
+
+
+=item *
+
+C<shm_zone> — Shared memory zone used by this upstream group,
+if any.
+
+
+
+=item *
+
+C<peer> — object that holds generic methods for
+initializing upstream configuration:
+
+
+    
+    typedef struct {
+        ngx_http_upstream_init_pt        init_upstream;
+        ngx_http_upstream_init_peer_pt   init;
+        void                            *data;
+    } ngx_http_upstream_peer_t;
+
+
+A module that implements a load-balancing algorithm must set these
+methods and initialize private C<data>.
+If C<init_upstream> was not initialized during configuration
+parsing, C<ngx_http_upstream_module> sets it to the default
+C<ngx_http_upstream_init_round_robin> algorithm.
+
+
+=over
+
+
+
+=item *
+
+C<init_upstream(cf, us)> — Configuration-time
+method responsible for initializing a group of servers and
+initializing the C<init()> method in case of success.
+A typical load-balancing module uses a list of servers in the
+C<upstream> block
+to create an efficient data structure that it uses and saves its own
+configuration to the C<data> field.
+
+
+
+=item *
+
+C<init(r, us)> — Initializes a per-request
+C<ngx_http_upstream_peer_t.peer> structure that is used for
+load balancing (not to be confused with the
+C<ngx_http_upstream_srv_conf_t.peer> described above which
+is per-upstream).
+It is passed as the C<data> argument to all callbacks that
+deal with server selection.
+
+
+=back
+
+
+
+
+
+=back
+
+
+
+
+
+
+
+When nginx has to pass a request to another host for processing, it uses
+the configured load-balancing method to obtain an address to connect to.
+The method is obtained from the
+C<ngx_http_upstream_t.peer> object
+of type C<ngx_peer_connection_t>:
+
+    
+    struct ngx_peer_connection_s {
+        ...
+    
+        struct sockaddr                 *sockaddr;
+        socklen_t                        socklen;
+        ngx_str_t                       *name;
+    
+        ngx_uint_t                       tries;
+    
+        ngx_event_get_peer_pt            get;
+        ngx_event_free_peer_pt           free;
+        ngx_event_notify_peer_pt         notify;
+        void                            *data;
+    
+    #if (NGX_SSL || NGX_COMPAT)
+        ngx_event_set_peer_session_pt    set_session;
+        ngx_event_save_peer_session_pt   save_session;
+    #endif
+    
+        ...
+    };
+
+
+
+The structure has the following fields:
+
+
+=over
+
+
+
+=item *
+
+C<sockaddr>, C<socklen>,
+C<name> — Address of the upstream server to connect to;
+this is the output parameter of a load-balancing method.
+
+
+
+=item *
+
+C<data> — The per-request data of a load-balancing method;
+keeps the state of the selection algorithm and usually includes the link
+to the upstream configuration.
+It is passed as an argument to all methods that deal with server selection
+(see below).
+
+
+
+=item *
+
+C<tries> — Allowed
+L<number|ngx_http_proxy_module>
+of attempts to connect to an upstream server.
+
+
+
+=item *
+
+C<get>, C<free>, C<notify>,
+C<set_session>, and C<save_session>
+- Methods of the load-balancing module, described below.
+
+
+
+=back
+
+
+
+
+
+
+
+
+All methods accept at least two arguments: a peer connection object
+C<pc> and the C<data> created by
+C<ngx_http_upstream_srv_conf_t.peer.init()>.
+Note that it might differ from C<pc.data> due
+to “chaining” of load-balancing modules.
+
+
+
+
+
+
+
+=over
+
+
+
+=item *
+
+C<get(pc, data)> — The method called when the upstream
+module is ready to pass a request to an upstream server and needs to know
+its address.
+The method has to fill the C<sockaddr>,
+C<socklen>, and C<name> fields of
+C<ngx_peer_connection_t> structure.
+The return is one of:
+
+
+=over
+
+
+
+
+=item *
+
+C<NGX_OK> — Server was selected.
+
+
+
+=item *
+
+C<NGX_ERROR> — Internal error occurred.
+
+
+
+=item *
+
+C<NGX_BUSY> — no servers are currently available.
+This can happen due to many reasons, including: the dynamic server group is
+empty, all servers in the group are in the failed state, or
+all servers in the group are already
+handling the maximum number of connections.
+
+
+
+=item *
+
+C<NGX_DONE> — the underlying connection was reused and there
+is no need to create a new connection to the upstream server.
+This value is set by the C<keepalive> module.
+
+=back
+
+
+
+
+
+
+=item *
+
+C<free(pc, data, state)> — The method called when an
+upstream module has finished work with a particular server.
+The C<state> argument is the completion status of the upstream
+connection, a bitmask with the following possible values:
+
+
+=over
+
+
+
+
+=item *
+
+C<NGX_PEER_FAILED> — Attempt was
+L<unsuccessful|ngx_http_upstream_module>
+
+
+
+=item *
+
+C<NGX_PEER_NEXT> — A special case when upstream server
+returns codes C<403> or C<404>,
+which are not considered a
+L<failure|ngx_http_upstream_module>.
+
+
+
+=item *
+
+C<NGX_PEER_KEEPALIVE> — Currently unused
+
+
+
+=back
+
+
+
+This method also decrements the C<tries> counter.
+
+
+
+
+=item *
+
+C<notify(pc, data, type)> — Currently unused
+in the OSS version.
+
+
+
+=item *
+
+C<set_session(pc, data)> and
+C<save_session(pc, data)>
+— SSL-specific methods that enable caching sessions to upstream
+servers.
+The implementation is provided by the round-robin balancing method.
+
+
+
+=back
+
+
+
+
+
+
+

@@ -1,0 +1,241 @@
+=encoding utf-8
+
+
+=head1 Name
+
+C<ngx.process> - manage the nginx processes for OpenResty/ngx_lua.
+
+
+=head1 Status
+
+This Lua module is currently considered experimental.
+The API is still in flux and may change in the future without notice.
+
+
+=head1 Synopsis
+
+
+=head2 Enables privileged agent process and get process type
+
+
+    # http config
+    init_by_lua_block {
+        local process = require "ngx.process"
+    
+        -- enables privileged agent process
+        local ok, err = process.enable_privileged_agent()
+        if not ok then
+            ngx.log(ngx.ERR, "enables privileged agent failed error:", err)
+        end
+    
+        -- output process type
+        ngx.log(ngx.INFO, "process type: ", process.type())
+    }
+    
+    init_worker_by_lua_block {
+        local process = require "ngx.process"
+        ngx.log(ngx.INFO, "process type: ", process.type())
+    }
+    
+    server {
+        # ...
+        location = /t {
+            content_by_lua_block {
+                local process = require "ngx.process"
+                ngx.say("process type: ", process.type())
+            }
+        }
+    }
+    
+
+The example config above produces an output to C<error.log> when
+server starts:
+
+
+    [lua] init_by_lua:11: process type: master
+    [lua] init_worker_by_lua:3: process type: privileged agent
+    [lua] init_worker_by_lua:3: process type: worker
+
+The example location above produces the following response body:
+
+
+    process type: worker
+
+
+
+
+=head1 Functions
+
+
+=head2 type
+
+B<syntax:> I<type_name = process_module.type()>
+
+B<context:> I<any>
+
+Returns the current process's type name. Here are all of the names:
+
+
+    master
+    signaller
+    worker
+    helper
+    privileged agent
+
+For example,
+
+
+     local process = require "ngx.process"
+     ngx.say("process type:", process.type())   -- RESPONSE: worker
+
+
+
+
+=head2 enable_privileged_agent
+
+B<syntax:> I<ok, err = process_module.enable_privileged_agent()>
+
+B<context:> I<init_by_luaE<42>>
+
+Enables the privileged agent process in Nginx.
+
+The priviledged agent process does not listen on any virtual server ports like those worker processes.
+And it uses the same system account as the nginx master process, which is usually a privileged account
+like C<root>.
+
+The C<init_worker_by_lua*> directive handler still runs in the privileged agent process. And one can
+use the L<type> function provided by this module to check if the current process is a privileged
+agent.
+
+In case of failures, returns C<nil> and a string describing the error.
+
+
+
+
+=head2 signal_graceful_exit
+
+B<syntax:> I<process_module.signal_graceful_exit()>
+
+B<context:> I<any>
+
+Signals the I<current> nginx (worker) process to quit gracefully, i.e., after all the timers have expired (in time or expired prematurely).
+
+Note that this API function simply sets the nginx global C variable C<ngx_quit> to signal the nginx event
+loop directly. No UNIX signals or IPC are involved here.
+
+WARNING: the official NGINX core does not perform the graceful exiting procedure when the L<master_process|http://nginx.org/r/master_process>
+directive is turned C<off>. The OpenResty's NGINX core has a
+L<custom patch|https://github.com/openresty/openresty/blob/master/patches/nginx-1.11.2-single_process_graceful_exit.patch>
+applied, which fixes this issue.
+
+
+
+
+=head1 Community
+
+
+
+
+=head2 English Mailing List
+
+The L<openresty-en|https://groups.google.com/group/openresty-en> mailing list is for English speakers.
+
+
+
+
+=head2 Chinese Mailing List
+
+The L<openresty|https://groups.google.com/group/openresty> mailing list is for Chinese speakers.
+
+
+
+
+=head1 Bugs and Patches
+
+Please report bugs or submit patches by
+
+
+=over
+
+
+=item 1.
+
+creating a ticket on the L<GitHub Issue Tracker|https://github.com/openresty/lua-resty-core/issues>,
+
+=item 2.
+
+or posting to the L<OpenResty community>.
+
+
+=back
+
+
+
+
+=head1 Author
+
+Yuansheng Wang E<lt>membphis@gmail.comE<gt> (membphis), OpenResty Inc.
+
+
+
+
+=head1 Copyright and License
+
+This module is licensed under the BSD license.
+
+Copyright (C) 2017, by Yichun "agentzh" Zhang, OpenResty Inc.
+
+All rights reserved.
+
+Redistribution and use in source and binary forms, with or without modification, are permitted provided that the following conditions are met:
+
+
+=over
+
+
+=item *
+
+Redistributions of source code must retain the above copyright notice, this list of conditions and the following disclaimer.
+
+
+=back
+
+
+=over
+
+
+=item *
+
+Redistributions in binary form must reproduce the above copyright notice, this list of conditions and the following disclaimer in the documentation and/or other materials provided with the distribution.
+
+
+=back
+
+THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+
+
+
+
+=head1 See Also
+
+
+=over
+
+
+=item *
+
+library L<lua-resty-core|https://github.com/openresty/lua-resty-core>
+
+=item *
+
+the ngx_lua module: https://github.com/openresty/lua-nginx-module
+
+=item *
+
+OpenResty: http://openresty.org
+
+
+=back
+
+
+

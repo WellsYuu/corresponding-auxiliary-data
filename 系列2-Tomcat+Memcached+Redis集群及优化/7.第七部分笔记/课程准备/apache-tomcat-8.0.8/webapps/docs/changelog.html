@@ -1,0 +1,1177 @@
+<!DOCTYPE html SYSTEM "about:legacy-compat">
+<html lang="en"><head><META http-equiv="Content-Type" content="text/html; charset=UTF-8"><link href="./images/docs-stylesheet.css" rel="stylesheet" type="text/css"><title>Apache Tomcat 8 (8.0.8) - Changelog</title></head><body><div id="wrapper"><header><div id="header"><div><div><div class="logo noPrint"><a href="http://tomcat.apache.org/"><img alt="Tomcat Home" src="./images/tomcat.png"></a></div><div style="height: 1px;"></div><div class="asfLogo noPrint"><a href="http://www.apache.org/" target="_blank"><img src="./images/asf-feather.png" alt="The Apache Software Foundation" style="width: 266px; height: 83px;"></a></div><h1>Apache Tomcat 8</h1><div class="versionInfo">
+          Version 8.0.8,
+          <time datetime="2014-05-16">May 16 2014</time></div><div style="height: 1px;"></div><div style="clear: left;"></div></div></div></div></header><div id="middle"><div><div id="mainLeft" class="noprint"><div><nav><div><h2>Links</h2><ul><li><a href="index.html">Docs Home</a></li><li><a href="http://wiki.apache.org/tomcat/FAQ">FAQ</a></li><li><a href="#comments_section">User Comments</a></li></ul></div><div><h2>User Guide</h2><ul><li><a href="introduction.html">1) Introduction</a></li><li><a href="setup.html">2) Setup</a></li><li><a href="appdev/index.html">3) First webapp</a></li><li><a href="deployer-howto.html">4) Deployer</a></li><li><a href="manager-howto.html">5) Manager</a></li><li><a href="realm-howto.html">6) Realms and AAA</a></li><li><a href="security-manager-howto.html">7) Security Manager</a></li><li><a href="jndi-resources-howto.html">8) JNDI Resources</a></li><li><a href="jndi-datasource-examples-howto.html">9) JDBC DataSources</a></li><li><a href="class-loader-howto.html">10) Classloading</a></li><li><a href="jasper-howto.html">11) JSPs</a></li><li><a href="ssl-howto.html">12) SSL</a></li><li><a href="ssi-howto.html">13) SSI</a></li><li><a href="cgi-howto.html">14) CGI</a></li><li><a href="proxy-howto.html">15) Proxy Support</a></li><li><a href="mbeans-descriptor-howto.html">16) MBean Descriptor</a></li><li><a href="default-servlet.html">17) Default Servlet</a></li><li><a href="cluster-howto.html">18) Clustering</a></li><li><a href="balancer-howto.html">19) Load Balancer</a></li><li><a href="connectors.html">20) Connectors</a></li><li><a href="monitoring.html">21) Monitoring and Management</a></li><li><a href="logging.html">22) Logging</a></li><li><a href="apr.html">23) APR/Native</a></li><li><a href="virtual-hosting-howto.html">24) Virtual Hosting</a></li><li><a href="aio.html">25) Advanced IO</a></li><li><a href="extras.html">26) Additional Components</a></li><li><a href="maven-jars.html">27) Mavenized</a></li><li><a href="security-howto.html">28) Security Considerations</a></li><li><a href="windows-service-howto.html">29) Windows Service</a></li><li><a href="windows-auth-howto.html">30) Windows Authentication</a></li><li><a href="jdbc-pool.html">31) Tomcat's JDBC Pool</a></li><li><a href="web-socket-howto.html">32) WebSocket</a></li><li><a href="rewrite.html">33) Rewrite</a></li></ul></div><div><h2>Reference</h2><ul><li><a href="RELEASE-NOTES.txt">Release Notes</a></li><li><a href="config/index.html">Configuration</a></li><li><a href="api/index.html">Tomcat Javadocs</a></li><li><a href="servletapi/index.html">Servlet Javadocs</a></li><li><a href="jspapi/index.html">JSP 2.3 Javadocs</a></li><li><a href="elapi/index.html">EL 3.0 Javadocs</a></li><li><a href="websocketapi/index.html">WebSocket 1.0 Javadocs</a></li><li><a href="http://tomcat.apache.org/connectors-doc/">JK 1.2 Documentation</a></li></ul></div><div><h2>Apache Tomcat Development</h2><ul><li><a href="building.html">Building</a></li><li><a href="changelog.html">Changelog</a></li><li><a href="http://wiki.apache.org/tomcat/TomcatVersions">Status</a></li><li><a href="developers.html">Developers</a></li><li><a href="architecture/index.html">Architecture</a></li><li><a href="funcspecs/index.html">Functional Specs.</a></li><li><a href="tribes/introduction.html">Tribes</a></li></ul></div></nav></div></div><div id="mainRight"><div id="content"><h2>Changelog</h2><h3 id="Tomcat_8.0.8_(markt)">Tomcat 8.0.8 (markt)</h3><div class="text">
+ <div class="subsection"><h4 id="Tomcat_8.0.8_(markt)/Catalina">Catalina</h4><div class="text">
+   <ul class="changelog">
+     <li><img alt="Fix: " class="icon" src="./images/fix.gif">
+       <a href="http://issues.apache.org/bugzilla/show_bug.cgi?id=56536">56536</a>: Ensure that
+       <code>HttpSessionBindingListener.valueUnbound()</code> uses the correct
+       class loader when the <code>SingleSignOn</code> valve is used. (markt)
+     </li>
+   </ul>
+ </div></div>
+ <div class="subsection"><h4 id="Tomcat_8.0.8_(markt)/Jasper">Jasper</h4><div class="text">
+   <ul class="changelog">
+      <li><img alt="Fix: " class="icon" src="./images/fix.gif">
+        <a href="http://issues.apache.org/bugzilla/show_bug.cgi?id=56529">56529</a>: Avoid <code>NoSuchElementException</code> while handling
+        attributes with empty string value in custom tags. Patch provided by
+        Hariprasad Manchi. (violetagg)
+      </li>
+   </ul>
+ </div></div>
+</div><h3 id="Tomcat_8.0.7_(markt)"><span style="float: right;">not released</span> Tomcat 8.0.7 (markt)</h3><div class="text">
+  <div class="subsection"><h4 id="Tomcat_8.0.7_(markt)/Catalina">Catalina</h4><div class="text">
+    <ul class="changelog">
+      <li><img alt="Fix: " class="icon" src="./images/fix.gif">
+        <a href="http://issues.apache.org/bugzilla/show_bug.cgi?id=56523">56523</a>: When using SPNEGO authentication, log the exceptions
+        associated with failed user logins at debug level rather than error
+        level. (markt)
+      </li>
+    </ul>
+  </div></div>
+  <div class="subsection"><h4 id="Tomcat_8.0.7_(markt)/Coyote">Coyote</h4><div class="text">
+    <ul class="changelog">
+      <li><img alt="Add: " class="icon" src="./images/add.gif">
+        <a href="http://issues.apache.org/bugzilla/show_bug.cgi?id=56399">56399</a>: Assert that both Coyote and Catalina request objects
+        have been properly recycled. (kkolinko)
+      </li>
+    </ul>
+  </div></div>
+  <div class="subsection"><h4 id="Tomcat_8.0.7_(markt)/Jasper">Jasper</h4><div class="text">
+    <ul class="changelog">
+      <li><img alt="Fix: " class="icon" src="./images/fix.gif">
+        <a href="http://issues.apache.org/bugzilla/show_bug.cgi?id=56522">56522</a>: When setting a value for a
+        <code>ValueExpression</code>, ensure that the expected coercions take
+        place such as a <code>null</code> string being coerced to an empty
+        string. (markt)
+      </li>
+    </ul>
+  </div></div>
+  <div class="subsection"><h4 id="Tomcat_8.0.7_(markt)/Other">Other</h4><div class="text">
+    <ul class="changelog">
+      <li><img alt="Fix: " class="icon" src="./images/fix.gif">
+        Copy missing resources file from Apache Commons DBCP 2 to packaged
+        renamed copy of DBCP 2. (markt)
+      </li>
+    </ul>
+  </div></div>
+</div><h3 id="Tomcat_8.0.6_(markt)"><span style="float: right;">not released</span> Tomcat 8.0.6 (markt)</h3><div class="text">
+  <div class="subsection"><h4 id="Tomcat_8.0.6_(markt)/Catalina">Catalina</h4><div class="text">
+    <ul class="changelog">
+      <li><img alt="Fix: " class="icon" src="./images/fix.gif">
+        Fix extension validation which was broken by refactoring for new
+        resources implementation. (markt)
+      </li>
+      <li><img alt="Fix: " class="icon" src="./images/fix.gif">
+        Fix custom UTF-8 decoder so that a byte of value 0xC1 is always rejected
+        immediately as it is never valid in a UTF-8 byte sequence. Update UTF-8
+        decoder tests to account for UTF-8 decoding improvements in Java 8.
+        The custom UTF-8 decoder is still required due to bugs in the UTF-8
+        decoder provided by Java. Java 8's decoder is better than Java
+        7's but it is still buggy. (markt)
+      </li>
+      <li><img alt="Fix: " class="icon" src="./images/fix.gif">
+        <a href="http://issues.apache.org/bugzilla/show_bug.cgi?id=56027">56027</a>: Add more options for managing FIPS mode in the
+        AprLifecycleListener. (schultz/kkolinko)
+      </li>
+      <li><img alt="Fix: " class="icon" src="./images/fix.gif">
+        <a href="http://issues.apache.org/bugzilla/show_bug.cgi?id=56320">56320</a>: Fix a file descriptor leak in the default servlet when
+        sendfile is used. (markt)
+      </li>
+      <li><img alt="Fix: " class="icon" src="./images/fix.gif">
+        <a href="http://issues.apache.org/bugzilla/show_bug.cgi?id=56321">56321</a>: When a WAR is modified, undeploy the web application
+        before deleting any expanded directory as the undeploy process may
+        refer to classes that need to be loaded from the expanded directory. If
+        the expanded directory is deleted first, any attempt to load a new class
+        during undeploy will fail. (markt)
+      </li>
+      <li><img alt="Fix: " class="icon" src="./images/fix.gif">
+        <a href="http://issues.apache.org/bugzilla/show_bug.cgi?id=56327">56327</a>: Enable AJP as well as HTTP connectors to be created
+        via JMX. Patch by kiran. (markt)
+      </li>
+      <li><img alt="Fix: " class="icon" src="./images/fix.gif">
+        <a href="http://issues.apache.org/bugzilla/show_bug.cgi?id=56339">56339</a>: Avoid an infinite loop if an application calls
+        <code>session.invalidate()</code> from the session destroyed event for
+        that session. (markt)
+      </li>
+      <li><img alt="Code: " class="icon" src="./images/code.gif">
+        <a href="http://issues.apache.org/bugzilla/show_bug.cgi?id=56365">56365</a>: Simplify file name pattern matching code in
+        <code>StandardJarScanner</code>. Improve documentation. (kkolinko)
+      </li>
+      <li><img alt="Fix: " class="icon" src="./images/fix.gif">
+        Ensure that the static resource cache is able to detect when a cache
+        entry is invalidated by being overridden by a new resource in a
+        different <code>WebResourceSet</code>. (markt)
+      </li>
+      <li><img alt="Fix: " class="icon" src="./images/fix.gif">
+        <a href="http://issues.apache.org/bugzilla/show_bug.cgi?id=56369">56369</a>: Ensure that removing an MBean notification listener
+        reverts all the operations performed when adding an MBean notification
+        listener. (markt)
+      </li>
+      <li><img alt="Code: " class="icon" src="./images/code.gif">
+        Improve implementation of <code>Lifecycle</code> for
+        <code>WebappClassLoader</code>. State is now correctly reported rather
+        than always reporting as <code>NEW</code>. (markt)
+      </li>
+      <li><img alt="Add: " class="icon" src="./images/add.gif">
+        <a href="http://issues.apache.org/bugzilla/show_bug.cgi?id=56382">56382</a>: Information about finished deployment and its execution
+        time is added to the log files. Patch is provided by Danila Galimov.
+        (violetagg)
+      </li>
+      <li><img alt="Add: " class="icon" src="./images/add.gif">
+        <a href="http://issues.apache.org/bugzilla/show_bug.cgi?id=56383">56383</a>: Properties for disabling server information and error
+        report are added to the <code>org.apache.catalina.valves.ErrorReportValve</code>.
+        Based on the patch provided by Nick Bunn. (violetagg/kkolinko)
+      </li>
+      <li><img alt="Fix: " class="icon" src="./images/fix.gif">
+        <a href="http://issues.apache.org/bugzilla/show_bug.cgi?id=56390">56390</a>: Fix JAR locking issue with JARs containing TLDs and
+        the TLD cache that prevented the undeployment of web applications when
+        the WAR was deleted. (markt)
+      </li>
+      <li><img alt="Fix: " class="icon" src="./images/fix.gif">
+        Only create XML parsing objects if required and fix associated potential
+        memory leak in the default Servlet. (markt)
+      </li>
+      <li><img alt="Fix: " class="icon" src="./images/fix.gif">
+        Modify generic exception handling so that
+        <code>StackOverflowError</code> is not treated as a fatal error and can
+        handled and/or logged as required. (markt)
+      </li>
+      <li><img alt="Fix: " class="icon" src="./images/fix.gif">
+        <a href="http://issues.apache.org/bugzilla/show_bug.cgi?id=56409">56409</a>: Avoid <code>StackOverflowError</code> on non-Windows
+        systems if a file named <code>\</code> is encountered when scanning for
+        TLDs. (markt)
+      </li>
+      <li><img alt="Add: " class="icon" src="./images/add.gif">
+        <a href="http://issues.apache.org/bugzilla/show_bug.cgi?id=56430">56430</a>: Extend checks for suspicious URL patterns to include
+        patterns of the form <code>*.a.b</code> which are not valid patterns for
+        extension mappings. (markt)
+      </li>
+      <li><img alt="Add: " class="icon" src="./images/add.gif">
+        Extend XML factory, parser etc. memory leak protection to cover some
+        additional locations where, theoretically, a memory leak could occur.
+        (markt)
+      </li>
+      <li><img alt="Fix: " class="icon" src="./images/fix.gif">
+        <a href="http://issues.apache.org/bugzilla/show_bug.cgi?id=56441">56441</a>: Raise the visibility of exceptions thrown when a
+        problem is encountered calling a getter or setter on a component
+        attribute. The logging level is raised from debug to warning. (markt)
+      </li>
+      <li><img alt="Add: " class="icon" src="./images/add.gif">
+        <a href="http://issues.apache.org/bugzilla/show_bug.cgi?id=56463">56463</a>: Property for disabling server information is added to
+        the <code>DefaultServlet</code>. Server information is presented in the
+        response sent to the client when directory listings is enabled.
+        (violetagg)
+      </li>
+      <li><img alt="Fix: " class="icon" src="./images/fix.gif">
+        <a href="http://issues.apache.org/bugzilla/show_bug.cgi?id=56472">56472</a>: Allow NamingContextListener to clean up on stop if its
+        start failed. (kkolinko)
+      </li>
+      <li><img alt="Fix: " class="icon" src="./images/fix.gif">
+        <a href="http://issues.apache.org/bugzilla/show_bug.cgi?id=56481">56481</a>: Work around case insensitivity issue in
+        <code>URLClassLoader</code> exposed by some recent refactoring. (markt)
+      </li>
+      <li><img alt="Add: " class="icon" src="./images/add.gif">
+        <a href="http://issues.apache.org/bugzilla/show_bug.cgi?id=56492">56492</a>: Avoid eclipse debugger pausing on uncaught exceptions
+        when tomcat renews its threads. (slaurent)
+      </li>
+      <li><img alt="Add: " class="icon" src="./images/add.gif">
+        Add the <code>org.apache.naming</code> package to the packages requiring
+        code to have the <code>defineClassInPackage</code> permission when
+        running under a security manager. (markt)
+      </li>
+      <li><img alt="Fix: " class="icon" src="./images/fix.gif">
+        Make the naming context tokens for containers more robust by using a
+        separate object. Require RuntimePermission when introducing a new token.
+        (markt/kkolinko)
+      </li>
+      <li><img alt="Fix: " class="icon" src="./images/fix.gif">
+        <a href="http://issues.apache.org/bugzilla/show_bug.cgi?id=56501">56501</a>: <code>HttpServletRequest.getContextPath()</code>
+        should return the undecoded context path used by the user agent. (markt)
+      </li>
+      <li><img alt="Fix: " class="icon" src="./images/fix.gif">
+        Minor fixes to <code>ThreadLocalLeakPreventionListener</code>. Do not
+        trigger threads renewal for failed contexts. Do not ignore
+        <code>threadRenewalDelay</code> setting. Improve documentation. (kkolinko)
+      </li>
+      <li><img alt="Fix: " class="icon" src="./images/fix.gif">
+        Correct regression introduced in <a href="http://svn.apache.org/viewvc?view=rev&amp;rev=1239520">r1239520</a> that broke loading
+        of users from <code>tomcat-users.xml</code> when using the
+        <code>JAASMemoryLoginModule</code>. (markt)
+      </li>
+      <li><img alt="Fix: " class="icon" src="./images/fix.gif">
+        Correct regression introduced in <a href="http://svn.apache.org/viewvc?view=rev&amp;rev=797162">r797162</a> that broke
+        authentication of users when using the
+        <code>JAASMemoryLoginModule</code>. (markt)
+      </li>
+    </ul>
+  </div></div>
+  <div class="subsection"><h4 id="Tomcat_8.0.6_(markt)/Coyote">Coyote</h4><div class="text">
+    <ul class="changelog">
+      <li><img alt="Fix: " class="icon" src="./images/fix.gif">
+        More cleanup of NIO2 endpoint shutdown. (remm)
+      </li>
+      <li><img alt="Fix: " class="icon" src="./images/fix.gif">
+        <a href="http://issues.apache.org/bugzilla/show_bug.cgi?id=56336">56336</a>: AJP output corruption and errors. (remm)
+      </li>
+      <li><img alt="Fix: " class="icon" src="./images/fix.gif">
+        Handle various cases of incomplete writes in NIO2. (remm)
+      </li>
+      <li><img alt="Code: " class="icon" src="./images/code.gif">
+        Code cleanups and i18n in NIO2. (remm)
+      </li>
+      <li><img alt="Fix: " class="icon" src="./images/fix.gif">
+        Fix extra onDataAvailable calls in the NIO2 connector. (remm)
+      </li>
+      <li><img alt="Fix: " class="icon" src="./images/fix.gif">
+        Fix gather writes in NIO2 SSL. (remm)
+      </li>
+      <li><img alt="Code: " class="icon" src="./images/code.gif">
+        Upgrade the NIO2 connectors to beta, but still not ready for production. (remm)
+      </li>
+      <li><img alt="Code: " class="icon" src="./images/code.gif">
+        Fix code duplication between NIO and NIO2. (remm)
+      </li>
+      <li><img alt="Fix: " class="icon" src="./images/fix.gif">
+        <a href="http://issues.apache.org/bugzilla/show_bug.cgi?id=56348">56348</a>: Fix slow asynchronous read when read was performed on
+        a non-container thread. (markt)
+      </li>
+      <li><img alt="Fix: " class="icon" src="./images/fix.gif">
+        <a href="http://issues.apache.org/bugzilla/show_bug.cgi?id=56416">56416</a>: Correct documentation for default value of socket
+        linger for the AJP and HTTP connectors. (markt)
+      </li>
+      <li><img alt="Fix: " class="icon" src="./images/fix.gif">
+        Fix possible corruption if doing keepalive after a comet request. (remm)
+      </li>
+      <li><img alt="Fix: " class="icon" src="./images/fix.gif">
+        <a href="http://issues.apache.org/bugzilla/show_bug.cgi?id=56518">56518</a>: Fix connection limit latch leak when a non-container
+        thread is interrupted during asynchronous processing. (markt)
+      </li>
+    </ul>
+  </div></div>
+  <div class="subsection"><h4 id="Tomcat_8.0.6_(markt)/Jasper">Jasper</h4><div class="text">
+    <ul class="changelog">
+      <li><img alt="Fix: " class="icon" src="./images/fix.gif">
+        <a href="http://issues.apache.org/bugzilla/show_bug.cgi?id=56334">56334</a>: Fix a regression in the handling of back-slash
+        escaping introduced by the fix for <a href="http://issues.apache.org/bugzilla/show_bug.cgi?id=55735">55735</a>. (markt/kkolinko)
+      </li>
+      <li><img alt="Fix: " class="icon" src="./images/fix.gif">
+        <a href="http://issues.apache.org/bugzilla/show_bug.cgi?id=56425">56425</a>: Improve method matching for EL expressions. When
+        looking for matching methods, an exact match between parameter types is
+        preferred followed by an assignable match followed by a coercible match.
+        (markt)
+      </li>
+      <li><img alt="Fix: " class="icon" src="./images/fix.gif">
+        Correct the handling of back-slash escaping in the EL parser and no
+        longer require that <code>\$</code> or <code>\#</code> must be followed
+        by <code>{</code> in order for the back-slash escaping to take effect.
+        (markt)
+      </li>
+    </ul>
+  </div></div>
+  <div class="subsection"><h4 id="Tomcat_8.0.6_(markt)/Cluster">Cluster</h4><div class="text">
+    <ul class="changelog">
+      <li><img alt="Code: " class="icon" src="./images/code.gif">
+        Remove the implementation of
+        <code>org.apache.catalina.LifecycleListener</code> from
+        <code>org.apache.catalina.ha.tcp.SimpleTcpCluster</code>.
+        <code>SimpleTcpCluster</code> does not work as
+        <code>LifecycleListener</code>, it works as nested components of Host or
+        Engine. (kfujino)
+      </li>
+      <li><img alt="Fix: " class="icon" src="./images/fix.gif">
+        Remove cluster and replicationValve from cluster manager template. These
+        instance are not necessary to template. (kfujino)
+      </li>
+      <li><img alt="Fix: " class="icon" src="./images/fix.gif">
+        Add support for cross context session replication to
+        <code>org.apache.catalina.ha.session.BackupManager</code>. (kfujino)
+      </li>
+      <li><img alt="Fix: " class="icon" src="./images/fix.gif">
+        Remove the unnecessary cross context check. It does not matter whether
+        the context that is referenced by other context is set to
+        <code>crossContext</code>=true. The context that refers to the different
+        context must be set to <code>crossContext</code>=true. (kfujino)
+      </li>
+      <li><img alt="Code: " class="icon" src="./images/code.gif">
+        Move to <code>org.apache.catalina.ha.session.ClusterManagerBase</code>
+        common logics of
+        <code>org.apache.catalina.ha.session.BackupManager</code> and
+        <code>org.apache.catalina.ha.session.DeltaManager</code>. (kfujino)
+      </li>
+      <li><img alt="Code: " class="icon" src="./images/code.gif">
+        Simplify the code of <code>o.a.c.ha.tcp.SimpleTcpCluster</code>. In
+        order to add or remove cluster valve to Container, use pipeline instead
+        of <code>IntrospectionUtils</code>. (kfujino)
+      </li>
+      <li><img alt="Fix: " class="icon" src="./images/fix.gif">
+        There is no need to set cluster instance when
+        <code>SimpleTcpCluster.unregisterClusterValve</code> is called.
+        Set null than cluster instance for cleanup. (kfujino)
+      </li>
+    </ul>
+  </div></div>
+  <div class="subsection"><h4 id="Tomcat_8.0.6_(markt)/WebSocket">WebSocket</h4><div class="text">
+    <ul class="changelog">
+      <li><img alt="Fix: " class="icon" src="./images/fix.gif">
+        <a href="http://issues.apache.org/bugzilla/show_bug.cgi?id=56343">56343</a>: Avoid a NPE if Tomcat's Java WebSocket 1.0
+        implementation is used with the Java WebSocket 1.0 API JAR from the
+        reference implementation. (markt)
+      </li>
+      <li><img alt="Fix: " class="icon" src="./images/fix.gif">
+        Increase the default maximum size of the executor used by the WebSocket
+        implementation for call backs associated with asynchronous writes from
+        10 to 200. (markt)
+      </li>
+      <li><img alt="Add: " class="icon" src="./images/add.gif">
+        Add a warning if the thread group created for WebSocket asynchronous
+        write call backs can not be destroyed when the web application is
+        stopped. (markt)
+      </li>
+      <li><img alt="Fix: " class="icon" src="./images/fix.gif">
+        Ensure that threads created to support WebSocket clients are stopped
+        when no longer required. This will happen automatically for WebSocket
+        client connections initiated by web applications but stand alone clients
+        must call <code>WsWebSocketContainer.destroy()</code>. (markt)
+      </li>
+      <li><img alt="Fix: " class="icon" src="./images/fix.gif">
+        <a href="http://issues.apache.org/bugzilla/show_bug.cgi?id=56449">56449</a>: When creating a new session, add the message handlers
+        to the session before calling <code>Endpoint.onOpen()</code> so the
+        message handlers are in place should the <code>onOpen()</code> method
+        trigger the sending of any messages. (markt)
+      </li>
+      <li><img alt="Fix: " class="icon" src="./images/fix.gif">
+        <a href="http://issues.apache.org/bugzilla/show_bug.cgi?id=56458">56458</a>: Report WebSocket sessions that are created over secure
+        connections as secure rather than as not secure. (markt)
+      </li>
+      <li><img alt="Fix: " class="icon" src="./images/fix.gif">
+        Stop threads used for secure WebSocket client connections when they are
+        no longer required and give them better names for easier debugging while
+        they are running. (markt)
+      </li>
+    </ul>
+  </div></div>
+  <div class="subsection"><h4 id="Tomcat_8.0.6_(markt)/Web_applications">Web applications</h4><div class="text">
+    <ul class="changelog">
+      <li><img alt="Fix: " class="icon" src="./images/fix.gif">
+        Add Support for <code>copyXML</code> attribute of Host to Host Manager.
+        (kfujino)
+      </li>
+      <li><img alt="Fix: " class="icon" src="./images/fix.gif">
+        Ensure that "name" request parameter is used as a application base of
+        host if "webapps" request parameter is not set when adding host in
+        HostManager Application. (kfujino)
+      </li>
+      <li><img alt="Fix: " class="icon" src="./images/fix.gif">
+        Correct documentation on Windows service options, aligning it with
+        Apache Commons Daemon documentation. (kkolinko)
+      </li>
+      <li><img alt="Fix: " class="icon" src="./images/fix.gif">
+        <a href="http://issues.apache.org/bugzilla/show_bug.cgi?id=56418">56418</a>: Ensure that the Manager web application does not
+        report success for a web application deployment that fails. (slaurent)
+      </li>
+      <li><img alt="Update: " class="icon" src="./images/update.gif">
+        Improve valves documentation. Split valves into groups. (kkolinko)
+      </li>
+      <li><img alt="Fix: " class="icon" src="./images/fix.gif">
+        <a href="http://issues.apache.org/bugzilla/show_bug.cgi?id=56513">56513</a>: Make the documentation crystal clear that using
+        sendfile will disable any compression that Tomcat may otherwise have
+        applied to the response. (markt)
+      </li>
+    </ul>
+  </div></div>
+  <div class="subsection"><h4 id="Tomcat_8.0.6_(markt)/Other">Other</h4><div class="text">
+    <ul class="changelog">
+      <li><img alt="Code: " class="icon" src="./images/code.gif">
+        Review source code and take advantage of Java 7's
+        try-with-resources syntax where possible. (markt)
+      </li>
+      <li><img alt="Fix: " class="icon" src="./images/fix.gif">
+        Align DisplayName of Tomcat installed by <code>service.bat</code> with
+        one installed by the *.exe installer. Print a warning in case if neither
+        server nor client jvm is found by <code>service.bat</code>. (kkolinko)
+      </li>
+      <li><img alt="Update: " class="icon" src="./images/update.gif">
+        <a href="http://issues.apache.org/bugzilla/show_bug.cgi?id=56363">56363</a>: Update to version 1.1.30 of Tomcat Native library.
+        (schultz)
+      </li>
+      <li><img alt="Update: " class="icon" src="./images/update.gif">
+        Update package renamed Apache Commons BCEL to r1593495 to pick up some
+        additional changes for Java 7 support and some code clean up. (markt)
+      </li>
+      <li><img alt="Update: " class="icon" src="./images/update.gif">
+        Update package renamed Apache Commons FileUpload to r1569132 to pick up
+        some small improvements (e.g. better <code>null</code> protection) and
+        some code clean up. (markt)
+      </li>
+      <li><img alt="Update: " class="icon" src="./images/update.gif">
+        Update package renamed Apache Commons Codec to r1586336 to pick up some
+        Javadoc fixes and some code clean up. (markt)
+      </li>
+      <li><img alt="Code: " class="icon" src="./images/code.gif">
+        Switch to including Apache Commons DBCP via a package renamed svn copy
+        rather than building from a source release for consistency with other
+        Commons packages and to allow faster releases to fix DBCP related
+        issues. (markt)
+      </li>
+      <li><img alt="Update: " class="icon" src="./images/update.gif">
+        Update package renamed Apache Commons Pool2 and DBCP2 to r1593563 to
+        pick various bug fixes. (markt)
+      </li>
+      <li><img alt="Add: " class="icon" src="./images/add.gif">
+        In tests: allow to configure directory where JUnit reports and access
+        log are written to. (kkolinko)
+      </li>
+    </ul>
+  </div></div>
+</div><h3 id="Tomcat_8.0.5_(markt)"><span style="float: right;">beta, 2014-03-27</span> Tomcat 8.0.5 (markt)</h3><div class="text">
+  <div class="subsection"><h4 id="Tomcat_8.0.5_(markt)/Catalina">Catalina</h4><div class="text">
+    <ul class="changelog">
+      <li><img alt="Fix: " class="icon" src="./images/fix.gif">
+        Rework the fix for <a href="http://issues.apache.org/bugzilla/show_bug.cgi?id=56190">56190</a> as the previous fix did not recycle
+        the request in all cases leading to mis-routing of requests. (markt)
+      </li>
+      <li><img alt="Fix: " class="icon" src="./images/fix.gif">
+        Allow web applications to package tomcat-jdbc.jar and their JDBC driver
+        of choice in the web application. (markt)
+      </li>
+      <li><img alt="Fix: " class="icon" src="./images/fix.gif">
+        <a href="http://issues.apache.org/bugzilla/show_bug.cgi?id=56293">56293</a>: Cache resources loaded by the class loader from
+        <code>/META-INF/services/</code> for better performance for repeated
+        look ups. (markt)
+      </li>
+    </ul>
+  </div></div>
+  <div class="subsection"><h4 id="Tomcat_8.0.5_(markt)/Coyote">Coyote</h4><div class="text">
+    <ul class="changelog">
+      <li><img alt="Fix: " class="icon" src="./images/fix.gif">
+        Fix possibly incomplete final flush with NIO2 when using non blocking
+        mode. (remm)
+      </li>
+      <li><img alt="Fix: " class="icon" src="./images/fix.gif">
+        Cleanup NIO2 endpoint shutdown. (remm)
+      </li>
+      <li><img alt="Fix: " class="icon" src="./images/fix.gif">
+        Fix rare race condition notifying onWritePossible in the NIO2
+        HTTP/1.1 connector. (remm)
+      </li>
+    </ul>
+  </div></div>
+  <div class="subsection"><h4 id="Tomcat_8.0.5_(markt)/Jasper">Jasper</h4><div class="text">
+    <ul class="changelog">
+      <li><img alt="Fix: " class="icon" src="./images/fix.gif">
+        <a href="http://issues.apache.org/bugzilla/show_bug.cgi?id=54475">54475</a>: Add Java 8 support to SMAP generation for JSPs. Patch
+        by Robbie Gibson. (markt)
+      </li>
+    </ul>
+  </div></div>
+  <div class="subsection"><h4 id="Tomcat_8.0.5_(markt)/Web_applications">Web applications</h4><div class="text">
+    <ul class="changelog">
+      <li><img alt="Fix: " class="icon" src="./images/fix.gif">
+        <a href="http://issues.apache.org/bugzilla/show_bug.cgi?id=56273">56273</a>: If the Manager web application does not perform an
+        operation because the web application is already being serviced, report
+        an error rather than reporting success. (markt)
+      </li>
+      <li><img alt="Fix: " class="icon" src="./images/fix.gif">
+        <a href="http://issues.apache.org/bugzilla/show_bug.cgi?id=56304">56304</a>: Add a note to the documentation about not using
+        WebSocket with BIO HTTP in production. (markt)
+      </li>
+    </ul>
+  </div></div>
+</div><h3 id="Tomcat_8.0.4_(markt)"><span style="float: right;">not released</span> Tomcat 8.0.4 (markt)</h3><div class="text">
+  <div class="subsection"><h4 id="Tomcat_8.0.4_(markt)/Catalina">Catalina</h4><div class="text">
+    <ul class="changelog">
+      <li><img alt="Fix: " class="icon" src="./images/fix.gif">
+        Restore the ability to use the <code>addURL()</code> method of the
+        web application class loader to add external resources to the web
+        application. (markt)
+      </li>
+      <li><img alt="Fix: " class="icon" src="./images/fix.gif">
+        Improve the robustness of web application undeployment based on some
+        code analysis triggered by the report for <a href="http://issues.apache.org/bugzilla/show_bug.cgi?id=54315">54315</a>. (markt)
+      </li>
+      <li><img alt="Fix: " class="icon" src="./images/fix.gif">
+        <a href="http://issues.apache.org/bugzilla/show_bug.cgi?id=56125">56125</a>: Correctly construct the URL for a resource that
+        represents the root of a JAR file. (markt)
+      </li>
+      <li><img alt="Fix: " class="icon" src="./images/fix.gif">
+        Generate a valid root element for the effective web.xml for a web
+        application for all supported versions of web.xml. (markt)
+      </li>
+      <li><img alt="Add: " class="icon" src="./images/add.gif">
+        Make it easier for applications embedding and/or extending Tomcat to
+        modify the <code>javaseClassLoader</code> attribute of the
+        <code>WebappClassLoader</code>. (markt)
+      </li>
+      <li><img alt="Fix: " class="icon" src="./images/fix.gif">
+        Add missing support for <code>&lt;deny-uncovered-http-methods&gt;</code>
+        element when merging web.xml files. (markt)
+      </li>
+      <li><img alt="Fix: " class="icon" src="./images/fix.gif">
+        Improve merging process for web.xml files to take account of the
+        elements and attributes supported by the Servlet version of the merged
+        file. (markt)
+      </li>
+      <li><img alt="Fix: " class="icon" src="./images/fix.gif">
+        Avoid <code>NullPointerException</code> in resource cache when making an
+        invalid request for a resource outside of the web application. (markt)
+      </li>
+      <li><img alt="Fix: " class="icon" src="./images/fix.gif">
+        Remove an unnecessary null check identified by FindBugs. (markt)
+      </li>
+      <li><img alt="Add: " class="icon" src="./images/add.gif">
+        In WebappClassLoader, when reporting threads that are still running
+        while web application is being stopped, print their stack traces to
+        the log. (kkolinko)
+      </li>
+      <li><img alt="Fix: " class="icon" src="./images/fix.gif">
+        <a href="http://issues.apache.org/bugzilla/show_bug.cgi?id=56190">56190</a>: The response should be closed (i.e. no further output
+        is permitted) when a call to <code>AsyncContext.complete()</code> takes
+        effect. (markt)
+      </li>
+      <li><img alt="Fix: " class="icon" src="./images/fix.gif">
+        <a href="http://issues.apache.org/bugzilla/show_bug.cgi?id=56236">56236</a>: Enable Tomcat to work with alternative Servlet and
+        JSP API JARs that package the XML schemas in such as way as to require
+        a dependency on the JSP API before enabling validation for web.xml.
+        Tomcat has no such dependency. (markt)
+      </li>
+      <li><img alt="Fix: " class="icon" src="./images/fix.gif">
+        <a href="http://issues.apache.org/bugzilla/show_bug.cgi?id=56244">56244</a>: Fix MBeans descriptor for WebappClassLoader MBean.
+        (kkolinko)
+      </li>
+      <li><img alt="Add: " class="icon" src="./images/add.gif">
+        Add a work around for validating XML documents (often TLDs) that use
+        just the file name to refer to refer to the JavaEE schema on which they
+        are based. (markt)
+      </li>
+      <li><img alt="Add: " class="icon" src="./images/add.gif">
+        Add methods of get the idle time from last client access time to
+        <code>org.apache.catalina.Session</code>. (kfujino)
+      </li>
+      <li><img alt="Fix: " class="icon" src="./images/fix.gif">
+        <a href="http://issues.apache.org/bugzilla/show_bug.cgi?id=56246">56246</a>: Fix NullPointerException in MemoryRealm when
+        authenticating an unknown user. (markt)
+      </li>
+      <li><img alt="Fix: " class="icon" src="./images/fix.gif">
+        <a href="http://issues.apache.org/bugzilla/show_bug.cgi?id=56248">56248</a>: Allow the deployer to update an existing WAR file
+        without undeploying the existing application if the update flag is set.
+        This allows any existing custom context.xml for the application to be
+        retained. To update an application and remove any existing context.xml
+        simply undeploy the old version of the application before deploying the
+        new version. (markt)
+      </li>
+      <li><img alt="Fix: " class="icon" src="./images/fix.gif">
+        <a href="http://issues.apache.org/bugzilla/show_bug.cgi?id=56253">56253</a>: When listing resources that are provided by a JAR, fix
+        possible <code>StringIndexOutOfBoundsException</code>s. Add some unit
+        tests for this and similar scenarios and fix the additional issues those
+        unit tests identified. Based on a patch by Larry Isaacs. (markt)
+      </li>
+      <li><img alt="Fix: " class="icon" src="./images/fix.gif">
+        Redefine the <code>globalXsltFile</code> initialisation parameter of the
+        DefaultServlet as relative to CATALINA_BASE/conf or CATALINA_HOME/conf.
+        Prevent user supplied XSLTs used by the DefaultServlet from defining
+        external entities. (markt)
+      </li>
+    </ul>
+  </div></div>
+  <div class="subsection"><h4 id="Tomcat_8.0.4_(markt)/Coyote">Coyote</h4><div class="text">
+    <ul class="changelog">
+      <li><img alt="Fix: " class="icon" src="./images/fix.gif">
+        In some circumstances asynchronous requests could time out too soon.
+        (markt)
+      </li>
+      <li><img alt="Fix: " class="icon" src="./images/fix.gif">
+        <a href="http://issues.apache.org/bugzilla/show_bug.cgi?id=56172">56172</a>: Avoid possible request corruption when using the AJP
+        NIO connector and a request is sent using more than one AJP message.
+        Patch provided by Amund Elstad. (markt)
+      </li>
+      <li><img alt="Add: " class="icon" src="./images/add.gif">
+        Add experimental NIO2 connector. Based on code developed by
+        Nabil Benothman. (remm)
+      </li>
+      <li><img alt="Fix: " class="icon" src="./images/fix.gif">
+        Improve processing of chuck size from chunked headers. Avoid overflow
+        and use a bit shift instead of a multiplication as it is marginally
+        faster. (markt/kkolinko)
+      </li>
+      <li><img alt="Fix: " class="icon" src="./images/fix.gif">
+        Correct regression introduced in 8.0.0-RC2 as part of the Servlet 3.1
+        non-blocking IO support that broke handling of requests with an explicit
+        content length of zero. (markt/kkolinko)
+      </li>
+      <li><img alt="Fix: " class="icon" src="./images/fix.gif">
+        Fix possible overflow when parsing long values from a byte array.
+        (markt)
+      </li>
+    </ul>
+  </div></div>
+  <div class="subsection"><h4 id="Tomcat_8.0.4_(markt)/Jasper">Jasper</h4><div class="text">
+    <ul class="changelog">
+      <li><img alt="Fix: " class="icon" src="./images/fix.gif">
+        Change the default compiler source and compiler target versions to 1.7
+        since Tomcat 8 requires a minimum of Java 7. (markt)
+      </li>
+      <li><img alt="Fix: " class="icon" src="./images/fix.gif">
+        <a href="http://issues.apache.org/bugzilla/show_bug.cgi?id=56179">56179</a>: Fix parsing of EL expressions that contain unnecessary
+        parentheses. (markt)
+      </li>
+      <li><img alt="Fix: " class="icon" src="./images/fix.gif">
+        <a href="http://issues.apache.org/bugzilla/show_bug.cgi?id=56177">56177</a>: Handle dependency tracking for TLDs when using JspC
+        with a tag library JAR that is located outside of the web application.
+        (markt)
+      </li>
+      <li><img alt="Fix: " class="icon" src="./images/fix.gif">
+        Remove an unnecessary null check identified by FindBugs. (markt)
+      </li>
+      <li><img alt="Fix: " class="icon" src="./images/fix.gif">
+        <a href="http://issues.apache.org/bugzilla/show_bug.cgi?id=56199">56199</a>: Restore validateXml option for JspC which determines
+        if web.xml will be parsed with a validating parser. (markt)
+      </li>
+      <li><img alt="Fix: " class="icon" src="./images/fix.gif">
+        <a href="http://issues.apache.org/bugzilla/show_bug.cgi?id=56223">56223</a>: Throw an <code>IllegalStateException</code> if a call
+        is made to <code>ServletContext.setInitParameter()</code> after the
+        ServletContext has been initialized. (markt)
+      </li>
+      <li><img alt="Fix: " class="icon" src="./images/fix.gif">
+        <a href="http://issues.apache.org/bugzilla/show_bug.cgi?id=56265">56265</a>: Do not escape values of dynamic tag attributes
+        containing EL expressions. (kkolinko)
+      </li>
+      <li><img alt="Fix: " class="icon" src="./images/fix.gif">
+        Make the default compiler source and target versions for JSPs Java 7
+        since Tomcat 8 requires Java 7 as a minimum. (markt)
+      </li>
+      <li><img alt="Update: " class="icon" src="./images/update.gif">
+        <a href="http://issues.apache.org/bugzilla/show_bug.cgi?id=56283">56283</a>: Update to the Eclipse JDT Compiler P20140317-1600
+        which adds support for Java 8 syntax to JSPs. Add support for value
+        "1.8" for the <code>compilerSourceVM</code> and
+        <code>compilerTargetVM</code> options. (markt)
+      </li>
+    </ul>
+  </div></div>
+  <div class="subsection"><h4 id="Tomcat_8.0.4_(markt)/WebSocket">WebSocket</h4><div class="text">
+    <ul class="changelog">
+      <li><img alt="Fix: " class="icon" src="./images/fix.gif">
+        Avoid a possible deadlock when one thread is shutting down a connection
+        while another thread is trying to write to it. (markt)
+      </li>
+      <li><img alt="Fix: " class="icon" src="./images/fix.gif">
+        Avoid NPE when flushing batched messages. (markt)
+      </li>
+    </ul>
+  </div></div>
+  <div class="subsection"><h4 id="Web_Applications">Web Applications</h4><div class="text">
+    <ul class="changelog">
+      <li><img alt="Add: " class="icon" src="./images/add.gif">
+        <a href="http://issues.apache.org/bugzilla/show_bug.cgi?id=56093">56093</a>: Add the SSL Valve to the documentation web
+        application. (markt)
+      </li>
+      <li><img alt="Fix: " class="icon" src="./images/fix.gif">
+        <a href="http://issues.apache.org/bugzilla/show_bug.cgi?id=56217">56217</a>: Improve readability by using left alignment for the
+        table cell containing the request information on the Manager application
+        status page. (markt)
+      </li>
+      <li><img alt="Fix: " class="icon" src="./images/fix.gif">
+        Fixed <code>java.lang.NegativeArraySizeException</code> when using
+        "Expire sessions" command in the manager web application on a
+        context where the session timeout is disabled. (kfujino)
+      </li>
+      <li><img alt="Fix: " class="icon" src="./images/fix.gif">
+         Add support for <code>LAST_ACCESS_AT_START</code> system property to
+         Manager web application. (kfujino)
+      </li>
+    </ul>
+  </div></div>
+  <div class="subsection"><h4 id="Tomcat_8.0.4_(markt)/Other">Other</h4><div class="text">
+    <ul class="changelog">
+      <li><img alt="Fix: " class="icon" src="./images/fix.gif">
+        <a href="http://issues.apache.org/bugzilla/show_bug.cgi?id=56115">56115</a>: Expose the <code>httpusecaches</code> property of
+        Ant's <code>get</code> task as some users may need to change the
+        default. Based on a suggestion by Anthony. (markt)
+      </li>
+      <li><img alt="Fix: " class="icon" src="./images/fix.gif">
+        <a href="http://issues.apache.org/bugzilla/show_bug.cgi?id=56143">56143</a>: Improve <code>service.bat</code> so that it can be
+        launched from a non-UAC console. This includes using a single call to
+        <code>tomcat8.exe</code> to install the Windows service rather than
+        three calls, and using command line arguments instead of environment
+        variables to pass the settings. (markt/kkolinko)
+      </li>
+      <li><img alt="Code: " class="icon" src="./images/code.gif">
+        Simplify Windows *.bat files: remove %OS% checks, as current java does
+        not run on ancient non-NT operating systems. (kkolinko)
+      </li>
+      <li><img alt="Fix: " class="icon" src="./images/fix.gif">
+        Align options between <code>service.bat</code> and <code>exe</code>
+        Windows installer. For <code>service.bat</code> the changes are in
+        --Classpath, --DisplayName, --StartPath, --StopPath. For
+        <code>exe</code> installer the changes are in --JvmMs, --JvmMx options,
+        which are now 128 Mb and 256 Mb respectively instead of being empty.
+        Explicitly specify --LogPath path when uninstalling Windows service,
+        avoiding default value for that option. (kkolinko)
+      </li>
+      <li><img alt="Fix: " class="icon" src="./images/fix.gif">
+        <a href="http://issues.apache.org/bugzilla/show_bug.cgi?id=56137">56137</a>: Explicitly use NIO connector in SSL example in
+        server.xml so it doesn't break if APR is enabled. (markt)
+      </li>
+      <li><img alt="Fix: " class="icon" src="./images/fix.gif">
+        <a href="http://issues.apache.org/bugzilla/show_bug.cgi?id=56139">56139</a>: Avoid a web application class loader leak in some unit
+        tests when running on Windows. (markt)
+      </li>
+      <li><img alt="Fix: " class="icon" src="./images/fix.gif">
+        Correct build script to avoid building JARs with empty packages. (markt)
+      </li>
+      <li><img alt="Add: " class="icon" src="./images/add.gif">
+        Allow to limit JUnit test run to a number of selected test case
+        methods. (kkolinko)
+      </li>
+      <li><img alt="Update: " class="icon" src="./images/update.gif">
+        Update Commons Pool 2 to 2.2. (markt)
+      </li>
+      <li><img alt="Update: " class="icon" src="./images/update.gif">
+        Update Commons DBCP 2 to the 2.0 release. (markt)
+      </li>
+      <li><img alt="Fix: " class="icon" src="./images/fix.gif">
+        <a href="http://issues.apache.org/bugzilla/show_bug.cgi?id=56189">56189</a>: Remove used file cpappend.bat from the distribution.
+        (markt)
+      </li>
+      <li><img alt="Fix: " class="icon" src="./images/fix.gif">
+        <a href="http://issues.apache.org/bugzilla/show_bug.cgi?id=56204">56204</a>: Remove unnecessary dependency between tasks in the
+        build script. (markt)
+      </li>
+      <li><img alt="Fix: " class="icon" src="./images/fix.gif">
+         Add definition of <code>org.apache.catalina.ant.FindLeaksTask</code>.
+         (kfujino)
+      </li>
+      <li><img alt="Fix: " class="icon" src="./images/fix.gif">
+         Implement <code>org.apache.catalina.ant.VminfoTask</code>,
+         <code>org.apache.catalina.ant.ThreaddumpTask</code> and
+         <code>org.apache.catalina.ant.SslConnectorCiphersTask</code>. (kfujino)
+      </li>
+      <li><img alt="Add: " class="icon" src="./images/add.gif">
+         Add the option to the Apache Ant tasks to ignore the constraint of the
+         first line of the response message that must be "OK -"
+         (<code>ignoreResponseConstraint</code> in <code>AbstractCatalinaTask</code>).
+         Default is false. (kfujino)
+      </li>
+    </ul>
+  </div></div>
+</div><h3 id="Tomcat_8.0.3_(markt)"><span style="float: right;">beta, 2014-02-11</span> Tomcat 8.0.3 (markt)</h3><div class="text">
+  <div class="subsection"><h4 id="Tomcat_8.0.3_(markt)/Other">Other</h4><div class="text">
+    <ul class="changelog">
+      <li><img alt="Fix: " class="icon" src="./images/fix.gif">
+        Fix build of Apache Commons DBCP2 classes. (kkolinko)
+      </li>
+      <li><img alt="Update: " class="icon" src="./images/update.gif">
+        Update Commons DBCP 2 to snapshot 170 dated 07 Feb 2014. This enables
+        DBCP to work with a SecurityManager such that only DBCP needs to be
+        granted the necessary permissions to communicate with the database.
+        (markt)
+      </li>
+    </ul>
+  </div></div>
+</div><h3 id="Tomcat_8.0.2_(markt)"><span style="float: right;">not released</span> Tomcat 8.0.2 (markt)</h3><div class="text">
+  <div class="subsection"><h4 id="Tomcat_8.0.2_(markt)/Catalina">Catalina</h4><div class="text">
+    <ul class="changelog">
+      <li><img alt="Fix: " class="icon" src="./images/fix.gif">
+        <a href="http://issues.apache.org/bugzilla/show_bug.cgi?id=56082">56082</a>: Fix a concurrency bug in JULI's LogManager
+        implementation. (markt)
+      </li>
+      <li><img alt="Fix: " class="icon" src="./images/fix.gif">
+        <a href="http://issues.apache.org/bugzilla/show_bug.cgi?id=56085">56085</a>: <code>ServletContext.getRealPath(String)</code> should
+        return <code>null</code> for invalid input rather than throwing an
+        <code>IllegalArgumentException</code>. (markt)
+      </li>
+      <li><img alt="Fix: " class="icon" src="./images/fix.gif">
+        Fix WebDAV support that was broken by the refactoring for the new
+        resources implementation. (markt)
+      </li>
+      <li><img alt="Code: " class="icon" src="./images/code.gif">
+        Simplify Catalina.initDirs(). (kkolinko)
+      </li>
+      <li><img alt="Fix: " class="icon" src="./images/fix.gif">
+        <a href="http://issues.apache.org/bugzilla/show_bug.cgi?id=56096">56096</a>: When the attribute <code>rmiBindAddress</code> of the
+        JMX Remote Lifecycle Listener is specified it's value will be used when
+        constructing the address of a JMX API connector server. Patch is
+        provided by Jim Talbut. (violetagg)
+      </li>
+      <li><img alt="Fix: " class="icon" src="./images/fix.gif">
+        When environment entry with one and the same name is defined in the web
+        deployment descriptor and with annotation then the one specified in the
+        web deployment descriptor is with priority. (violetagg)
+      </li>
+      <li><img alt="Fix: " class="icon" src="./images/fix.gif">
+        Fix passing the value of false for <code>xmlBlockExternal</code> option
+        of Context to Jasper, as the default was changed in 8.0.1. (kkolinko)
+      </li>
+    </ul>
+  </div></div>
+  <div class="subsection"><h4 id="Tomcat_8.0.2_(markt)/Coyote">Coyote</h4><div class="text">
+    <ul class="changelog">
+      <li><img alt="Fix: " class="icon" src="./images/fix.gif">
+        Enable non-blocking reads to take place on non-container threads.
+        (markt)
+      </li>
+    </ul>
+  </div></div>
+  <div class="subsection"><h4 id="Tomcat_8.0.2_(markt)/Cluster">Cluster</h4><div class="text">
+    <ul class="changelog">
+      <li><img alt="Code: " class="icon" src="./images/code.gif">
+        Simplify the code of
+        <code>o.a.c.ha.tcp.SimpleTcpCluster.createManager(String)</code>.
+        Remove unnecessary class cast. (kfujino)
+      </li>
+    </ul>
+  </div></div>
+  <div class="subsection"><h4 id="Tomcat_8.0.2_(markt)/Web_applications">Web applications</h4><div class="text">
+    <ul class="changelog">
+      <li><img alt="Fix: " class="icon" src="./images/fix.gif">
+        In Manager web application improve handling of file upload errors.
+        Display a message instead of error 500 page. Simplify. (kkolinko)
+      </li>
+    </ul>
+  </div></div>
+  <div class="subsection"><h4 id="Tomcat_8.0.2_(markt)/Other">Other</h4><div class="text">
+    <ul class="changelog">
+      <li><img alt="Fix: " class="icon" src="./images/fix.gif">
+        <a href="http://issues.apache.org/bugzilla/show_bug.cgi?id=56104">56104</a>: Correct the version number on the welcome page of the
+        Windows installer. (markt)
+      </li>
+      <li><img alt="Update: " class="icon" src="./images/update.gif">
+        Update Commons DBCP 2 to snapshot 168 dated 05 Feb 2014. (markt)
+      </li>
+      <li><img alt="Fix: " class="icon" src="./images/fix.gif">
+        Fix CVE-2014-0050, a denial of service with a malicious, malformed
+        Content-Type header and multipart request processing. Fixed by merging
+        latest code (r1565159) from Commons FileUpload. (markt)
+      </li>
+    </ul>
+  </div></div>
+</div><h3 id="Tomcat_8.0.1_(markt)"><span style="float: right;">beta, 2014-02-02</span> Tomcat 8.0.1 (markt)</h3><div class="text">
+  <div class="subsection"><h4 id="Tomcat_8.0.1_(markt)/Catalina">Catalina</h4><div class="text">
+    <ul class="changelog">
+      <li><img alt="Fix: " class="icon" src="./images/fix.gif">
+        Change default value of <code>xmlBlockExternal</code> attribute of
+        Context. It is <code>true</code> now. (kkolinko)
+      </li>
+    </ul>
+  </div></div>
+  <div class="subsection"><h4 id="Tomcat_8.0.1_(markt)/Coyote">Coyote</h4><div class="text">
+    <ul class="changelog">
+      <li><img alt="Fix: " class="icon" src="./images/fix.gif">
+        Correct regression in the fix for <a href="http://issues.apache.org/bugzilla/show_bug.cgi?id=55996">55996</a> that meant that
+        asynchronous requests might timeout too early. (markt)
+      </li>
+    </ul>
+  </div></div>
+  <div class="subsection"><h4 id="Tomcat_8.0.1_(markt)/Jasper">Jasper</h4><div class="text">
+    <ul class="changelog">
+      <li><img alt="Fix: " class="icon" src="./images/fix.gif">
+        Change default value of the <code>blockExternal</code> attribute of
+        JspC task. The default value is <code>true</code>. Add support for
+        <code>-no-blockExternal</code> switch when JspC is run as a
+        standalone application. (kkolinko)
+      </li>
+    </ul>
+  </div></div>
+  <div class="subsection"><h4 id="Tomcat_8.0.1_(markt)/WebSocket">WebSocket</h4><div class="text">
+    <ul class="changelog">
+      <li><img alt="Fix: " class="icon" src="./images/fix.gif">
+        Do not return an empty string for the
+        <code>Sec-WebSocket-Protocol</code> HTTP header when no sub-protocol has
+        been requested or no sub-protocol could be agreed as RFC6455 requires
+        that no <code>Sec-WebSocket-Protocol</code> header is returned in this
+        case. (markt)
+      </li>
+    </ul>
+  </div></div>
+</div><h3 id="Tomcat_8.0.0_(markt)"><span style="float: right;">not released</span> Tomcat 8.0.0 (markt)</h3><div class="text">
+  <div class="subsection"><h4 id="Tomcat_8.0.0_(markt)/Catalina">Catalina</h4><div class="text">
+    <ul class="changelog">
+      <li><img alt="Add: " class="icon" src="./images/add.gif">
+        Implement JSR 340 - Servlet 3.1. The JSR 340 implementation includes
+        contributions from Nick Williams and Jeremy Boynes. (markt)
+      </li>
+      <li><img alt="Add: " class="icon" src="./images/add.gif">
+        Implement JSR 245 MR2 - JSP 2.3. (markt)
+      </li>
+      <li><img alt="Add: " class="icon" src="./images/add.gif">
+        Implement JSR 341 - Unified Expression Language 3.0. (markt)
+      </li>
+      <li><img alt="Add: " class="icon" src="./images/add.gif">
+        Implement JSR 356 - WebSockets. The JSR 356 implementation includes
+        contributions from Nick Williams, Rossen Stoyanchev and Niki Dokovski.
+        (markt)
+      </li>
+      <li><img alt="Update: " class="icon" src="./images/update.gif">
+        <a href="http://issues.apache.org/bugzilla/show_bug.cgi?id=46727">46727</a>: Refactor default servlet to make it easier to
+        sub-class to implement finer grained control of the file encoding. Based
+        on a patch by Fred Toth. (markt)
+      </li>
+      <li><img alt="Add: " class="icon" src="./images/add.gif">
+        <a href="http://issues.apache.org/bugzilla/show_bug.cgi?id=45995">45995</a>: Align Tomcat with Apache httpd and perform MIME type
+        mapping based on file extension in a case insensitive manner. (markt)
+      </li>
+      <li><img alt="Code: " class="icon" src="./images/code.gif">
+        Remove duplicate code that converted a Host's appBase attribute to
+        a canonical file. (markt)
+      </li>
+      <li><img alt="Code: " class="icon" src="./images/code.gif">
+        <a href="http://issues.apache.org/bugzilla/show_bug.cgi?id=51408">51408</a>: Replace calls to <code>Charset.defaultCharset()</code>
+        with an explicit reference to the ISO-8859-1 Charset. (markt)
+      </li>
+      <li><img alt="Code: " class="icon" src="./images/code.gif">
+        Refactor initialization code to use a single, consistent approach to
+        determining the Catalina home (binary) and base (instance) directories.
+        The search order for home is <code>catalina.home</code> system property,
+        parent of current directory if boootstrap.jar is present and finally
+        current working directory. The search order for Catalina base is
+        <code>catalina.base</code> system property falling back to the value for
+        Catalina home. (markt)
+      </li>
+      <li><img alt="Update: " class="icon" src="./images/update.gif">
+        <a href="http://issues.apache.org/bugzilla/show_bug.cgi?id=52092">52092</a>: JULI now uses the <code>OneLineFormatter</code> and
+        <code>AsyncFileHandler</code> by default. (markt)
+      </li>
+      <li><img alt="Fix: " class="icon" src="./images/fix.gif">
+        <a href="http://issues.apache.org/bugzilla/show_bug.cgi?id=52558">52558</a>: Refactor <code>CometConnectionManagerValve</code> so
+        that it does not prevent the session from being serialized in when
+        running in a cluster. (markt)
+      </li>
+      <li><img alt="Fix: " class="icon" src="./images/fix.gif">
+        <a href="http://issues.apache.org/bugzilla/show_bug.cgi?id=52767">52767</a>: Remove reference to MySQL specific autoReconnect
+        property in <code>JDBCAccessLogValve</code>. (markt)
+      </li>
+      <li><img alt="Code: " class="icon" src="./images/code.gif">
+        Make the Mapper type-safe. Hosts, Contexts and Wrappers are no
+        longer handled as plain objects, instead they keep their type.
+        Code using the Mapper doesn't need to cast objects returned by
+        the mapper. (rjung)
+      </li>
+      <li><img alt="Code: " class="icon" src="./images/code.gif">
+        Move Manager, Loader and Resources from Container to Context since
+        Context is the only place they are used. The documentation already
+        states (and has done for some time) that Context is the only valid
+        location for these nested components. (markt)
+      </li>
+      <li><img alt="Code: " class="icon" src="./images/code.gif">
+        Move the Mapper from the Connector to the Service since the Mapper is
+        identical for all Connectors of a given Service and it is common for
+        there to be multiple Connectors for a Service (http, https and ajp).
+        This means there is now only ever one Mapper per Service rather than
+        possibly multiple identically configured Mapper objects. (markt)
+      </li>
+      <li><img alt="Code: " class="icon" src="./images/code.gif">
+        Remove the per Context Mapper objects and use the Mapper from the
+        Service. This removes the need to maintain two copies of the mappings
+        for Servlets and Filters. (markt)
+      </li>
+      <li><img alt="Add: " class="icon" src="./images/add.gif">
+        Implement a new Resources implementation that merges Aliases,
+        VirtualLoader, VirtualDirContext, JAR resources and external
+        repositories into a single framework rather than a separate one for each
+        feature. (markt)
+      </li>
+      <li><img alt="Add: " class="icon" src="./images/add.gif">
+        URL rewrite valve, similar in functionality to mod_rewrite. (remm)
+      </li>
+      <li><img alt="Add: " class="icon" src="./images/add.gif">
+        Port storeconfig functionality, which can persist to server.xml and
+        context.xml runtime container configuration changes. (remm)
+      </li>
+      <li><img alt="Add: " class="icon" src="./images/add.gif">
+        <a href="http://issues.apache.org/bugzilla/show_bug.cgi?id=54095">54095</a>: Add support to the Default Servlet for serving
+        gzipped versions of static resources directly from disk as an
+        alternative to Tomcat compressing them on each request. Patch by
+        Philippe Marschall. (markt)
+      </li>
+      <li><img alt="Fix: " class="icon" src="./images/fix.gif">
+        <a href="http://issues.apache.org/bugzilla/show_bug.cgi?id=54708">54708</a>: Change the name of the working directory for the ROOT
+        application (located under $CATALINA_BASE/work by default) from _ to
+        ROOT. (markt)
+      </li>
+      <li><img alt="Add: " class="icon" src="./images/add.gif">
+        Change default configuration so that a change to the global web.xml file
+        will trigger a reload of all web applications. (markt)
+      </li>
+      <li><img alt="Fix: " class="icon" src="./images/fix.gif">
+        <a href="http://issues.apache.org/bugzilla/show_bug.cgi?id=55101">55101</a>: Make BASIC authentication more tolerant of whitespace.
+        Patch provided by Brian Burch. (markt)
+      </li>
+      <li><img alt="Fix: " class="icon" src="./images/fix.gif">
+        <a href="http://issues.apache.org/bugzilla/show_bug.cgi?id=55166">55166</a>: Move JSP descriptor and tag library descriptor schemas
+        to servlet-api.jar to enable relative references between the schemas to
+        be correctly resolved. (markt)
+      </li>
+      <li><img alt="Code: " class="icon" src="./images/code.gif">
+        Refactor the descriptor parsing code into a separate module that can be
+        used by both Catalina and Jasper. Includes patches provided by Jeremy
+        Boynes. (violetagg/markt)
+      </li>
+      <li><img alt="Code: " class="icon" src="./images/code.gif">
+        <a href="http://issues.apache.org/bugzilla/show_bug.cgi?id=55246">55246</a>: Move TLD scanning to a ServletContainerInitializer
+        provided by Jasper. Includes removal of TldConfig lifecycle listener and
+        associated Context properties. (jboynes)
+      </li>
+      <li><img alt="Add: " class="icon" src="./images/add.gif">
+        <a href="http://issues.apache.org/bugzilla/show_bug.cgi?id=55317">55317</a>: Facilitate weaving by allowing ClassFileTransformer to
+        be added to WebppClassLoader. Patch by Nick Williams. (markt)
+      </li>
+      <li><img alt="Fix: " class="icon" src="./images/fix.gif">
+        <a href="http://issues.apache.org/bugzilla/show_bug.cgi?id=55620">55620</a>: Enable Tomcat to start when either $CATALINA_HOME
+        and/or $CATALINA_BASE contains a comma character. Prevent Tomcat from
+        starting when $CATALINA_HOME and/or $CATALINA_BASE contains a semi-colon
+        on Windows. Prevent Tomcat from starting when $CATALINA_HOME and/or
+        $CATALINA_BASE contains a colon on Linux/FreeBSD/etc. (markt)
+      </li>
+      <li><img alt="Code: " class="icon" src="./images/code.gif">
+        Initialize the JSP runtime in Jasper's initializer to avoid need for a
+        Jasper-specific lifecycle listener. <code>JasperListener</code> has been
+        removed. (jboynes)
+      </li>
+      <li><img alt="Fix: " class="icon" src="./images/fix.gif">
+        Change ordering of elements of JMX objects names so components are
+        grouped more logically in JConsole. Generally, components are now
+        grouped by Host and then by Context. (markt)
+      </li>
+      <li><img alt="Add: " class="icon" src="./images/add.gif">
+        Context listener to allow better EE and framework integration. (remm)
+      </li>
+    </ul>
+  </div></div>
+  <div class="subsection"><h4 id="Tomcat_8.0.0_(markt)/Coyote">Coyote</h4><div class="text">
+    <ul class="changelog">
+      <li><img alt="Add: " class="icon" src="./images/add.gif">
+        Experimental support for SPDY. Includes contributions from Sheldon Shao.
+        (costin)
+      </li>
+      <li><img alt="Code: " class="icon" src="./images/code.gif">
+        The default connector is now the Java NIO connector even when specifying
+        HTTP/1.1 as protocol (fhanik)
+      </li>
+      <li><img alt="Code: " class="icon" src="./images/code.gif">
+        Update default value of pollerThreadCount for the NIO connector. The new
+        default value will never go above 2 regardless of available processors.
+        (fhanik)
+      </li>
+      <li><img alt="Fix: " class="icon" src="./images/fix.gif">
+        <a href="http://issues.apache.org/bugzilla/show_bug.cgi?id=54010">54010</a>: Remove some unnecessary code (duplicate calls to
+        configure the scheme as https for AJP requests originally received over
+        HTTPS). (markt)
+      </li>
+      <li><img alt="Code: " class="icon" src="./images/code.gif">
+        Refactor char encoding/decoding using NIO APIs. (remm)
+      </li>
+      <li><img alt="Update: " class="icon" src="./images/update.gif">
+        Change the default URIEncoding for all connectors from ISO-8859-1 to
+        UTF-8. (markt)
+      </li>
+    </ul>
+  </div></div>
+  <div class="subsection"><h4 id="Tomcat_8.0.0_(markt)/Jasper">Jasper</h4><div class="text">
+    <ul class="changelog">
+      <li><img alt="Code: " class="icon" src="./images/code.gif">
+        Simplify API of <code>ErrorDispatcher</code> class by using varargs.
+        (kkolinko)
+      </li>
+      <li><img alt="Code: " class="icon" src="./images/code.gif">
+        Update Jasper to use the new common web.xml parsing code. Includes
+        patches by Jeremy Boynes. (markt/violetagg)
+      </li>
+      <li><img alt="Add: " class="icon" src="./images/add.gif">
+        Create test cases for JspC. Patch by Jeremy Boynes. (markt)
+      </li>
+      <li><img alt="Code: " class="icon" src="./images/code.gif">
+        <a href="http://issues.apache.org/bugzilla/show_bug.cgi?id=55246">55246</a>: TLD scanning is now performed by JasperInitializer
+        (a ServletContainerInitializer) removing the need for support within the
+        Servlet container itself. The scan is now performed only once rather than
+        in two passes reducing startup time. (jboynes)
+      </li>
+      <li><img alt="Fix: " class="icon" src="./images/fix.gif">
+        <a href="http://issues.apache.org/bugzilla/show_bug.cgi?id=55251">55251</a>: Do not allow JspC task to fail silently if the web.xml
+        or web.xml fragment can not be generated. (markt)
+      </li>
+    </ul>
+  </div></div>
+  <div class="subsection"><h4 id="Tomcat_8.0.0_(markt)/Cluster">Cluster</h4><div class="text">
+    <ul class="changelog">
+      <li><img alt="Code: " class="icon" src="./images/code.gif">
+        Remove unused JvmRouteSessionIDBinderListener and SessionIDMessage.
+        (kfujino)
+      </li>
+      <li><img alt="Code: " class="icon" src="./images/code.gif">
+        Modify method signature in ReplicationValve. Cluster instance is not
+        necessary to argument of method. (kfujino)
+      </li>
+      <li><img alt="Code: " class="icon" src="./images/code.gif">
+        Remove unused <code>expireSessionsOnShutdown</code> attribute in
+        <code>org.apache.catalina.ha.session.BackupManager</code>. (kfujino)
+      </li>
+    </ul>
+  </div></div>
+  <div class="subsection"><h4 id="Tomcat_8.0.0_(markt)/Web_applications">Web applications</h4><div class="text">
+    <ul class="changelog">
+      <li><img alt="Add: " class="icon" src="./images/add.gif">
+        Extend the diagnostic information provided by the Manager web
+        application to include details of the configured SSL ciphers suites for
+        each connector. (markt)
+      </li>
+      <li><img alt="Update: " class="icon" src="./images/update.gif">
+        <a href="http://issues.apache.org/bugzilla/show_bug.cgi?id=48550">48550</a>: Update examples web application to use UTF-8. (markt)
+      </li>
+      <li><img alt="Update: " class="icon" src="./images/update.gif">
+        <a href="http://issues.apache.org/bugzilla/show_bug.cgi?id=55383">55383</a>: Improve the design and correct the HTML markup of
+        the documentation web application. Patches provided by Konstantin
+        Prei&szlig;er. (markt)
+      </li>
+    </ul>
+  </div></div>
+  <div class="subsection"><h4 id="Tribes">Tribes</h4><div class="text">
+    <ul class="changelog">
+      <li><img alt="Code: " class="icon" src="./images/code.gif">
+        Refactor <code>AbstractReplicatedMap</code> to use generics. A key
+        side-effect of this is that the class now implements
+        <code>Map&lt;K,V&gt;</code> rather than extends
+        <code>ConcurrentMap</code>. (markt)
+      </li>
+    </ul>
+  </div></div>
+  <div class="subsection"><h4 id="Tomcat_8.0.0_(markt)/Other">Other</h4><div class="text">
+    <ul class="changelog">
+      <li><img alt="Code: " class="icon" src="./images/code.gif">
+        Remove unused, deprecated code. (markt)
+      </li>
+      <li><img alt="Code: " class="icon" src="./images/code.gif">
+        Remove static info String and associated getInfo() method where present.
+        (markt)
+      </li>
+      <li><img alt="Update: " class="icon" src="./images/update.gif">
+        (<a href="http://svn.apache.org/viewvc?view=rev&amp;rev=1353242">r1353242</a>, <a href="http://svn.apache.org/viewvc?view=rev&amp;rev=1353410">r1353410</a>):
+        Remove Ant tasks <code>jasper2</code> and <code>jkstatus</code>.
+        The correct names are <code>jasper</code> and <code>jkupdate</code>.
+        (kkolinko)
+      </li>
+      <li><img alt="Fix: " class="icon" src="./images/fix.gif">
+        <a href="http://issues.apache.org/bugzilla/show_bug.cgi?id=53529">53529</a>: Clean-up the handling of
+        <code>InterruptedException</code> throughout the code base. (markt)
+      </li>
+      <li><img alt="Add: " class="icon" src="./images/add.gif">
+        <a href="http://issues.apache.org/bugzilla/show_bug.cgi?id=54899">54899</a>: Provide an initial implementation of NetBeans support.
+        Patch provided by Brian Burch. (markt)
+      </li>
+      <li><img alt="Fix: " class="icon" src="./images/fix.gif">
+        <a href="http://issues.apache.org/bugzilla/show_bug.cgi?id=55166">55166</a>: Move the JSP descriptor and tag library descriptor
+        schema defintion files from jsp-api.jar to servlet-api.jar so relative
+        includes between the J2EE, Servlet and JSP schemas are correctly
+        resolved. (markt)
+      </li>
+      <li><img alt="Fix: " class="icon" src="./images/fix.gif">
+        <a href="http://issues.apache.org/bugzilla/show_bug.cgi?id=55372">55372</a>: When starting Tomcat with the <code>jpda</code> option
+        to enable remote debugging, by default only listen on localhost for
+        connections from a debugger. Prior to this change, Tomcat listened on
+        all known addresses. (markt)
+      </li>
+    </ul>
+  </div></div>
+</div></div></div></div></div><footer><div id="footer">
+    Copyright &copy; 1999-2014, The Apache Software Foundation
+  </div></footer></div></body></html>
