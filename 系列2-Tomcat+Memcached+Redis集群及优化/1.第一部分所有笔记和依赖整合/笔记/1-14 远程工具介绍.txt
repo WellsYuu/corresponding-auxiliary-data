@@ -1,0 +1,4 @@
+远程操作工具：[xmanager]
+	远程命令工具：xshell
+	远程ftp工具：xftp
+	远程文本工具: UltraEdit - vi vim nano

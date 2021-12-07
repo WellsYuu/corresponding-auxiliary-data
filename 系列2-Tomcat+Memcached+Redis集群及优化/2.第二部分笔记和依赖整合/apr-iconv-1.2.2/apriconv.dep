@@ -1,0 +1,38 @@
+# Microsoft Developer Studio Generated Dependency File, included by apriconv.mak
+
+.\lib\iconv.c : \
+	".\include\apr_iconv.h"\
+	".\lib\iconv.h"\
+	
+
+.\lib\iconv_ces.c : \
+	".\include\apr_iconv.h"\
+	".\lib\iconv.h"\
+	
+
+.\lib\iconv_ces_euc.c : \
+	".\include\apr_iconv.h"\
+	".\lib\iconv.h"\
+	
+
+.\lib\iconv_ces_iso2022.c : \
+	".\include\apr_iconv.h"\
+	".\lib\iconv.h"\
+	
+
+.\lib\iconv_int.c : \
+	".\include\apr_iconv.h"\
+	".\lib\iconv.h"\
+	
+
+.\lib\iconv_module.c : \
+	".\include\api_version.h"\
+	".\include\apr_iconv.h"\
+	".\lib\charset_alias.h"\
+	".\lib\iconv.h"\
+	
+
+.\lib\iconv_uc.c : \
+	".\include\apr_iconv.h"\
+	".\lib\iconv.h"\
+	

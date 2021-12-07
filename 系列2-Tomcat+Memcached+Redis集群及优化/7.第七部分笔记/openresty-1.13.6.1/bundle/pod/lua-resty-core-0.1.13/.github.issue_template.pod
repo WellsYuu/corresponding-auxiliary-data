@@ -1,0 +1,44 @@
+=encoding utf-8
+
+This place is for bug reports and development discussions only. For general questions and
+discussions, please join the openresty-en mailing list instead: https://groups.google.com/group/openresty-en.
+If you want to use Chinese, please join the openresty (Chinese) mailing list instead: https://groups.google.com/group/openresty.
+Do not use Chinese in this place.
+
+Before you open a new issue, please search the internet and make sure it is not duplicate.
+
+Ensure you have provided the following details while reporting a problem:
+
+
+=over
+
+
+=item *
+
+[ ] The exact version of the related software, including but not limited to the OpenResty version
+(if any), the NGINX core version, the C<ngx_lua> module version(via C<openresty -V> or C<nginx -V>),
+and the C<lua-resty-core> version(via C<resty -e 'print(require("resty.core").version)'>),
+and your operating system version(via C<uname -a>).
+
+=item *
+
+[ ] B<A minimal and standalone test case> that others can easily run on their side and
+reproduce the issue you are seeing.
+
+=item *
+
+[ ] Do not simply say "something is broken" or "something does not work". Always provide
+as much details as possible. Always describe B<the symptoms and your expected results>.
+
+
+=back
+
+You can (temporarily) enable the nginx debugging logs to see the internal workings
+of NGINX in your nginx''s C<error.log> file. See http://nginx.org/en/docs/debugging_log.html
+The same instructions apply equally well to OpenResty.
+
+If you are seeing crashes, please provide the full backtrace for the crash. See
+https://www.nginx.com/resources/wiki/start/topics/tutorials/debugging/#core-dump
+for more details.
+
+Thanks for your cooperation.

@@ -1,0 +1,9 @@
+mysql安装配置：
+	1、修改mysql.user里的host字段 -> %
+		select host,user from mysql.user;
+		update mysql.user set host='%' where user='root' and host='127.0.0.1';
+		
+	2、刷新修改
+		flush privileges;
+		
+	3、远程连接工具 -> sqlyog

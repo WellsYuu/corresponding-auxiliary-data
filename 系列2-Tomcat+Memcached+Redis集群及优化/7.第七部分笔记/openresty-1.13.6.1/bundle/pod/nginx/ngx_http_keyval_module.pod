@@ -1,0 +1,123 @@
+=encoding utf-8
+
+=head1 NAME
+
+ngx_http_keyval_module - Module ngx_http_keyval_module
+
+
+
+
+=head1
+
+
+
+The C<ngx_http_keyval_module> module (1.13.3) creates variables
+with values taken from key-value pairs managed by the
+L<API|ngx_http_api_module>.
+
+
+
+
+
+
+B<NOTE>
+
+This module is available as part of our
+commercial subscription.
+
+
+
+
+
+=head1 Example Configuration
+
+
+
+
+    
+    http {
+    
+        keyval_zone zone=one:32k state=one.keyval;
+        keyval $arg_text $text zone=one;
+        ...
+        server {
+            ...
+            location / {
+                return 200 $text;
+            }
+    
+            location /api {
+                api write=on;
+            }
+        }
+    }
+
+
+
+
+
+
+=head1 Directives
+
+=head2 keyval
+
+
+B<syntax:> keyval I<
+    I<C<key>>
+    I<C<$variable>>
+    C<zone>=I<C<name>>>
+
+
+
+B<context:> I<http>
+
+
+
+
+
+Creates a new I<C<$variable>> whose value
+is looked up by the I<C<key>> in the key-value database.
+Strings are matched ignoring the case.
+The database is stored in a shared memory zone
+specified by the C<zone> parameter.
+
+
+
+
+
+
+
+=head2 keyval_zone
+
+
+B<syntax:> keyval_zone I<
+    C<zone>=I<C<name>>:I<C<size>>
+    [C<state>=I<C<file>>]>
+
+
+
+B<context:> I<http>
+
+
+
+
+
+Sets the I<C<name>> and I<C<size>> of the shared memory zone
+that keeps the key-value database.
+Key-value pairs are managed by the
+L<API|ngx_http_api_module>.
+
+
+
+
+
+The optional C<state> parameter specifies a I<C<file>>
+that keeps the current state of the key-value database in the JSON format
+and makes it persistent across nginx restarts.
+
+
+
+
+
+
+

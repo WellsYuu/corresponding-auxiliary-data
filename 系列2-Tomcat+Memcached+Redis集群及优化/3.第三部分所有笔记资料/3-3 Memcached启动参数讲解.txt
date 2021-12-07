@@ -1,0 +1,2 @@
+Æô¶¯²ÎÊý£º
+	bin/memcached -d -u root -l 192.168.1.18 -p 2222 -c 128 -m 100 -P myPid

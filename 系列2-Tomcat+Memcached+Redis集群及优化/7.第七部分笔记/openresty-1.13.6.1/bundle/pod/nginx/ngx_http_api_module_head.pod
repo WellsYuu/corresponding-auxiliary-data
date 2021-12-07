@@ -1,0 +1,185 @@
+=encoding utf-8
+
+=head1 NAME
+
+ngx_http_api_module_head - Module ngx_http_api_module
+
+
+
+
+=head1
+
+
+
+The C<ngx_http_api_module> module (1.13.3) provides REST API
+for accessing various status information,
+configuring upstream server groups on-the-fly, and managing
+L<key-value pairs|ngx_http_keyval_module>
+without the need of reconfiguring nginx.
+
+
+
+
+
+
+B<NOTE>
+
+The module supersedes the
+L<ngx_http_status_module|ngx_http_status_module> and
+L<ngx_http_upstream_conf_module|ngx_http_upstream_conf_module>
+modules.
+
+
+
+
+
+
+
+B<NOTE>
+
+This module is available as part of our
+commercial subscription.
+
+
+
+
+
+=head1 Example Configuration
+
+
+
+
+    
+    http {
+        upstream backend {
+            zone http_backend 64k;
+    
+            server backend1.example.com weight=5;
+            server backend2.example.com;
+        }
+    
+        proxy_cache_path /data/nginx/cache_backend keys_zone=cache_backend:10m;
+    
+        server {
+            server_name backend.example.com;
+    
+            location / {
+                proxy_pass  http://backend;
+                proxy_cache cache_backend;
+    
+                health_check;
+            }
+    
+            status_zone server_backend;
+        }
+    
+        keyval_zone zone=one:32k state=one.keyval;
+        keyval $arg_text $text zone=one;
+    
+        server {
+            listen 127.0.0.1;
+    
+            location /api {
+                <emphasis>api</emphasis> write=on;
+                allow 127.0.0.1;
+                deny all;
+            }
+        }
+    }
+    
+    stream {
+        upstream backend {
+            zone stream_backend 64k;
+    
+            server backend1.example.com:12345 weight=5;
+            server backend2.example.com:12345;
+        }
+    
+        server {
+            listen      127.0.0.1:12345;
+            proxy_pass  backend;
+            status_zone server_backend;
+            health_check;
+        }
+    }
+
+
+All API requests include a supported API version in the URI.
+Examples of API requests with this configuration:
+
+    
+    http://127.0.0.1/api/1/
+    http://127.0.0.1/api/1/nginx
+    http://127.0.0.1/api/1/connections
+    http://127.0.0.1/api/1/http/requests
+    http://127.0.0.1/api/1/http/server_zones/server_backend
+    http://127.0.0.1/api/1/http/caches/cache_backend
+    http://127.0.0.1/api/1/http/upstreams/backend
+    http://127.0.0.1/api/1/http/upstreams/backend/servers/
+    http://127.0.0.1/api/1/http/upstreams/backend/servers/1
+    http://127.0.0.1/api/1/http/keyvals/one?key=arg1
+    http://127.0.0.1/api/1/stream/
+    http://127.0.0.1/api/1/stream/server_zones/server_backend
+    http://127.0.0.1/api/1/stream/upstreams/
+    http://127.0.0.1/api/1/stream/upstreams/backend
+    http://127.0.0.1/api/1/stream/upstreams/backend/servers/1
+
+
+
+
+
+
+=head1 Directives
+
+=head2 api
+
+
+B<syntax:> api I<
+[C<write>=C<on>E<verbar>C<off>]>
+
+
+
+B<context:> I<location>
+
+
+
+
+
+Turns on the REST API interface in the surrounding location.
+Access to this location should be
+L<limited|ngx_http_core_module>.
+
+
+
+
+
+The C<write> parameter determines whether the API
+is read-only or read-write.
+By default, the API is read-only.
+
+
+
+
+
+All API requests should contain a supported API version in the URI.
+If the request URI equals the location prefix,
+the list of supported API versions is returned.
+The current and the only API version is “C<1>”.
+
+
+
+
+
+The optional “C<fields>” argument in the request line
+specifies which fields of the requested objects will be output:
+
+    
+    http://127.0.0.1/api/1/nginx?fields=version,build
+
+
+
+
+
+
+
+

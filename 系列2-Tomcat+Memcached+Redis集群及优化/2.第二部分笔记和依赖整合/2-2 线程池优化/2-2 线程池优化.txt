@@ -1,0 +1,11 @@
+maxConnections：最大连接数
+
+	1、ulimit -a
+			修改 /etc/security/limits.conf
+			
+	2、添加maxConntions的配置
+		2.1 对CPU要求更高时，建议不要配置过于大
+		2.2 对CPU要求不是特别高时，建议配置在3000左右
+		
+	3、配置的地方：
+			server.xml -> connector
