@@ -1,0 +1,18 @@
+1、配置Tomcat之前需要安装Tomcat-native
+	%CATALINA_HOME%/bin/tomcat-native-{版本}.tar.gz
+	
+	
+2、解压该文件夹
+
+3、进入 native目录进行安装
+	./configure --with-apr=/usr/local/apr
+	make & make install
+	
+	
+4、修改catalina.sh
+LD_LIBRARY_PATH=$LD_LIBRARY_PAYH:/usr/local/apr/lib export LD_LIBRARY_PATH
+
+5、server.xml -> %CATALINA_HOME%/conf/server.xml
+	
+	修改Connectior节点的protocol属性
+		-> org.apache.coyote.http11.Http11AprProtocol即可
