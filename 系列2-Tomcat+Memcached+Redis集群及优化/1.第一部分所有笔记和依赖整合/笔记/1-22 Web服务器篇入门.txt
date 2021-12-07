@@ -1,0 +1,10 @@
+高并发：
+	1、Web引流
+	2、动静分离
+	3、缓存应用
+	4、分布式文件系统。。。
+	
+
+Tomcat集群：
+  1、分布式session问题
+  2、MSM -> memcached-session-manager
