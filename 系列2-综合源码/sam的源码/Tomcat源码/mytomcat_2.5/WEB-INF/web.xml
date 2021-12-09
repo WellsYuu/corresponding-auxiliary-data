@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<web-app>
+	<!-- 注册两个服务处理  -->
+	<servlet>
+		<url-pattern>/login.action</url-pattern>
+		<servlet-class>mytomcat_1.LoginServlet</servlet-class>
+	</servlet>
+
+	<servlet>
+		<url-pattern>/register.action</url-pattern>
+		<servlet-class>mytomcat_1.RegiestServlet</servlet-class>
+	</servlet>
+	
+</web-app>
