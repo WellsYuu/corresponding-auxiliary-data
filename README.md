@@ -5,7 +5,7 @@ Corresponding Auxiliary Data 是专为 [哔哩哔哩 (B站) ](https://space.bili
 我们的主要目标是：
 
 - 去除因需学习而存在的高额培训费用。
-- 杜绝盗版，所有系列视频均为自费三方渠道购买。
+- 杜绝盗版，**所有系列视频均为自费三方渠道购买**。
 - 在内卷时代将更多的技术传播到更多人的手里，尽可能提高更多人的技术水准。
 
 ------
@@ -47,9 +47,13 @@ Corresponding Auxiliary Data 以系列模块的方式来区分不同的视频集
 
 ### 系列二
 
-正在更新...
+该**系列二**视频及源码、PPT、笔记等材料均来自于 *咕泡学院Java架构师VIP全套* 内部培训课程，其中系列二中部分章节没有源码，只有笔记或者PPT，那么可以在 [系列2-综合源码](https://github.com/walesu/corresponding-auxiliary-data/tree/main/%E7%B3%BB%E5%88%972-%E7%BB%BC%E5%90%88%E6%BA%90%E7%A0%81) 中寻找
 
-------
+### 系列三
+
+更新中...
+
+
 
 ## License
 
