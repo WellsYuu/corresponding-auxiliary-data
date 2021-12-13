@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<wc-entries
+   xmlns="svn:">
+<entry
+   name=""
+   repos="https://222.92.214.196/svn/cn95598"
+   revision="4375"
+   last-author="yongde"
+   uuid="aa817e3d-b7c8-4c43-9e1d-df7715af45e8"
+   url="https://222.92.214.196/svn/cn95598/cn95598-manage/trunk/src/test/java"
+   committed-rev="4159"
+   kind="dir"
+   committed-date="2016-01-15T03:34:42.829052Z"/>
+<entry
+   name="com"
+   kind="dir"/>
+</wc-entries>

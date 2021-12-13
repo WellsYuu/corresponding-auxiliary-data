@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<wc-entries
+   xmlns="svn:">
+<entry
+   repos="https://222.92.214.196/svn/cn95598"
+   name=""
+   revision="4375"
+   last-author="yongde"
+   url="https://222.92.214.196/svn/cn95598/cn95598-manage/trunk/src/test/resources"
+   uuid="aa817e3d-b7c8-4c43-9e1d-df7715af45e8"
+   committed-rev="88"
+   kind="dir"
+   committed-date="2015-08-07T03:26:10.775770Z"/>
+</wc-entries>

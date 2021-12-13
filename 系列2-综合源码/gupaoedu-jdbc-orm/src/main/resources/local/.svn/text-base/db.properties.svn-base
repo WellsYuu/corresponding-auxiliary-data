@@ -1,0 +1,22 @@
+
+#sysbase database mysql config
+sysbase.mysql.jdbc.driverClassName=com.mysql.jdbc.Driver
+sysbase.mysql.jdbc.url=jdbc:mysql://61.155.169.157:3306/cn95598_sysbase?characterEncoding=UTF-8&rewriteBatchedStatements=true
+sysbase.mysql.jdbc.username=cn95598
+sysbase.mysql.jdbc.password=CN95598,.
+
+#alibaba druid config
+
+dbPool.initialSize=1
+dbPool.minIdle=1
+dbPool.maxActive=200
+dbPool.maxWait=60000
+dbPool.timeBetweenEvictionRunsMillis=60000
+dbPool.minEvictableIdleTimeMillis=300000
+dbPool.validationQuery=SELECT 'x' 
+dbPool.testWhileIdle=true
+dbPool.testOnBorrow=false
+dbPool.testOnReturn=false
+dbPool.poolPreparedStatements=false
+dbPool.maxPoolPreparedStatementPerConnectionSize=20
+dbPool.filters=stat,log4j,wall

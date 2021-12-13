@@ -1,0 +1,14 @@
+#allow request common modes
+auth.rule.allow.modes=lang,desktop,setting,app,buildingmornitor,plugins
+#allow request urls
+auth.rule.allow.urls=web/menu/getList,web/getMonitorTree/.*,web/explorer/my/app/getList,web/code/getComboxData
+
+#allow request methods
+auth.rule.method.query=get,config
+auth.rule.method.add=add,save
+auth.rule.method.edit=modify,update,reset
+auth.rule.method.remove=remove,recovery,delete,realDel
+auth.rule.method.upload=upload
+auth.rule.method.download=download
+auth.rule.method.import=import
+auth.rule.method.export=export

@@ -1,0 +1,10 @@
+redis_ref_hosts=222.92.214.198:6379
+#222.92.214.198:6379
+#192.168.81.17:6379
+
+
+#redis.host=222.92.214.196
+#redis.port=6379
+#redis.expire=1800
+#redis.timeout=10000
+#redis.password=123456

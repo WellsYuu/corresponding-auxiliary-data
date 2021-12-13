@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<application xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://www.zeroturnaround.com" xsi:schemaLocation="http://www.zeroturnaround.com/alderaan/rebel-2_0.xsd">
+
+	<classpath>
+		<dir name="E:/GP_WORKSPACE/gupaoedu-mvcframework/target/ROOT/WEB-INF/classes">
+			<include name="system.properties"/>
+			<include name="webdefault.xml"/>
+		</dir>
+		<dir name="E:/GP_WORKSPACE/gupaoedu-mvcframework/src/main/resources">
+			<include name="**/*"/>
+		</dir>
+		<dir name="E:/GP_WORKSPACE/gupaoedu-mvcframework/src/main/java">
+			<exclude name="**/*.java"/>
+			<exclude name="**/*.class"/>
+		</dir>
+		<dir name="E:/GP_WORKSPACE/gupaoedu-mvcframework/target/classes">
+		</dir>
+	</classpath>
+
+	<web>
+		<link target="/">
+			<dir name="E:/GP_WORKSPACE/gupaoedu-mvcframework/src/main/webapp">
+			</dir>
+		</link>
+	</web>
+
+</application>

@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<web-app xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns="http://java.sun.com/xml/ns/j2ee" xmlns:javaee="http://java.sun.com/xml/ns/javaee"
+	xmlns:web="http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd"
+	xsi:schemaLocation="http://java.sun.com/xml/ns/j2ee http://java.sun.com/xml/ns/j2ee/web-app_2_4.xsd"
+	version="2.4">
+	<display-name>Gupao Web Application</display-name>
+  	
+	<!-- mvcframework config start -->
+	<servlet>
+	  <servlet-name>dispatcher</servlet-name>
+	  <servlet-class>com.gupaoedu.mvcframework.servlet.GPDispatcherServlet</servlet-class>
+	  <init-param>
+	  	<param-name>scanPackage</param-name>
+	  	<param-value>com.gupaoedu.demo</param-value>
+	  </init-param>
+	  <load-on-startup>1</load-on-startup>
+	</servlet>
+	<servlet-mapping>
+	  <servlet-name>dispatcher</servlet-name>
+	  <url-pattern>*.json</url-pattern>
+	</servlet-mapping>
+	<!-- mvcframework config end -->
+	
+	<!-- welcome page -->
+	<welcome-file-list>
+	  <welcome-file>/index.html</welcome-file>
+	</welcome-file-list>
+</web-app>

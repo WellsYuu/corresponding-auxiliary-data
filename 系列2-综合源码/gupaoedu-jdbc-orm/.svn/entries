@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<wc-entries
+   xmlns="svn:">
+<entry
+   repos="https://222.92.214.196/svn/cn95598"
+   name=""
+   revision="4375"
+   last-author="yongde"
+   uuid="aa817e3d-b7c8-4c43-9e1d-df7715af45e8"
+   url="https://222.92.214.196/svn/cn95598/cn95598-manage/trunk"
+   committed-rev="4353"
+   kind="dir"
+   committed-date="2016-02-24T04:02:01.857223Z"/>
+<entry
+   name="pom.xml"
+   checksum="8a3f7aa4f3381d1e7517bfa828e383e0"
+   last-author="yongde"
+   committed-rev="4345"
+   text-time="2016-02-24T03:56:47.000000Z"
+   kind="file"
+   committed-date="2016-02-24T03:56:51.416000Z"/>
+<entry
+   name="src"
+   kind="dir"/>
+</wc-entries>

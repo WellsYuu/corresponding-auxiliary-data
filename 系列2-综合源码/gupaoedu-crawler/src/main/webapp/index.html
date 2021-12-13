@@ -1,0 +1,54 @@
+<html>
+	<head>
+	 	<meta charset="utf-8"/>
+		<title>网页搜索</title>
+		<link href="/css/index.css" rel="stylesheet"/>
+	</head>
+	<body>
+		
+		<center>
+			<input name="keyword" id="keyword"/><input type="button" id="search-btn" value="搜索"/>
+		</center>
+		
+		<script type="text/template" id="house-item">
+				<li>
+					<div class="name"></div>
+					<div class="cover">
+						<img src="" />
+					</div>
+					<div class="type"></div>
+					<div class="price"></div>
+					<div class="address"></div>
+				</li>
+			
+		</script>
+		
+		<div class="house-list">
+			<ul>
+				
+			</ul>
+		</div>
+	</body>
+	<script type="text/javascript" src="js/jquery-2.0.3.min.js"></script>
+	<script type="text/javascript">
+		$(document).ready(function(){
+			
+			var temp = $("#house-item").html();
+			$("#search-btn").click(function(){
+				var keyword = $("#keyword").val();
+				$.ajax({url:"/web/house/search.json",data:{keyword:keyword},type:"post",dataType:"json",success:function(r){
+					$.each(r.data.rows,function(i,o){
+						var item = $(temp);
+						$(".name",item).html(o.name);
+						$(".cover img",item).attr("src",o.cover);
+						$(".type",item).html(o.type);
+						$(".price",item).html(o.price);
+						$(".address",item).html(o.address);
+						$(".house-list ul").append(item);
+					});
+				}});
+			});
+			
+		});
+	</script>
+</html>
