@@ -1,0 +1,23 @@
+K 25
+svn:wc:ra_dav:version-url
+V 74
+/svn/cn95598/!svn/ver/4690/cn95598-manage/trunk/src/main/resources/product
+END
+db.properties
+K 25
+svn:wc:ra_dav:version-url
+V 88
+/svn/cn95598/!svn/ver/4690/cn95598-manage/trunk/src/main/resources/product/db.properties
+END
+redis-host.properties
+K 25
+svn:wc:ra_dav:version-url
+V 96
+/svn/cn95598/!svn/ver/3388/cn95598-manage/trunk/src/main/resources/product/redis-host.properties
+END
+log4j-cfg.xml
+K 25
+svn:wc:ra_dav:version-url
+V 88
+/svn/cn95598/!svn/ver/3672/cn95598-manage/trunk/src/main/resources/product/log4j-cfg.xml
+END

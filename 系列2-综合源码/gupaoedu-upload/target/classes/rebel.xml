@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<application xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://www.zeroturnaround.com" xsi:schemaLocation="http://www.zeroturnaround.com/alderaan/rebel-2_0.xsd">
+
+	<classpath>
+		<dir name="E:/GP_WORKSPACE/gupaoedu-upload/target/gupaoedu-upload/WEB-INF/classes">
+			<include name="log4j-cfg.xml"/>
+		</dir>
+		<dir name="E:/GP_WORKSPACE/gupaoedu-upload/target/gupaoedu-upload/WEB-INF/classes">
+			<include name="application-beans.xml"/>
+			<include name="application-common.xml"/>
+			<include name="application-context.xml"/>
+			<include name="application-web.xml"/>
+			<include name="i18n/en.properties"/>
+			<include name="i18n/zh_CN.properties"/>
+			<include name="i18n/zh_TW.properties"/>
+			<include name="local/log4j-cfg.xml"/>
+			<include name="product/log4j-cfg.xml"/>
+			<include name="system.properties"/>
+			<include name="webdefault.xml"/>
+		</dir>
+		<dir name="E:/GP_WORKSPACE/gupaoedu-upload/src/main/resources">
+			<include name="**/*"/>
+		</dir>
+		<dir name="E:/GP_WORKSPACE/gupaoedu-upload/src/main/java">
+			<exclude name="**/*.java"/>
+			<exclude name="**/*.class"/>
+		</dir>
+		<dir name="E:/GP_WORKSPACE/gupaoedu-upload/target/classes">
+		</dir>
+	</classpath>
+
+	<web>
+		<link target="/">
+			<dir name="E:/GP_WORKSPACE/gupaoedu-upload/src/main/webapp">
+			</dir>
+		</link>
+	</web>
+
+</application>

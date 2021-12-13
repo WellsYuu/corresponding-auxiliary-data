@@ -1,0 +1,59 @@
+K 25
+svn:wc:ra_dav:version-url
+V 66
+/svn/cn95598/!svn/ver/5088/cn95598-manage/trunk/src/main/resources
+END
+application-web.xml
+K 25
+svn:wc:ra_dav:version-url
+V 86
+/svn/cn95598/!svn/ver/1790/cn95598-manage/trunk/src/main/resources/application-web.xml
+END
+auth-rule.properties
+K 25
+svn:wc:ra_dav:version-url
+V 87
+/svn/cn95598/!svn/ver/4328/cn95598-manage/trunk/src/main/resources/auth-rule.properties
+END
+application-common.xml
+K 25
+svn:wc:ra_dav:version-url
+V 89
+/svn/cn95598/!svn/ver/3181/cn95598-manage/trunk/src/main/resources/application-common.xml
+END
+system.properties
+K 25
+svn:wc:ra_dav:version-url
+V 84
+/svn/cn95598/!svn/ver/4010/cn95598-manage/trunk/src/main/resources/system.properties
+END
+application-db.xml
+K 25
+svn:wc:ra_dav:version-url
+V 85
+/svn/cn95598/!svn/ver/4745/cn95598-manage/trunk/src/main/resources/application-db.xml
+END
+webdefault.xml
+K 25
+svn:wc:ra_dav:version-url
+V 79
+/svn/cn95598/!svn/ver/88/cn95598-manage/trunk/src/main/resources/webdefault.xml
+END
+application-context.xml
+K 25
+svn:wc:ra_dav:version-url
+V 89
+/svn/cn95598/!svn/ver/879/cn95598-manage/trunk/src/main/resources/application-context.xml
+END
+application-aop.xml
+K 25
+svn:wc:ra_dav:version-url
+V 85
+/svn/cn95598/!svn/ver/839/cn95598-manage/trunk/src/main/resources/application-aop.xml
+END
+application-beans.xml
+K 25
+svn:wc:ra_dav:version-url
+V 86
+/svn/cn95598/!svn/ver/88/cn95598-manage/trunk/src/main/resources/application-beans.xml
+END

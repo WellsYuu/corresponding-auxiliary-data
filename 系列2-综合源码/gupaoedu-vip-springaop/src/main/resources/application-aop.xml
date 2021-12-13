@@ -1,0 +1,45 @@
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:tx="http://www.springframework.org/schema/tx"
+	xmlns:aop="http://www.springframework.org/schema/aop"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://www.springframework.org/schema/beans 
+						http://www.springframework.org/schema/beans/spring-beans-3.0.xsd
+						http://www.springframework.org/schema/tx 
+						http://www.springframework.org/schema/tx/spring-tx-3.0.xsd
+						http://www.springframework.org/schema/aop 
+						http://www.springframework.org/schema/aop/spring-aop-3.0.xsd">
+	<aop:aspectj-autoproxy proxy-target-class="true"/>
+	
+	<!-- 声明一个需要织入到虚拟切面的逻辑（切面） -->
+	<!-- 
+	<bean id="logAspect" class="com.gupaoedu.vip.aop.aspect.LogAspect"></bean>
+	
+	<aop:config>
+		<aop:aspect ref="logAspect">
+			<aop:pointcut expression="execution(* com.gupaoedu.vip.aop.service..*(..))" id="logPointcut"/>
+			<aop:before method="before" pointcut-ref="logPointcut"/>
+			<aop:after-returning method="afterReturn" returning="boolean"  pointcut-ref="logPointcut"/>
+			<aop:after method="after" pointcut-ref="logPointcut"/>
+			<aop:after-throwing method="afterThrow" pointcut-ref="logPointcut"/>
+		</aop:aspect>
+	</aop:config> 
+	-->
+	
+	
+	<!-- 具体的方法就是切点 -->
+	<!-- 如何定义一个具体的方法 -->
+	<!-- 权限修饰符(public/private/protected可省略) 返回值(Void/自定义类型,用*表示任意返回值类型，必填的) 属于哪个包哪个类(省略).方法名称(参数列表,必填) throws 异常类型(可省略) -->
+	<!-- 参数列表的不同跟什么有关呢？
+		 1、参数的个数
+		 2、参数的顺序
+		 3、参数的类型
+		 
+		 跟参数的名字没有任何关系,形式参数
+		 如果一个方法用final修饰了，就意味着这个方法不能被重写
+		 也就意味着我们的子类不能对这个方法进行扩展
+		 代理是是无法实现的
+	 -->
+	<!-- execution(public * com.gupaoedu.vip.aop.service..*.*(..))-->
+	
+	
+</beans>

@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<wc-entries
+   xmlns="svn:">
+<entry
+   name=""
+   repos="https://222.92.214.196/svn/cn95598"
+   revision="4375"
+   last-author="yongde"
+   uuid="aa817e3d-b7c8-4c43-9e1d-df7715af45e8"
+   url="https://222.92.214.196/svn/cn95598/cn95598-manage/trunk/src/main/webapp/WEB-INF"
+   committed-rev="1791"
+   kind="dir"
+   committed-date="2015-10-30T03:06:57.982326Z"/>
+<entry
+   name="web.xml"
+   checksum="44777d226a308f7f1af582b1557619a6"
+   last-author="yongde"
+   text-time="2015-10-30T02:00:31.000000Z"
+   committed-rev="1791"
+   kind="file"
+   committed-date="2015-10-30T03:06:57.982000Z"/>
+</wc-entries>

@@ -1,0 +1,185 @@
+10
+
+dir
+5329
+https://222.92.214.196/svn/cn95598/cn95598-manage/trunk/src/main/resources
+https://222.92.214.196/svn/cn95598
+
+
+
+2016-06-24T10:48:11.421131Z
+5088
+yongde
+
+
+svn:special svn:externals svn:needs-lock
+
+
+
+
+
+
+
+
+
+
+
+aa817e3d-b7c8-4c43-9e1d-df7715af45e8
+
+ahdsm
+dir
+
+application-aop.xml
+file
+
+
+
+
+2015-09-07T09:35:22.000000Z
+3c603ed3c08e83206938bce1a198bd89
+2015-09-07T09:35:22.374843Z
+839
+yongde
+
+application-beans.xml
+file
+
+
+
+
+2015-08-07T03:26:10.000000Z
+af4e3f925b465023c0182f03d0e2237a
+2015-08-07T03:26:10.775770Z
+88
+yongde
+
+application-common.xml
+file
+
+
+
+
+2015-11-21T06:28:57.000000Z
+fd63afbf0a90e9db8ee91c87930b240b
+2015-11-21T07:01:57.814000Z
+3181
+yongde
+
+application-context.xml
+file
+
+
+
+
+2015-09-09T02:05:02.000000Z
+95280e5f86ff4bd2873c170e61366389
+2015-09-09T02:05:02.228492Z
+879
+yongde
+
+application-db.xml
+file
+
+
+
+
+2016-07-26T03:56:10.000000Z
+e57140854272d127186df402d349660f
+2016-04-13T06:47:48.384091Z
+4745
+yongde
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+3016
+
+application-web.xml
+file
+
+
+
+
+2015-10-30T02:00:14.000000Z
+4fd330fe35a5b46aab8b4f90f19cc76d
+2015-10-30T03:06:44.940000Z
+1790
+yongde
+
+auth-rule.properties
+file
+
+
+
+
+2016-02-22T08:10:44.000000Z
+8308f7dad5eeee3c95ddcb39d3a3c941
+2016-02-22T08:10:44.837527Z
+4328
+zhixiong
+
+i18n
+dir
+
+idsm
+dir
+
+idsmpc
+dir
+
+local
+dir
+
+nxdsm
+dir
+
+product
+dir
+
+system.properties
+file
+
+
+
+
+2015-12-23T07:28:40.893601Z
+5462158e2591f61a1f644d3d12f8b073
+2015-12-23T07:28:40.893601Z
+4010
+yongde
+
+test
+dir
+
+webdefault.xml
+file
+
+
+
+
+2015-08-07T03:26:10.000000Z
+3f629ae5728ba1dfe153048225a4254a
+2015-08-07T03:26:10.775770Z
+88
+yongde
+
+zjdsm
+dir
+

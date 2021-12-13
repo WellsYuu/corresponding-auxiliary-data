@@ -1,0 +1,13 @@
+#************** System Config *******************#
+
+#system.charSet=UTF-8
+system.sysCode=manage
+system.local=zh_CN
+
+system.myHost=http://manage.cn95598.com
+system.passportHost=http://passport.cn95598.com
+
+sso.loginHost=${system.passportHost}
+
+sso.service=${system.myHost}
+

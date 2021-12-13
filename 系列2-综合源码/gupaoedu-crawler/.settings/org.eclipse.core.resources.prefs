@@ -1,0 +1,12 @@
+eclipse.preferences.version=1
+encoding//src/main/java/com/gupaoedu/common/utils/WebUtil.java=UTF-8
+encoding//src/main/java/com/gupaoedu/core/mvc/action/BaseAction.java=UTF-8
+encoding//src/main/java/com/gupaoedu/crawler/parser/house/LianjiaParser.java=UTF-8
+encoding//src/main/java/com/gupaoedu/crawler/support/DownLoader.java=UTF-8
+encoding//src/main/java/com/gupaoedu/crawler/support/RandomProxyIp.java=UTF-8
+encoding//src/main/java/com/gupaoedu/crawler/support/ResultProcess.java=UTF-8
+encoding//src/main/java/com/gupaoedu/crawler/support/SearchResult.java=UTF-8
+encoding//src/main/java/javax/core/common/Page.java=UTF-8
+encoding//src/main/java/javax/core/common/config/CustomConfig.java=UTF-8
+encoding//src/main/webapp/index.html=UTF-8
+encoding//src/test/java=UTF-8
