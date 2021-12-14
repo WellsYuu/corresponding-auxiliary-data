@@ -1,36 +1,21 @@
-/*! SearchHighlight for DataTables v1.0.1
- * 2014 SpryMedia Ltd - datatables.net/license
+/*
+ * Copyright [$tody.year] [Wales Yu of copyright owner]
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 
-/**
- * @summary     SearchHighlight
- * @description Search term highlighter for DataTables
- * @version     1.0.1
- * @file        dataTables.searchHighlight.js
- * @author      SpryMedia Ltd (www.sprymedia.co.uk)
- * @contact     www.sprymedia.co.uk/contact
- * @copyright   Copyright 2014 SpryMedia Ltd.
- * 
- * License      MIT - http://datatables.net/license/mit
- *
- * This feature plug-in for DataTables will highlight search terms in the
- * DataTable as they are entered into the main search input element, or via the
- * `search()` API method.
- *
- * It depends upon the jQuery Highlight plug-in by Bartek Szopka:
- * 	  http://bartaz.github.io/sandbox.js/jquery.highlight.js
- *
- * Search highlighting in DataTables can be enabled by:
- *
- * * Adding the class `searchHighlight` to the HTML table
- * * Setting the `searchHighlight` parameter in the DataTables initialisation to
- *   be true
- * * Setting the `searchHighlight` parameter to be true in the DataTables
- *   defaults (thus causing all tables to have this feature) - i.e.
- *   `$.fn.dataTable.defaults.searchHighlight = true`.
- *
- * For more detailed information please see:
- *     http://datatables.net/blog/2014-10-22
+/*! SearchHighlight for DataTables v1.0.1
+ * 2014 SpryMedia Ltd - datatables.net/license
  */
 
 (function(window, document, $){
