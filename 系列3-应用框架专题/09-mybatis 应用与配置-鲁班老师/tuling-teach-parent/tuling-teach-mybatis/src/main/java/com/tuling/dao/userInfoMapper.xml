@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.tuling.dao.UserInfoMapper">
+    <resultMap id="UserInfoMapper" type="com.tuling.dao.UserInfo">
+        <id property="id"  column="id"/>
+        <result property="username" column="user_name"/>
+    </resultMap>
+    <sql id="normal_colume">
+        id,user_name,nick_name,password
+    </sql>
+
+    <select id="getUser" parameterType="int"  resultMap="UserInfoMapper">
+        SELECT  *  FROM  user_info where id=#{id}
+    </select>
+
+    <select id="selectUser" parameterType="com.tuling.dao.UserInfo" resultType="com.tuling.dao.UserInfo">
+        SELECT
+        <include refid="normal_colume"/>
+        from user_info
+        <where>
+            <if test="username !=null">
+                AND user_name=#{username}
+            </if>
+            <if test="password !=null">
+                AND password=#{password}
+            </if>
+        </where>
+    </select>
+
+    <update id="updateUser" parameterType="com.tuling.dao.UserInfo">
+        UPDATE user_info set
+        <set>
+            <if test="password!=null">
+                , password=#{password}
+            </if>
+            <if test="userName!=null">
+                , user_name=#{userName}
+            </if>
+        </set>
+    </update>
+    <select id="getUserByIds" parameterType="arraylist" resultType="com.tuling.dao.UserInfo">
+        SELECT  *  FROM  user_info where id in
+        <foreach collection="array" open="(" close=")" index="i" item="id" separator=",">
+            #{id}
+        </foreach>
+    </select>
+
+</mapper>
