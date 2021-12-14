@@ -1,5 +1,5 @@
 /*
- * Copyright [$tody.year] [Wales Yu of copyright owner]
+ * Copyright 2021-2021 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -762,11 +762,6 @@ body.stop-scrolling {
 .sweet-alert .sa-icon.sa-success .sa-line.sa-long {
   -ms-transform: rotate(-45deg) \9; }
 
-/*!
- * Load Awesome v1.1.0 (http://github.danielcardoso.net/load-awesome/)
- * Copyright 2015 Daniel Cardoso <@DanielCardoso>
- * Licensed under MIT
- */
 .la-ball-fall,
 .la-ball-fall > div {
   position: relative;
