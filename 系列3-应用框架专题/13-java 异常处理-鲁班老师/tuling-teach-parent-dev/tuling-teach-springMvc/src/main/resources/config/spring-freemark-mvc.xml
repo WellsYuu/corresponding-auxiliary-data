@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="GBK"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xmlns:mvc="http://www.springframework.org/schema/mvc"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+       http://www.springframework.org/schema/beans/spring-beans.xsd  
+       http://www.springframework.org/schema/context  
+       http://www.springframework.org/schema/context/spring-context.xsd  
+       http://www.springframework.org/schema/mvc  
+       http://www.springframework.org/schema/mvc/spring-mvc.xsd">
+    <!-- 控制器  -->
+    <mvc:annotation-driven/>
+  <!--  <mvc:default-servlet-handler/>-->
+    <mvc:resources mapping="/static/**" location="/js/"/>
+
+
+    <bean id="freemarkerConfig"
+          class="org.springframework.web.servlet.view.freemarker.FreeMarkerConfigurer">
+        <property name="templateLoaderPaths" value="/ftl/" />
+        <property name="freemarkerVariables">
+            <map>
+                <entry key="webnorm" value="!webnorm"></entry>
+                <entry key="weblist" value="!m1"></entry>
+                <entry key="webthum" value="!s2"></entry>
+                <entry key="l2" value="!l2"></entry>
+                <entry key="m1" value="!m1"></entry>
+                <entry key="s2" value="!s2"></entry>
+                <entry key="s1" value="!s1"></entry>
+                <entry key="s2" value="!s2"></entry>
+            </map>
+        </property>
+        <property name="freemarkerSettings">
+            <map>
+                <entry key="default_encoding" value="UTF-8" />
+                <entry key="tag_syntax" value="auto_detect" />
+                <entry key="number_format" value="#" />
+                <entry key="datetime_format" value="yyyy-MM-dd hh:mm:ss" />
+            </map>
+        </property>
+    </bean>
+
+    <bean class="org.springframework.web.servlet.view.freemarker.FreeMarkerViewResolver">
+        <property name="suffix" value=".ftl"/>
+        <property name="cache" value="false"/>
+    </bean>
+    <!-- 扫描加载Bean-->
+    <context:component-scan base-package="com.tuling.control"/>
+</beans>

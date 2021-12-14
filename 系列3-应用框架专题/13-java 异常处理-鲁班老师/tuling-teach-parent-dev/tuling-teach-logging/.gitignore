@@ -1,0 +1,13 @@
+.classpath
+.springBeans
+.svn
+logs/
+target/
+*.iml
+/.idea/
+temp/
+/classes/
+/test-classes/
+/target/
+.project
+.settings/

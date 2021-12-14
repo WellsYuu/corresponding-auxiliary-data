@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<Configuration status="error">
+    <!-- 定义输出源 -->
+    <Appenders>
+        <Console name="Console" target="SYSTEM_ERR">
+            <PatternLayout pattern="%d [%-5level][%t] %m (%C:%F:%L) %n"/>
+        </Console>
+        <!--  测试环境使用-->
+        <File name="file" fileName="logs/all.log" append="false">
+            <PatternLayout pattern="%d [%-5level][%t] %m (%C:%F:%L) %n"/>
+        </File>
+        <RollingFile name="rollingFile" fileName="logs/all-2.log"
+                     filePattern="logs/$${date:yyyy-MM-dd}/all-%d{yyyy-MM-dd-HH}-%i.zip">
+            <PatternLayout pattern="%d [%-5level][%t] %m (%C:%F:%L) %n"/>
+            <Policies>
+                <TimeBasedTriggeringPolicy/>
+                <SizeBasedTriggeringPolicy size="2 KB"/>
+            </Policies>
+            <DefaultRolloverStrategy max="10"/>
+        </RollingFile>
+
+
+        <RollingFile name="errorRollingFile" fileName="logs/error.log"
+                     filePattern="logs/$${date:yyyy-MM-dd}-error/error-%d{yyyy-MM-dd-HH}-%i.zip">
+            <PatternLayout pattern="%d [%-5level][%t] %m (%C:%F:%L) %n"/>
+            <ThresholdFilter level="error" onMatch="ACCEPT" onMismatch="DENY"/>
+            <Policies>
+                <TimeBasedTriggeringPolicy/>
+                <SizeBasedTriggeringPolicy size="2 KB"/>
+            </Policies>
+            <DefaultRolloverStrategy max="10"/>
+        </RollingFile>
+    </Appenders>
+
+    <!--  具体的日志配置 name =-->
+    <Loggers>
+        <!-- <Logger name="org.springframework" level="error">
+             <AppenderRef ref="Console"/>
+         </Logger>-->
+        <Logger name="com.tuliing" level="error">
+            <AppenderRef ref="errorRollingFile"/>
+        </Logger>
+
+        <AsyncRoot level="debug">
+            <AppenderRef ref="Console"/>
+            <AppenderRef ref="file"/>
+            <AppenderRef ref="rollingFile"/>
+        </AsyncRoot>
+
+    </Loggers>
+</Configuration>
