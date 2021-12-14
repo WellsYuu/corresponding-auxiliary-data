@@ -1,8 +1,24 @@
-*,body,button,div,h1,h2,h3,h4,h5,h6,hr,input,li,p,textarea,ul{margin:0;padding:0;font-family:"Î¢ÈíÑÅºÚ","ËÎÌå"}
-body{font-size:13px;font-family:"Î¢ÈíÑÅºÚ","ËÎÌå";color:#5F5F5F;background-color:#fff;overflow:hidden;overflow-y:scroll}
+/*
+ * Copyright [$tody.year] [Wales Yu of copyright owner]
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+*,body,button,div,h1,h2,h3,h4,h5,h6,hr,input,li,p,textarea,ul{margin:0;padding:0;font-family:"Î¢ï¿½ï¿½ï¿½Åºï¿½","ï¿½ï¿½ï¿½ï¿½"}
+body{font-size:13px;font-family:"Î¢ï¿½ï¿½ï¿½Åºï¿½","ï¿½ï¿½ï¿½ï¿½";color:#5F5F5F;background-color:#fff;overflow:hidden;overflow-y:scroll}
 .fl{float:left}
 .fr{float:right}
-.zi{font:16px/41px Î¢ÈíÑÅºÚ,ËÎÌå;text-align:center;color:#333}
+.zi{font:16px/41px Î¢ï¿½ï¿½ï¿½Åºï¿½,ï¿½ï¿½ï¿½ï¿½;text-align:center;color:#333}
 .clearleft{clear:left}
 .clearright{clear:right}
 .clearboth{clear:both}
@@ -226,7 +242,7 @@ button.toast-close-button {
 }
 /**********page*********/
 .page{text-align: center;height: 52px;overflow: hidden;clear: both; margin-bottom:25px}
-.pager{margin:0 ;padding: 0;font-family: "Î¢ÈíÑÅºÚ";display: inline-block;max-width: 850px;_width: 800px;_padding-left: 300px;}
+.pager{margin:0 ;padding: 0;font-family: "Î¢ï¿½ï¿½ï¿½Åºï¿½";display: inline-block;max-width: 850px;_width: 800px;_padding-left: 300px;}
 .pager-linkPage{display: inline-block;float: left;}
 .pager .upPage, .pager .downPage {line-height: 48px;}
 .pager .upPage {display: inline-block;width: 85px;height: 48px;border: 1px solid #E8E8E6;}
@@ -238,7 +254,7 @@ button.toast-close-button {
 
 /**********page*********/
 .pages{text-align: center;height: 52px;overflow: hidden;clear: both;margin-bottom:25px; margin-top:25px}
-.pager{margin:0 ;padding: 0;font-family: "Î¢ÈíÑÅºÚ";display: inline-block;max-width: 850px;_width: 800px;_padding-left: 300px;}
+.pager{margin:0 ;padding: 0;font-family: "Î¢ï¿½ï¿½ï¿½Åºï¿½";display: inline-block;max-width: 850px;_width: 800px;_padding-left: 300px;}
 .pager-linkPage{display: inline-block;float: left;}
 .pagers .upPage, .pagers .downPage {line-height: 48px;}
 .pagers .upPage {display: inline-block;width: 85px;height: 48px;border: 1px solid #E8E8E6;}

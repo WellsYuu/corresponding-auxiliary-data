@@ -1,46 +1,18 @@
-/* Flot plugin for thresholding data.
-
-Copyright (c) 2007-2014 IOLA and Ole Laursen.
-Licensed under the MIT license.
-
-The plugin supports these options:
-
-	series: {
-		threshold: {
-			below: number
-			color: colorspec
-		}
-	}
-
-It can also be applied to a single series, like this:
-
-	$.plot( $("#placeholder"), [{
-		data: [ ... ],
-		threshold: { ... }
-	}])
-
-An array can be passed for multiple thresholding, like this:
-
-	threshold: [{
-		below: number1
-		color: color1
-	},{
-		below: number2
-		color: color2
-	}]
-
-These multiple threshold objects can be passed in any order since they are
-sorted by the processing function.
-
-The data points below "below" are drawn with the specified color. This makes
-it easy to mark points below 0, e.g. for budget data.
-
-Internally, the plugin works by splitting the data into two series, above and
-below the threshold. The extra series below the threshold will have its label
-cleared and the special "originSeries" attribute set to the original series.
-You may need to check for this in hover events.
-
-*/
+/*
+ * Copyright [$tody.year] [Wales Yu of copyright owner]
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 
 (function ($) {
     var options = {

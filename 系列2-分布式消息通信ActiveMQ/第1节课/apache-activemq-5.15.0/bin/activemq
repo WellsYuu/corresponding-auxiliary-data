@@ -1,5 +1,21 @@
 #!/bin/sh
 
+#
+# Copyright [$tody.year] [Wales Yu of copyright owner]
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#     http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+#
+
 ### BEGIN INIT INFO
 # Provides:          activemq
 # Required-Start:    $remote_fs $network $syslog
@@ -10,39 +26,7 @@
 # Description:       Starts ActiveMQ Message Broker Server
 ### END INIT INFO
 
-# ------------------------------------------------------------------------
-# Licensed to the Apache Software Foundation (ASF) under one or more
-# contributor license agreements.  See the NOTICE file distributed with
-# this work for additional information regarding copyright ownership.
-# The ASF licenses this file to You under the Apache License, Version 2.0
-# (the "License"); you may not use this file except in compliance with
-# the License.  You may obtain a copy of the License at
-#
-# http://www.apache.org/licenses/LICENSE-2.0
-#
-# Unless required by applicable law or agreed to in writing, software
-# distributed under the License is distributed on an "AS IS" BASIS,
-# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-# See the License for the specific language governing permissions and
-# limitations under the License.
-# ------------------------------------------------------------------------
-#
-# This script controls standalone Apache ActiveMQ service processes.
-# To ensure compatibility to macosx and cygwin we do not utilize
-# lsb standard infrastructure for controlling daemons like
-# "start-stop-daemon".
-#
-# See also http://activemq.apache.org/activemq-command-line-tools-reference.html
-# for additional commandline arguments
-#
-# System variables for this script, like ACTIVEMQ_OPTS and ACTIVEMQ_OPTS_MEMORY,
-# can be configured in 'env' script located in this directory.
-#
-# For more information on configuring the script, see http://activemq.apache.org/unix-shell-script.html
-#
-#
-# Authors:
-# Marc Schoechlin <ms@256bit.org>
+
 
 # ------------------------------------------------------------------------
 # IMPROVED DEBUGGING (execute with bash -x)

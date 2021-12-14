@@ -1,23 +1,39 @@
-/* 
+/*
+ * Copyright [$tody.year] [Wales Yu of copyright owner]
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+/*
  * My97 DatePicker 4.7
- * Æ¤·ôÃû³Æ:whyGreen
+ * Æ¤ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½:whyGreen
  */
  
-/* ÈÕÆÚÑ¡ÔñÈÝÆ÷ DIV */
+/* ï¿½ï¿½ï¿½ï¿½Ñ¡ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ DIV */
 .WdateDiv{
 	width:180px;
 	background-color:#fff;
 	border:#C5E1E4 1px solid;
 	padding:2px;
 }
-/* Ë«ÔÂÈÕÀúµÄ¿í¶È */
+/* Ë«ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ä¿ï¿½ï¿½ */
 .WdateDiv2{
 	width:360px;
 }
 .WdateDiv *{font-size:9pt;}
 
 /****************************
- * µ¼º½Í¼±ê È«²¿ÊÇA±êÇ©
+ * ï¿½ï¿½ï¿½ï¿½Í¼ï¿½ï¿½ È«ï¿½ï¿½ï¿½ï¿½Aï¿½ï¿½Ç©
  ***************************/
 .WdateDiv .NavImg a{
 	cursor:pointer;
@@ -44,9 +60,9 @@
 	background:url(img.gif) no-repeat -48px 0px;
 }
 /****************************
- * Äê·ÝÔÂ·ÝÏà¹Ø
+ * ï¿½ï¿½ï¿½ï¿½Â·ï¿½ï¿½ï¿½ï¿½
  ***************************/
-/* Äê·ÝÔÂ·ÝÀ¸ DIV */
+/* ï¿½ï¿½ï¿½ï¿½Â·ï¿½ï¿½ï¿½ DIV */
 .WdateDiv #dpTitle{
 	height:24px;
 	padding:1px;
@@ -54,7 +70,7 @@
 	background:url(bg.jpg);
 	margin-bottom:2px;
 }
-/* Äê·ÝÔÂ·ÝÊäÈë¿ò INPUT */
+/* ï¿½ï¿½ï¿½ï¿½Â·ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ INPUT */
 .WdateDiv .yminput{
 	margin-top:2px;
 	text-align:center;
@@ -65,7 +81,7 @@
 	background-color:transparent;
 	cursor:pointer;
 }
-/* Äê·ÝÔÂ·ÝÊäÈë¿ò»ñµÃ½¹µãÊ±µÄÑùÊ½ INPUT */
+/* ï¿½ï¿½ï¿½ï¿½Â·ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ã½ï¿½ï¿½ï¿½Ê±ï¿½ï¿½ï¿½ï¿½Ê½ INPUT */
 .WdateDiv .yminputfocus{
 	margin-top:2px;
 	text-align:center;
@@ -75,7 +91,7 @@
 	height:20px;
 	width:50px;
 }
-/* ²Ëµ¥Ñ¡Ôñ¿ò DIV */
+/* ï¿½Ëµï¿½Ñ¡ï¿½ï¿½ï¿½ DIV */
 .WdateDiv .menuSel{
 	z-index:1;
 	position:absolute;
@@ -83,48 +99,48 @@
 	border:#A3C6C8 1px solid;
 	display:none;
 }
-/* ²Ëµ¥µÄÑùÊ½ TD */
+/* ï¿½Ëµï¿½ï¿½ï¿½ï¿½ï¿½Ê½ TD */
 .WdateDiv .menu{
 	cursor:pointer;
 	background-color:#fff;
 	color:#11777C;
 }
-/* ²Ëµ¥µÄmouseoverÑùÊ½ TD */
+/* ï¿½Ëµï¿½ï¿½ï¿½mouseoverï¿½ï¿½Ê½ TD */
 .WdateDiv .menuOn{
 	cursor:pointer;
 	background-color:#BEEBEE;
 }
-/* ²Ëµ¥ÎÞÐ§Ê±µÄÑùÊ½ TD */
+/* ï¿½Ëµï¿½ï¿½ï¿½Ð§Ê±ï¿½ï¿½ï¿½ï¿½Ê½ TD */
 .WdateDiv .invalidMenu{
 	color:#aaa;
 }
-/* ÄêÑ¡Ôñ¿òµÄÆ«ÒÆ DIV */
+/* ï¿½ï¿½Ñ¡ï¿½ï¿½ï¿½ï¿½Æ«ï¿½ï¿½ DIV */
 .WdateDiv .YMenu{
 	margin-top:20px;
 }
-/* ÔÂÑ¡Ôñ¿òµÄÆ«ÒÆ DIV */
+/* ï¿½ï¿½Ñ¡ï¿½ï¿½ï¿½ï¿½Æ«ï¿½ï¿½ DIV */
 .WdateDiv .MMenu{
 	margin-top:20px;
 	*width:62px;
 }
-/* Ê±Ñ¡Ôñ¿òµÄÎ»ÖÃ DIV */
+/* Ê±Ñ¡ï¿½ï¿½ï¿½ï¿½Î»ï¿½ï¿½ DIV */
 .WdateDiv .hhMenu{
 	margin-top:-90px; 
 	margin-left:26px;
 }
-/* ·ÖÑ¡Ôñ¿òµÄÎ»ÖÃ DIV */
+/* ï¿½ï¿½Ñ¡ï¿½ï¿½ï¿½ï¿½Î»ï¿½ï¿½ DIV */
 .WdateDiv .mmMenu{
 	margin-top:-46px; 
 	margin-left:26px;
 }
-/* ÃëÑ¡Ôñ¿òµÄÎ»ÖÃ DIV */
+/* ï¿½ï¿½Ñ¡ï¿½ï¿½ï¿½ï¿½Î»ï¿½ï¿½ DIV */
 .WdateDiv .ssMenu{
 	margin-top:-24px; 
 	margin-left:26px;
 }
 
 /****************************
- * ÖÜÏà¹Ø
+ * ï¿½ï¿½ï¿½ï¿½ï¿½
  ***************************/
  .WdateDiv .Wweek {
  	text-align:center;
@@ -132,9 +148,9 @@
 	border-right:#BDEBEE 1px solid;
  }
 /****************************
- * ÐÇÆÚ,ÈÕÆÚÏà¹Ø
+ * ï¿½ï¿½ï¿½ï¿½,ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
  ***************************/
- /* ÐÇÆÚÀ¸ TR */
+ /* ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ TR */
 .WdateDiv .MTitle{
 	color:#13777e;
 	background-color:#bdebee;
@@ -146,7 +162,7 @@
 .WdateDiv .WdayTable2 table{
 	border:0;
 }
-/* ÈÕÆÚÀ¸±í¸ñ TABLE */
+/* ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ TABLE */
 .WdateDiv .WdayTable{
 	line-height:20px;	
 	color:#13777e;
@@ -156,21 +172,21 @@
 .WdateDiv .WdayTable td{
 	text-align:center;
 }
-/* ÈÕÆÚ¸ñµÄÑùÊ½ TD */
+/* ï¿½ï¿½ï¿½Ú¸ï¿½ï¿½ï¿½ï¿½Ê½ TD */
 .WdateDiv .Wday{
 	cursor:pointer;
 }
-/* ÈÕÆÚ¸ñµÄmouseoverÑùÊ½ TD */
+/* ï¿½ï¿½ï¿½Ú¸ï¿½ï¿½mouseoverï¿½ï¿½Ê½ TD */
 .WdateDiv .WdayOn{
 	cursor:pointer;
 	background-color:#74d2d9 ;
 }
-/* ÖÜÄ©ÈÕÆÚ¸ñµÄÑùÊ½ TD */
+/* ï¿½ï¿½Ä©ï¿½ï¿½ï¿½Ú¸ï¿½ï¿½ï¿½ï¿½Ê½ TD */
 .WdateDiv .Wwday{
 	cursor:pointer;
 	color:#ab1e1e;
 }
-/* ÖÜÄ©ÈÕÆÚ¸ñµÄmouseoverÑùÊ½ TD */
+/* ï¿½ï¿½Ä©ï¿½ï¿½ï¿½Ú¸ï¿½ï¿½mouseoverï¿½ï¿½Ê½ TD */
 .WdateDiv .WwdayOn{
 	cursor:pointer;
 	background-color:#74d2d9;
@@ -185,36 +201,36 @@
 .WdateDiv .WspecialDay{
 	background-color:#66F4DF;
 }
-/* ÆäËûÔÂ·ÝµÄÈÕÆÚ */
+/* ï¿½ï¿½ï¿½ï¿½ï¿½Â·Ýµï¿½ï¿½ï¿½ï¿½ï¿½ */
 .WdateDiv .WotherDay{ 
 	cursor:pointer;
 	color:#0099CC;	
 }
-/* ÆäËûÔÂ·ÝµÄÈÕÆÚmouseoverÑùÊ½ */
+/* ï¿½ï¿½ï¿½ï¿½ï¿½Â·Ýµï¿½ï¿½ï¿½ï¿½ï¿½mouseoverï¿½ï¿½Ê½ */
 .WdateDiv .WotherDayOn{ 
 	cursor:pointer;
 	background-color:#C0EBEF;	
 }
-/* ÎÞÐ§ÈÕÆÚµÄÑùÊ½,¼´ÔÚÈÕÆÚ·¶Î§ÒÔÍâÈÕÆÚ¸ñµÄÑùÊ½,²»ÄÜÑ¡ÔñµÄÈÕÆÚ */
+/* ï¿½ï¿½Ð§ï¿½ï¿½ï¿½Úµï¿½ï¿½ï¿½Ê½,ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ú·ï¿½Î§ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ú¸ï¿½ï¿½ï¿½ï¿½Ê½,ï¿½ï¿½ï¿½ï¿½Ñ¡ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ */
 .WdateDiv .WinvalidDay{
 	color:#aaa;
 }
 
 /****************************
- * Ê±¼äÏà¹Ø
+ * Ê±ï¿½ï¿½ï¿½ï¿½ï¿½
  ***************************/
-/* Ê±¼äÀ¸ DIV */
+/* Ê±ï¿½ï¿½ï¿½ï¿½ DIV */
 .WdateDiv #dpTime{
 	float:left;
 	margin-top:3px;
 	margin-right:30px;
 }
-/* Ê±¼äÎÄ×Ö SPAN */
+/* Ê±ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ SPAN */
 .WdateDiv #dpTime #dpTimeStr{
 	margin-left:1px;
 	color:#497F7F;
 }
-/* Ê±¼äÊäÈë¿ò INPUT */
+/* Ê±ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ INPUT */
 .WdateDiv #dpTime input{
 	height:20px;
 	width:18px;
@@ -222,29 +238,29 @@
 	color:#333;
 	border:#61CAD0 1px solid;	
 }
-/* Ê±¼ä Ê± INPUT */
+/* Ê±ï¿½ï¿½ Ê± INPUT */
 .WdateDiv #dpTime .tB{
 	border-right:0px;
 }
-/* Ê±¼ä ·ÖºÍ¼ä¸ô·û ':' INPUT */
+/* Ê±ï¿½ï¿½ ï¿½ÖºÍ¼ï¿½ï¿½ï¿½ï¿½ ':' INPUT */
 .WdateDiv #dpTime .tE{
 	border-left:0;
 	border-right:0;
 }
-/* Ê±¼ä Ãë INPUT */
+/* Ê±ï¿½ï¿½ ï¿½ï¿½ INPUT */
 .WdateDiv #dpTime .tm{
 	width:7px;
 	border-left:0;
 	border-right:0;
 }
-/* Ê±¼äÓÒ±ßµÄÏòÉÏ°´Å¥ BUTTON */
+/* Ê±ï¿½ï¿½ï¿½Ò±ßµï¿½ï¿½ï¿½ï¿½Ï°ï¿½Å¥ BUTTON */
 .WdateDiv #dpTime #dpTimeUp{
 	height:10px;
 	width:13px;
 	border:0px;
 	background:url(img.gif) no-repeat -32px -16px;
 }
-/* Ê±¼äÓÒ±ßµÄÏòÏÂ°´Å¥ BUTTON */
+/* Ê±ï¿½ï¿½ï¿½Ò±ßµï¿½ï¿½ï¿½ï¿½Â°ï¿½Å¥ BUTTON */
 .WdateDiv #dpTime #dpTimeDown{
 	height:10px;
 	width:13px;
@@ -252,7 +268,7 @@
 	background:url(img.gif) no-repeat -48px -16px;
 }
 /****************************
- * ÆäËû
+ * ï¿½ï¿½ï¿½ï¿½
  ***************************/
  .WdateDiv #dpQS {
  	float:left;

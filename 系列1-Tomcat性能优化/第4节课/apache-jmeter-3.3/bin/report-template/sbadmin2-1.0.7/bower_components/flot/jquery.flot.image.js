@@ -1,56 +1,18 @@
-/* Flot plugin for plotting images.
-
-Copyright (c) 2007-2014 IOLA and Ole Laursen.
-Licensed under the MIT license.
-
-The data syntax is [ [ image, x1, y1, x2, y2 ], ... ] where (x1, y1) and
-(x2, y2) are where you intend the two opposite corners of the image to end up
-in the plot. Image must be a fully loaded Javascript image (you can make one
-with new Image()). If the image is not complete, it's skipped when plotting.
-
-There are two helpers included for retrieving images. The easiest work the way
-that you put in URLs instead of images in the data, like this:
-
-	[ "myimage.png", 0, 0, 10, 10 ]
-
-Then call $.plot.image.loadData( data, options, callback ) where data and
-options are the same as you pass in to $.plot. This loads the images, replaces
-the URLs in the data with the corresponding images and calls "callback" when
-all images are loaded (or failed loading). In the callback, you can then call
-$.plot with the data set. See the included example.
-
-A more low-level helper, $.plot.image.load(urls, callback) is also included.
-Given a list of URLs, it calls callback with an object mapping from URL to
-Image object when all images are loaded or have failed loading.
-
-The plugin supports these options:
-
-	series: {
-		images: {
-			show: boolean
-			anchor: "corner" or "center"
-			alpha: [ 0, 1 ]
-		}
-	}
-
-They can be specified for a specific series:
-
-	$.plot( $("#placeholder"), [{
-		data: [ ... ],
-		images: { ... }
-	])
-
-Note that because the data format is different from usual data points, you
-can't use images with anything else in a specific data series.
-
-Setting "anchor" to "center" causes the pixels in the image to be anchored at
-the corner pixel centers inside of at the pixel corners, effectively letting
-half a pixel stick out to each side in the plot.
-
-A possible future direction could be support for tiling for large images (like
-Google Maps).
-
-*/
+/*
+ * Copyright [$tody.year] [Wales Yu of copyright owner]
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 
 (function ($) {
     var options = {
