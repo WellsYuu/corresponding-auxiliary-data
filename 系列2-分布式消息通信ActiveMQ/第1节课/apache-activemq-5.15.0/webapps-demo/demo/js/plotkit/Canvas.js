@@ -1,38 +1,18 @@
-/* 
-    PlotKit Canvas
-    --------------
-    
-    Provides HTML Canvas Renderer. This is supported under:
-    
-    - Safari 2.0
-    - Mozilla Firefox 1.5
-    - Opera 9.0 preview 2
-    - IE 6 (via VML Emulation)
-    
-    It uses DIVs for labels.
-    
-    Notes About IE Support
-    ----------------------
-    
-    This class relies on iecanvas.htc for Canvas Emulation under IE[1].
-    iecanvas.htc is included in the distribution of PlotKit for convenience. In order to enable IE support, you must set the following option when initialising the renderer:
-    
-    var renderOptions = {
-        "IECanvasHTC": "contrib/iecanvas.htc"
-    };
-    var engine = new CanvasRenderer(canvasElement, layout, renderOptions);
-    
-    Where "contrib/iecanvas.htc" is the path to the htc behavior relative
-    to where your HTML is.
-    
-    This is only needed for IE support.
-    
-    Copyright
-    ---------
-    Copyright 2005,2006 (c) Alastair Tse <alastair^liquidx.net>
-    For use under the BSD license. <http://www.liquidx.net/plotkit>
-    
-*/
+/*
+ * Copyright [$tody.year] [Wales Yu of copyright owner]
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 // --------------------------------------------------------------------
 // Check required components
 // --------------------------------------------------------------------

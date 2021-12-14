@@ -1,4 +1,20 @@
-<!-- File containing all charcter entity references definied 
+<!--
+  - Copyright [$tody.year] [Wales Yu of copyright owner]
+  -
+  - Licensed under the Apache License, Version 2.0 (the "License");
+  - you may not use this file except in compliance with the License.
+  - You may obtain a copy of the License at
+  -
+  -     http://www.apache.org/licenses/LICENSE-2.0
+  -
+  - Unless required by applicable law or agreed to in writing, software
+  - distributed under the License is distributed on an "AS IS" BASIS,
+  - WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  - See the License for the specific language governing permissions and
+  - limitations under the License.
+  -->
+
+<!-- File containing all charcter entity references definied
      by the HTML 4.0 standard. -->
 <!-- Valuable informations and a complete description of the
      HTML 4.0 character set can be found at
@@ -28,8 +44,7 @@
 <!ENTITY sect   CDATA "&#167;" -- section sign, U+00A7 ISOnum -->
 <!ENTITY uml    CDATA "&#168;" -- diaeresis = spacing diaeresis,
                                   U+00A8 ISOdia -->
-<!ENTITY copy   CDATA "&#169;" -- copyright sign, U+00A9 ISOnum -->
-<!ENTITY ordf   CDATA "&#170;" -- feminine ordinal indicator, U+00AA ISOnum -->
+<!ENTITY copy   CDATA "&#169;" >
 <!ENTITY laquo  CDATA "&#171;" -- left-pointing double angle quotation mark
                                   = left pointing guillemet, U+00AB ISOnum -->
 <!ENTITY not    CDATA "&#172;" -- not sign, U+00AC ISOnum -->
