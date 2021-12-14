@@ -1,0 +1,19 @@
+{
+  "configs": [
+    {
+      "active": true,
+      "className": "com.tuling.plugin.ServerLogPlugin",
+      "id": "1",
+      "jarRemoteUrl": "file:D:/site/tuling-teach-spring-plugin-0.0.2-SNAPSHOT.jar",
+      "name": "服务参数日志打印"
+    },
+    {
+      "active": true,
+      "className": "com.tuling.plugin.CountingBeforeAdvice",
+      "id": "2",
+      "jarRemoteUrl": "file:D:/site/tuling-teach-spring-plugin-0.0.2-SNAPSHOT.jar",
+      "name": "方法执行统计"
+    }
+  ],
+  "name": "我的插件小仓库"
+}
