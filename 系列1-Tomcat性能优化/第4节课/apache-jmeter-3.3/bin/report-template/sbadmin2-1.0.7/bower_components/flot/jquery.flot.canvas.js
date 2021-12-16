@@ -1,31 +1,18 @@
-/* Flot plugin for drawing all elements of a plot on the canvas.
-
-Copyright (c) 2007-2014 IOLA and Ole Laursen.
-Licensed under the MIT license.
-
-Flot normally produces certain elements, like axis labels and the legend, using
-HTML elements. This permits greater interactivity and customization, and often
-looks better, due to cross-browser canvas text inconsistencies and limitations.
-
-It can also be desirable to render the plot entirely in canvas, particularly
-if the goal is to save it as an image, or if Flot is being used in a context
-where the HTML DOM does not exist, as is the case within Node.js. This plugin
-switches out Flot's standard drawing operations for canvas-only replacements.
-
-Currently the plugin supports only axis labels, but it will eventually allow
-every element of the plot to be rendered directly to canvas.
-
-The plugin supports these options:
-
-{
-    canvas: boolean
-}
-
-The "canvas" option controls whether full canvas drawing is enabled, making it
-possible to toggle on and off. This is useful when a plot uses HTML text in the
-browser, but needs to redraw with canvas text when exporting as an image.
-
-*/
+/*
+ * Copyright 2021-2021 the original author or authors.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 
 (function($) {
 

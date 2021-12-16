@@ -1,11 +1,11 @@
 #!/bin/sh
 
-# Licensed to the Apache Software Foundation (ASF) under one or more
-# contributor license agreements.  See the NOTICE file distributed with
-# this work for additional information regarding copyright ownership.
-# The ASF licenses this file to You under the Apache License, Version 2.0
-# (the "License"); you may not use this file except in compliance with
-# the License.  You may obtain a copy of the License at
+#
+# Copyright 2021-2021 the original author or authors.
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
 #
 #     http://www.apache.org/licenses/LICENSE-2.0
 #
@@ -15,11 +15,6 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 #
-# -----------------------------------------------------------------------------
-# Commons Daemon wrapper script.
-# -----------------------------------------------------------------------------
-#
-# resolve links - $0 may be a softlink
 ARG0="$0"
 while [ -h "$ARG0" ]; do
   ls=`ls -ld "$ARG0"`

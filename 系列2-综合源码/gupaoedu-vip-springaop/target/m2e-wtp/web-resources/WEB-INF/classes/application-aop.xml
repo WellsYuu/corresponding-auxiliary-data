@@ -1,3 +1,19 @@
+<!--
+  ~ Copyright 2021-2021 the original author or authors.
+  ~
+  ~ Licensed under the Apache License, Version 2.0 (the "License");
+  ~ you may not use this file except in compliance with the License.
+  ~ You may obtain a copy of the License at
+  ~
+  ~     http://www.apache.org/licenses/LICENSE-2.0
+  ~
+  ~ Unless required by applicable law or agreed to in writing, software
+  ~ distributed under the License is distributed on an "AS IS" BASIS,
+  ~ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  ~ See the License for the specific language governing permissions and
+  ~ limitations under the License.
+  -->
+
 <beans xmlns="http://www.springframework.org/schema/beans"
 	xmlns:tx="http://www.springframework.org/schema/tx"
 	xmlns:aop="http://www.springframework.org/schema/aop"
@@ -10,7 +26,7 @@
 						http://www.springframework.org/schema/aop/spring-aop-3.0.xsd">
 	<aop:aspectj-autoproxy proxy-target-class="true"/>
 	
-	<!-- 声明�?个需要织入到虚拟切面的�?�辑（切面） -->
+	<!-- 声明�?个需要织入到虚拟切面的�?�辑（切面） -->
 	<!-- 
 	<bean id="logAspect" class="com.gupaoedu.vip.aop.aspect.LogAspect"></bean>
 	
@@ -26,18 +42,18 @@
 	-->
 	
 	
-	<!-- 具体的方法就是切�? -->
-	<!-- 如何定义�?个具体的方法 -->
-	<!-- 权限修饰�?(public/private/protected可省�?) 返回�?(Void/自定义类�?,�?*表示任意返回值类型，必填�?) 属于哪个包哪个类(省略).方法名称(参数列表,必填) throws 异常类型(可省�?) -->
-	<!-- 参数列表的不同跟�?么有关呢�?
+	<!-- 具体的方法就是切�? -->
+	<!-- 如何定义�?个具体的方法 -->
+	<!-- 权限修饰�?(public/private/protected可省�?) 返回�?(Void/自定义类�?,�?*表示任意返回值类型，必填�?) 属于哪个包哪个类(省略).方法名称(参数列表,必填) throws 异常类型(可省�?) -->
+	<!-- 参数列表的不同跟�?么有关呢�?
 		 1、参数的个数
 		 2、参数的顺序
 		 3、参数的类型
 		 
 		 跟参数的名字没有任何关系,形式参数
-		 如果�?个方法用final修饰了，就意味着这个方法不能被重�?
-		 也就意味�?我们的子类不能对这个方法进行扩展
-		 代理是是无法实现�?
+		 如果�?个方法用final修饰了，就意味着这个方法不能被重�?
+		 也就意味�?我们的子类不能对这个方法进行扩展
+		 代理是是无法实现�?
 	 -->
 	<!-- execution(public * com.gupaoedu.vip.aop.service..*.*(..))-->
 	

@@ -1,14 +1,30 @@
+/*
+ * Copyright 2021-2021 the original author or authors.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 var $lang={
-errAlertMsg: "▓╗║╧╖и╡─╚╒╞┌╕ё╩╜╗Є╒▀╚╒╞┌│м│Ў╧▐╢и╖╢╬з,╨ш╥к│╖╧·┬Ё?",
-aWeekStr: ["╓▄","╚╒","╥╗","╢■","╚¤","╦─","╬х","┴∙"],
-aLongWeekStr:["╓▄","╨╟╞┌╚╒","╨╟╞┌╥╗","╨╟╞┌╢■","╨╟╞┌╚¤","╨╟╞┌╦─","╨╟╞┌╬х","╨╟╞┌┴∙"],
-aMonStr: ["╥╗╘┬","╢■╘┬","╚¤╘┬","╦─╘┬","╬х╘┬","┴∙╘┬","╞▀╘┬","░╦╘┬","╛┼╘┬","╩о╘┬","╩о╥╗","╩о╢■"],
-aLongMonStr: ["╥╗╘┬","╢■╘┬","╚¤╘┬","╦─╘┬","╬х╘┬","┴∙╘┬","╞▀╘┬","░╦╘┬","╛┼╘┬","╩о╘┬","╩о╥╗╘┬","╩о╢■╘┬"],
-clearStr: "╟х┐╒",
-todayStr: "╜ё╠ь",
-okStr: "╚╖╢и",
-updateStr: "╚╖╢и",
-timeStr: "╩▒╝ф",
-quickStr: "┐ь╦┘╤б╘ё", 
-err_1: '╫ю╨б╚╒╞┌▓╗─▄┤є╙┌╫ю┤є╚╒╞┌!'
+errAlertMsg: "я┐╜я┐╜я┐╜╧╖я┐╜я┐╜я┐╜я┐╜я┐╜я┐╜┌╕я┐╜╩╜я┐╜я┐╜я┐╜я┐╜я┐╜я┐╜я┐╜┌│я┐╜я┐╜я┐╜я┐╜▐╢я┐╜я┐╜я┐╜╬з,я┐╜я┐╜╥кя┐╜я┐╜я┐╜я┐╜я┐╜я┐╜?",
+aWeekStr: ["я┐╜я┐╜","я┐╜я┐╜","╥╗","я┐╜я┐╜","я┐╜я┐╜","я┐╜я┐╜","я┐╜я┐╜","я┐╜я┐╜"],
+aLongWeekStr:["я┐╜я┐╜","я┐╜я┐╜я┐╜я┐╜я┐╜я┐╜","я┐╜я┐╜я┐╜я┐╜╥╗","я┐╜я┐╜я┐╜┌╢я┐╜","я┐╜я┐╜я┐╜я┐╜я┐╜я┐╜","я┐╜я┐╜я┐╜я┐╜я┐╜я┐╜","я┐╜я┐╜я┐╜я┐╜я┐╜я┐╜","я┐╜я┐╜я┐╜я┐╜я┐╜я┐╜"],
+aMonStr: ["╥╗я┐╜я┐╜","я┐╜я┐╜я┐╜я┐╜","я┐╜я┐╜я┐╜я┐╜","я┐╜я┐╜я┐╜я┐╜","я┐╜я┐╜я┐╜я┐╜","я┐╜я┐╜я┐╜я┐╜","я┐╜я┐╜я┐╜я┐╜","я┐╜я┐╜я┐╜я┐╜","я┐╜я┐╜я┐╜я┐╜","╩оя┐╜я┐╜","╩о╥╗","╩оя┐╜я┐╜"],
+aLongMonStr: ["╥╗я┐╜я┐╜","я┐╜я┐╜я┐╜я┐╜","я┐╜я┐╜я┐╜я┐╜","я┐╜я┐╜я┐╜я┐╜","я┐╜я┐╜я┐╜я┐╜","я┐╜я┐╜я┐╜я┐╜","я┐╜я┐╜я┐╜я┐╜","я┐╜я┐╜я┐╜я┐╜","я┐╜я┐╜я┐╜я┐╜","╩оя┐╜я┐╜","╩о╥╗я┐╜я┐╜","╩оя┐╜я┐╜я┐╜я┐╜"],
+clearStr: "я┐╜я┐╜я┐╜",
+todayStr: "я┐╜я┐╜я┐╜я┐╜",
+okStr: "╚╖я┐╜я┐╜",
+updateStr: "╚╖я┐╜я┐╜",
+timeStr: "╩▒я┐╜я┐╜",
+quickStr: "я┐╜я┐╜я┐╜я┐╜╤бя┐╜я┐╜", 
+err_1: 'я┐╜я┐╜╨бя┐╜я┐╜я┐╜┌▓я┐╜я┐╜▄┤я┐╜я┐╜я┐╜я┐╜я┐╜я┐╜я┐╜я┐╜я┐╜я┐╜!'
 }

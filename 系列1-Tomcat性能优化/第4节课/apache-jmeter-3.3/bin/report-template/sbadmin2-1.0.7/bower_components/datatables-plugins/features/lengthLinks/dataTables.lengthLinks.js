@@ -1,33 +1,21 @@
-/*! Page length control via links for DataTables
- * 2014 SpryMedia Ltd - datatables.net/license
+/*
+ * Copyright 2021-2021 the original author or authors.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 
-/**
- * @summary     LengthLinks
- * @description Page length control via links for DataTables
- * @version     1.1.0
- * @file        dataTables.searchHighlight.js
- * @author      SpryMedia Ltd (www.sprymedia.co.uk)
- * @contact     www.sprymedia.co.uk/contact
- * @copyright   Copyright 2014 SpryMedia Ltd.
- * 
- * License      MIT - http://datatables.net/license/mit
- *
- * This feature plug-in for DataTables adds page length control links to the
- * DataTable. The `dom` option can be used to insert the control using the `L`
- * character option and it uses the `lengthMenu` options of DataTables to
- * determine what to display.
- *
- * @example
- *   $('#myTable').DataTable( {
- *     dom: 'Lfrtip'
- *   } );
- *
- * @example
- *   $('#myTable').DataTable( {
- *     lengthMenu: [ [10, 25, 50, -1], [10, 25, 50, "All"] ]
- *     dom: 'Lfrtip'
- *   } );
+/*! Page length control via links for DataTables
+ * 2014 SpryMedia Ltd - datatables.net/license
  */
 
 (function(window, document, $, undefined) {

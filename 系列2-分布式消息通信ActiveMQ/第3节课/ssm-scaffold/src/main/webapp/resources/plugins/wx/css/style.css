@@ -1,4 +1,20 @@
-/*   
+/*
+ * Copyright 2021-2021 the original author or authors.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+/*
 Template Name: Metronic - Responsive Website Template build with Twitter Bootstrap 3.0
 Version: 1.5.2
 Author: KeenThemes
@@ -688,9 +704,6 @@ Header and header elements.
     margin-left: 5px;
 }
 
-/***
-Copyright
-***/
 .copyright {
     border-top: 1px solid #e7e7eb;
     color: #586583;
@@ -1067,15 +1080,6 @@ li [class*=" fa-"].icon-large {
 
 
 /* ▼ 弹出窗口 css   */
-/*!
- * Bootstrap Modal
- *
- * Copyright Jordan Schroter
- * Licensed under the Apache License v2.0
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Boostrap 3 patch for for bootstrap-modal. Include BEFORE bootstrap-modal.css!
- */
 body.modal-open,
 .modal-open .navbar-fixed-top,
 .modal-open .navbar-fixed-bottom {
@@ -1104,15 +1108,6 @@ div > div > .modal{
 .modal.container {
     max-width: none;
 }
-/*!
- * Bootstrap Modal
- *
- * Copyright Jordan Schroter
- * Licensed under the Apache License v2.0
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- */
-
 .modal-open {
     overflow: auto;
 }
@@ -1321,12 +1316,6 @@ div > div > .modal{
     margin: -12px 0 0 -12px;
 }
 
-/*
-Animate.css - http://daneden.me/animate
-Licensed under the ☺ license (http://licence.visualidiot.com/)
-
-Copyright (c) 2012 Dan Eden*/
-
 .animated {
     -webkit-animation-duration: 1s;
     -moz-animation-duration: 1s;
@@ -1369,17 +1358,6 @@ Copyright (c) 2012 Dan Eden*/
     animation-name: shake;
 }
 
-/*
- * Toastr
- * Version 2.0.1
- * Copyright 2012 John Papa and Hans Fjällemark.
- * All Rights Reserved.
- * Use, reproduction, distribution, and modification of this code is subject to the terms and
- * conditions of the MIT license, available at http://www.opensource.org/licenses/mit-license.php
- *
- * Author: John Papa and Hans Fjällemark
- * Project: https://github.com/CodeSeven/toastr
- */
 .toast-title {
     font-weight: bold;
 }
