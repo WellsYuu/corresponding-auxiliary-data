@@ -1,0 +1,23 @@
+[GC [PSYoungGen: 11279K->1528K(13824K)] 11279K->1552K(18944K), 0.0247313 secs] [Times: user=0.00 sys=0.00, real=0.02 secs] 
+GC 表示发生GC的类型 GC|FULLGC
+	FULLGC ： stop the world
+	
+	PSYoungGen
+
+	11279K->1528K(13824K)
+	gc前该内存区域（年轻代）已经使用的内存->GC后该内存区域已使用的容量（改内存区域总内存）
+	
+	11279K->1552K(18944K)
+	GC前JAVA堆的已使用内存->GC后JAVA堆的已使用内存（堆的总内存）
+	
+	
+	HA系统 
+	
+	
+	用户线程（业务）暂停
+	
+	GC线程1 并行执行
+	GC线程2
+	
+	
+	
