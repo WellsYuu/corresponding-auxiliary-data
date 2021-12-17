@@ -1,0 +1,1 @@
+package com.jiagouedu.services.manage.hotquery.dao;import com.jiagouedu.core.DaoManager;import com.jiagouedu.services.manage.hotquery.bean.Hotquery;public interface HotqueryDao extends DaoManager<Hotquery> {}

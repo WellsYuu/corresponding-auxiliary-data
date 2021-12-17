@@ -1,0 +1,1 @@
+package com.jiagouedu.services.manage.systemlog;import com.jiagouedu.core.Services;import com.jiagouedu.services.manage.systemlog.bean.Systemlog;public interface SystemlogService extends Services<Systemlog> {		/**	 * 根据账号查询最新的一次登陆记录	 * @return	 */	Systemlog selectFirstOne(String account);}

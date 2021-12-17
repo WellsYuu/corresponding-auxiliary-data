@@ -1,0 +1,1 @@
+package com.jiagouedu.services.manage.comment.dao;import com.jiagouedu.core.DaoManager;import com.jiagouedu.services.manage.comment.bean.Comment;public interface CommentDao extends DaoManager<Comment> {	int selectNotReplyCount();	void updateStatus(Comment c);}

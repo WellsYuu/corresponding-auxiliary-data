@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:dubbo="http://code.alibabatech.com/schema/dubbo"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd http://code.alibabatech.com/schema/dubbo http://code.alibabatech.com/schema/dubbo/dubbo.xsd">
+
+    <dubbo:application name="shop-goods-service"/>
+    <!-- 使用redis中心暴露发现服务地址-->
+    <dubbo:registry address="${dubbo.zk.ip}" check="false" id="shop-goods"/>
+    <dubbo:provider  timeout="10000" threadpool="fixed" threads="100" accepts="1000"  port="20887"/>
+
+    <!-- front-->
+    <dubbo:service retries="0" interface="com.jiagouedu.services.front.product.ProductService" ref="productServiceImpl"  />
+    <!--<dubbo:service retries="0" interface="com.jiagouedu.services.front.area.AreaService" ref="areaServiceFront"  />-->
+    <dubbo:service retries="0" interface="com.jiagouedu.services.front.attribute.AttributeService" ref="attributeServiceFront"  />
+    <dubbo:service retries="0" interface="com.jiagouedu.services.front.navigation.NavigationService" ref="navigationService"  />
+
+
+    <!-- manage-->
+    <dubbo:service retries="0" interface="com.jiagouedu.services.manage.product.ProductService" ref="productServiceManage"  />
+    <dubbo:service retries="0" interface="com.jiagouedu.services.manage.spec.SpecService" ref="specServiceManage"  />
+    <dubbo:service retries="0" interface="com.jiagouedu.services.manage.gift.GiftService" ref="giftServiceManage"  />
+    <dubbo:service retries="0" interface="com.jiagouedu.services.manage.activity.ActivityService" ref="activityServiceManage"  />
+</beans>

@@ -1,0 +1,1 @@
+package com.jiagouedu.services.manage.spec;import com.jiagouedu.core.Services;import com.jiagouedu.services.manage.spec.bean.Spec;public interface SpecService extends Services<Spec> {}

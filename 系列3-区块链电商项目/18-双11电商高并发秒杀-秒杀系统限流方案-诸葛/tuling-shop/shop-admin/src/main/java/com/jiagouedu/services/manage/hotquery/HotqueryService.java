@@ -1,0 +1,1 @@
+package com.jiagouedu.services.manage.hotquery;import com.jiagouedu.core.Services;import com.jiagouedu.services.manage.hotquery.bean.Hotquery;public interface HotqueryService extends Services<Hotquery> {}

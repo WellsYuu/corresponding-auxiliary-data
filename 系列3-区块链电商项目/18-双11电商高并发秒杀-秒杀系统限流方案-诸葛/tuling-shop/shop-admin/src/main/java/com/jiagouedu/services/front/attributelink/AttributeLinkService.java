@@ -1,0 +1,1 @@
+package com.jiagouedu.services.front.attributelink;import com.jiagouedu.core.Services;import com.jiagouedu.services.front.attributelink.bean.AttributeLink;public interface AttributeLinkService extends Services<AttributeLink> {	/**	 * @param oldAttr	 */	int deleteByCondition(AttributeLink oldAttr);}

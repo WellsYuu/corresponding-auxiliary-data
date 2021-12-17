@@ -1,0 +1,1 @@
+package com.jiagouedu.services.front.attribute.dao;import com.jiagouedu.core.DaoManager;import com.jiagouedu.services.front.attribute.bean.Attribute;public interface AttributeDao extends DaoManager<Attribute> {	/**	 * @param e	 */	void deleteByPid(Attribute e);}

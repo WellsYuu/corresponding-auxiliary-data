@@ -1,0 +1,1 @@
+package com.jiagouedu.services.manage.oss.dao;import com.jiagouedu.core.DaoManager;import com.jiagouedu.services.manage.oss.bean.Oss;public interface OssDao extends DaoManager<Oss> {}

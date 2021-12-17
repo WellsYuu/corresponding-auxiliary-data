@@ -1,0 +1,1 @@
+package com.jiagouedu.services.front.area.dao;import com.jiagouedu.core.DaoManager;import com.jiagouedu.services.front.area.bean.Area;public interface AreaDao extends DaoManager<Area> {}

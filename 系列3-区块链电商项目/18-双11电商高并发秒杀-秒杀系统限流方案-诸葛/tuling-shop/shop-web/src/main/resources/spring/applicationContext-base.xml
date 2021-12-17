@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+           http://www.springframework.org/schema/beans/spring-beans-3.0.xsd">
+
+	<!-- 基础的DAO，所有的业务逻辑实现类必须注入此dao才能进行数据库操作 -->
+	<bean id="baseDao" class="com.jiagouedu.core.dao.BaseDao">
+		<property name="sqlSessionFactory" ref="sessionFactory"/>
+	</bean>
+    <bean id="freemarkerHelper" class="com.jiagouedu.core.freemarker.front.FreemarkerHelper"/>
+</beans>

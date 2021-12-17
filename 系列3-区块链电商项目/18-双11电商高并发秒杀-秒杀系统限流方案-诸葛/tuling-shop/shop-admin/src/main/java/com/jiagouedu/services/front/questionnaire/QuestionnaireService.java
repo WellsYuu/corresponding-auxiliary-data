@@ -1,0 +1,1 @@
+package com.jiagouedu.services.front.questionnaire;import com.jiagouedu.core.Services;import com.jiagouedu.services.front.questionnaire.bean.Questionnaire;public interface QuestionnaireService extends Services<Questionnaire> {}

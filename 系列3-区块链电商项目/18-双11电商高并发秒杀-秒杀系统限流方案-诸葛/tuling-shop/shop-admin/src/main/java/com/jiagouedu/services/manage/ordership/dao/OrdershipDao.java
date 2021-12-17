@@ -1,0 +1,1 @@
+package com.jiagouedu.services.manage.ordership.dao;import com.jiagouedu.core.DaoManager;import com.jiagouedu.services.manage.ordership.bean.Ordership;public interface OrdershipDao extends DaoManager<Ordership> {}

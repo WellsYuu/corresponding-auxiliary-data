@@ -1,0 +1,1 @@
+package com.jiagouedu.services.manage.advert.bean;import java.io.Serializable;public class Advert extends com.jiagouedu.services.common.Advert implements		Serializable {	private static final long serialVersionUID = 1L;	public void clear() {		super.clear();	}}

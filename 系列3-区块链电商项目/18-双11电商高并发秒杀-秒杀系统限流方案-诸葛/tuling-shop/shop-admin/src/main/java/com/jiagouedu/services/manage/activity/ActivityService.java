@@ -1,0 +1,1 @@
+package com.jiagouedu.services.manage.activity;import com.jiagouedu.core.Services;import com.jiagouedu.services.manage.activity.bean.Activity;public interface ActivityService extends Services<Activity> {}

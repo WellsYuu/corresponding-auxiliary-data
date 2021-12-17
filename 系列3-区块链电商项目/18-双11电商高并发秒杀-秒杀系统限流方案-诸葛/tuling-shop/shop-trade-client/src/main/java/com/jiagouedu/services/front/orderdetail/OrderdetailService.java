@@ -1,0 +1,1 @@
+package com.jiagouedu.services.front.orderdetail;import com.jiagouedu.core.Services;import com.jiagouedu.services.front.orderdetail.bean.Orderdetail;public interface OrderdetailService extends Services<Orderdetail> {}
