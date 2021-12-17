@@ -1,0 +1,1 @@
+package com.jiagouedu.services.manage.emailnotifyproduct;import com.jiagouedu.core.Services;import com.jiagouedu.services.manage.emailnotifyproduct.bean.EmailNotifyProduct;public interface EmailNotifyProductService extends Services<EmailNotifyProduct> {	/**	 * 系统自动发送到货通知	 */	void autoNotify();}

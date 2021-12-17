@@ -1,0 +1,1 @@
+package com.jiagouedu.services.manage.gift;import com.jiagouedu.core.Services;import com.jiagouedu.services.manage.gift.bean.Gift;public interface GiftService extends Services<Gift> {}

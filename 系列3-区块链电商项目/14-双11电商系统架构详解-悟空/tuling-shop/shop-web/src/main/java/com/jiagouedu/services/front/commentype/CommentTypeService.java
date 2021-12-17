@@ -1,0 +1,1 @@
+package com.jiagouedu.services.front.commentype;import com.jiagouedu.core.Services;import com.jiagouedu.services.front.commentype.bean.CommentType;public interface CommentTypeService extends Services<CommentType> {}

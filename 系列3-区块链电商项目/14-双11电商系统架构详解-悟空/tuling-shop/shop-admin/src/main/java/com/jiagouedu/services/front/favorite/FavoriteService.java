@@ -1,0 +1,1 @@
+package com.jiagouedu.services.front.favorite;import com.jiagouedu.core.Services;import com.jiagouedu.services.front.favorite.bean.Favorite;public interface FavoriteService extends Services<Favorite> {	int selectCount(Favorite favorite);}

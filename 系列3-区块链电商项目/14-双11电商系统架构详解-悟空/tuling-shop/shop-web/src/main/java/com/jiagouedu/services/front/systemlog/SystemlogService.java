@@ -1,0 +1,1 @@
+package com.jiagouedu.services.front.systemlog;import com.jiagouedu.core.Services;import com.jiagouedu.services.front.systemlog.bean.Systemlog;public interface SystemlogService extends Services<Systemlog> {}

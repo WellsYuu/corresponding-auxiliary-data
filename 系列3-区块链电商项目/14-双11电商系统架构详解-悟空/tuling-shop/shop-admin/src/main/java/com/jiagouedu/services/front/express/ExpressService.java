@@ -1,0 +1,1 @@
+package com.jiagouedu.services.front.express;import com.jiagouedu.core.Services;import com.jiagouedu.services.front.express.bean.Express;public interface ExpressService extends Services<Express> {}

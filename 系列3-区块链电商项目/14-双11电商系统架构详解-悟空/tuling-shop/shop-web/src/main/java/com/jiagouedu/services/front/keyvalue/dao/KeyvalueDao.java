@@ -1,0 +1,1 @@
+package com.jiagouedu.services.front.keyvalue.dao;import com.jiagouedu.core.DaoManager;import com.jiagouedu.services.front.keyvalue.bean.Keyvalue;public interface KeyvalueDao extends DaoManager<Keyvalue> {}

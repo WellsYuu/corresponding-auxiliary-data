@@ -1,0 +1,1 @@
+package com.jiagouedu.services.manage.orderdetail.dao;import com.jiagouedu.core.DaoManager;import com.jiagouedu.services.manage.orderdetail.bean.Orderdetail;import com.jiagouedu.web.action.manage.report.ReportInfo;import java.util.List;public interface OrderdetailDao extends DaoManager<Orderdetail> {	List<ReportInfo> reportProductSales(Orderdetail orderdetail);}
