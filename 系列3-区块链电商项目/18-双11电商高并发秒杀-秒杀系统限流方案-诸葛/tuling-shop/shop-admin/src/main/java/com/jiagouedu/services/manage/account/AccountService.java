@@ -1,0 +1,1 @@
+package com.jiagouedu.services.manage.account;import com.jiagouedu.core.Services;import com.jiagouedu.services.manage.account.bean.Account;public interface AccountService extends Services<Account> {}

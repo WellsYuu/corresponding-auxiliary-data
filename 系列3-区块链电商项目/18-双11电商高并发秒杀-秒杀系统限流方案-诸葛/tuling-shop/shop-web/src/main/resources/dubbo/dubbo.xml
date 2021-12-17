@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:dubbo="http://code.alibabatech.com/schema/dubbo"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+       http://www.springframework.org/schema/beans/spring-beans.xsd
+       http://code.alibabatech.com/schema/dubbo
+       http://code.alibabatech.com/schema/dubbo/dubbo.xsd">
+
+    <!-- 提供方应用信息，用于计算依赖关系 -->
+    <dubbo:application name="shop-orders-service"  />
+
+    <dubbo:registry address="${dubbo.zk.ip}" check="false" id="shop-orders"/>
+    <!-- 使用multicast广播注册中心暴露发现服务地址
+    <dubbo:registry address="multicast://224.5.6.7:1234?unicast=false" check="false"/>-->
+
+    <import resource="dubbo-trade-consumer.xml" />
+    <import resource="dubbo-members-consumer.xml" />
+    <import resource="dubbo-goods-consumer.xml" />
+
+</beans>

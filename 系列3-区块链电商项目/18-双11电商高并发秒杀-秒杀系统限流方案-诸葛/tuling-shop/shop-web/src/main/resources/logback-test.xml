@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<configuration>
+
+	<appender name="stdout" class="ch.qos.logback.core.ConsoleAppender">
+		<layout class="ch.qos.logback.classic.PatternLayout">
+			<pattern>%d{HH:mm:ss} |%5le| %logger{50} => %msg %n%ex</pattern>
+		</layout>
+	</appender>
+
+    <logger name="com.jiagouedu" level="DEBUG"/>
+    <!--<logger name="java.sql.Connection" level="DEBUG"/>-->
+    <!--<logger name="java.sql.PreparedStatement" level="DEBUG"/>-->
+	<!--<logger name="org.springframework.ui.freemarker" level="DEBUG" />-->
+
+	<root level="INFO">
+		<appender-ref ref="stdout" />
+	</root>
+
+</configuration>

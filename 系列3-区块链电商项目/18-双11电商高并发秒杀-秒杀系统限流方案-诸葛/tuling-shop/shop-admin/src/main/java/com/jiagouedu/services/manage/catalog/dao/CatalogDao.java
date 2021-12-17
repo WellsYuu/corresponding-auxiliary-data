@@ -1,0 +1,1 @@
+package com.jiagouedu.services.manage.catalog.dao;import com.jiagouedu.core.DaoManager;import com.jiagouedu.services.manage.catalog.bean.Catalog;import java.util.List;public interface CatalogDao extends DaoManager<Catalog> {	/**	 * @param string	 */	void deletes(List<String> list);}

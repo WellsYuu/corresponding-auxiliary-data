@@ -1,0 +1,1 @@
+package com.jiagouedu.services.manage.systemlog.dao;import com.jiagouedu.core.DaoManager;import com.jiagouedu.services.manage.systemlog.bean.Systemlog;public interface SystemlogDao extends DaoManager<Systemlog> {	Systemlog selectFirstOne(String account);}

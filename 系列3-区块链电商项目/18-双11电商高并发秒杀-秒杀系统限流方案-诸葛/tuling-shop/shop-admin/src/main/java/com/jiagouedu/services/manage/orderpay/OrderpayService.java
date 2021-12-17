@@ -1,0 +1,1 @@
+package com.jiagouedu.services.manage.orderpay;import com.jiagouedu.core.Services;import com.jiagouedu.services.manage.orderpay.bean.Orderpay;public interface OrderpayService extends Services<Orderpay> {}

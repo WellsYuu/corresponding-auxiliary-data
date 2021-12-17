@@ -1,0 +1,1 @@
+package com.jiagouedu.services.manage.emailnotifyproduct.dao;import com.jiagouedu.core.DaoManager;import com.jiagouedu.services.manage.emailnotifyproduct.bean.EmailNotifyProduct;public interface EmailNotifyProductDao extends DaoManager<EmailNotifyProduct> {}

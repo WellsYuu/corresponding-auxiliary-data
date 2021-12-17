@@ -1,0 +1,1 @@
+package com.jiagouedu.services.manage.activity.dao;import com.jiagouedu.core.DaoManager;import com.jiagouedu.services.manage.activity.bean.Activity;public interface ActivityDao extends DaoManager<Activity> {}

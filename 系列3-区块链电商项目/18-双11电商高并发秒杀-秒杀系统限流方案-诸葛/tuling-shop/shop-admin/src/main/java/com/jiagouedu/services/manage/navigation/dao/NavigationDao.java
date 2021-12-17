@@ -1,0 +1,1 @@
+package com.jiagouedu.services.manage.navigation.dao;import com.jiagouedu.core.DaoManager;import com.jiagouedu.services.manage.navigation.bean.Navigation;public interface NavigationDao extends DaoManager<Navigation> {}

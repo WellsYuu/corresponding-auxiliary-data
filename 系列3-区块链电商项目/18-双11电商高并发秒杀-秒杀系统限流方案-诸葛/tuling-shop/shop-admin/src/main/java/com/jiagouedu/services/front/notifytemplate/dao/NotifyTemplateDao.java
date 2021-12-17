@@ -1,0 +1,1 @@
+package com.jiagouedu.services.front.notifytemplate.dao;import com.jiagouedu.core.DaoManager;import com.jiagouedu.services.front.notifytemplate.bean.NotifyTemplate;public interface NotifyTemplateDao extends DaoManager<NotifyTemplate> {}

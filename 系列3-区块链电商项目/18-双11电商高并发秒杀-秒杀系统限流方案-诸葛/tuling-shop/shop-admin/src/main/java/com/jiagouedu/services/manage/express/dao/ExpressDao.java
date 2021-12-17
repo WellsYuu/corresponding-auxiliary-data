@@ -1,0 +1,1 @@
+package com.jiagouedu.services.manage.express.dao;import com.jiagouedu.core.DaoManager;import com.jiagouedu.services.manage.express.bean.Express;public interface ExpressDao extends DaoManager<Express> {}

@@ -1,0 +1,1 @@
+package com.jiagouedu.services.front.attributelink.bean;import java.io.Serializable;/** * 属性产品中间类 * @author Administrator * */public class AttributeLink extends com.jiagouedu.services.common.AttributeLink implements Serializable {	private static final long serialVersionUID = 1L;}

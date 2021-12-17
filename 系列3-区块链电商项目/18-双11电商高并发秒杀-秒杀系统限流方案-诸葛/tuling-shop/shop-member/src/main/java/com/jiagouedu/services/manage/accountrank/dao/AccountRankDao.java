@@ -1,0 +1,1 @@
+package com.jiagouedu.services.manage.accountrank.dao;import com.jiagouedu.core.DaoManager;import com.jiagouedu.services.manage.accountrank.bean.AccountRank;public interface AccountRankDao extends DaoManager<AccountRank> {}
