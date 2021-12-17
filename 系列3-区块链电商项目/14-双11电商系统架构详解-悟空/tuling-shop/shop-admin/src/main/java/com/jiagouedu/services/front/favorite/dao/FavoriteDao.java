@@ -1,0 +1,1 @@
+package com.jiagouedu.services.front.favorite.dao;import com.jiagouedu.core.DaoManager;import com.jiagouedu.services.front.favorite.bean.Favorite;public interface FavoriteDao extends DaoManager<Favorite> {	int selectCount(Favorite favorite);}

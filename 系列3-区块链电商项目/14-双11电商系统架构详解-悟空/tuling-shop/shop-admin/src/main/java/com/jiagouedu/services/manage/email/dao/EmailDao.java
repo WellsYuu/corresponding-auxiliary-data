@@ -1,0 +1,1 @@
+package com.jiagouedu.services.manage.email.dao;import com.jiagouedu.core.DaoManager;import com.jiagouedu.services.manage.email.bean.Email;public interface EmailDao extends DaoManager<Email> {}

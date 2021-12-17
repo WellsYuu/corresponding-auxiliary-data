@@ -1,0 +1,1 @@
+package com.jiagouedu.services.front.orderlog;import com.jiagouedu.core.Services;import com.jiagouedu.services.front.orderlog.bean.Orderlog;public interface OrderlogService extends Services<Orderlog> {}

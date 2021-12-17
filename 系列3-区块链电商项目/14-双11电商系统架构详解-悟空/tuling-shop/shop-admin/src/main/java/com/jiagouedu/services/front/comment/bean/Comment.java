@@ -1,0 +1,1 @@
+package com.jiagouedu.services.front.comment.bean;import java.io.Serializable;public class Comment extends com.jiagouedu.services.common.Comment implements Serializable {	private static final long serialVersionUID = 1L;	public void clear() {		super.clear();	}}

@@ -1,0 +1,1 @@
+package com.jiagouedu.services.manage.sms;import com.jiagouedu.core.Services;import com.jiagouedu.services.manage.sms.bean.Sms;public interface SmsService extends Services<Sms> {}

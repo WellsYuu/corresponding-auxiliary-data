@@ -1,0 +1,13 @@
+*.iml
+*.ipr
+*.iws
+.classpath
+.settings/
+.project
+bin/
+target/
+classes/
+.idea/
+build/
+spy.log
+.git/

@@ -1,0 +1,1 @@
+package com.jiagouedu.services.manage.account.dao;import com.jiagouedu.core.DaoManager;import com.jiagouedu.services.manage.account.bean.Account;public interface AccountDao extends DaoManager<Account> {}

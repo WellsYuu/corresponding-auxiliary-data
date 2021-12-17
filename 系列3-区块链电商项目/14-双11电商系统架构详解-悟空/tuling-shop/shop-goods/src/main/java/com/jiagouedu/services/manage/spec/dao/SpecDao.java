@@ -1,0 +1,1 @@
+package com.jiagouedu.services.manage.spec.dao;import com.jiagouedu.core.DaoManager;import com.jiagouedu.services.manage.spec.bean.Spec;public interface SpecDao extends DaoManager<Spec> {}

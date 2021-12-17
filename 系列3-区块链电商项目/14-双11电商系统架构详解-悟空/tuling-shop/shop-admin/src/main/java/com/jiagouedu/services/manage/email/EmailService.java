@@ -1,0 +1,1 @@
+package com.jiagouedu.services.manage.email;import com.jiagouedu.core.Services;import com.jiagouedu.services.manage.email.bean.Email;public interface EmailService extends Services<Email> {}

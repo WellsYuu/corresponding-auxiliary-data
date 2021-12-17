@@ -1,0 +1,1 @@
+package com.jiagouedu.services.manage.ordership;import com.jiagouedu.core.Services;import com.jiagouedu.services.manage.ordership.bean.Ordership;public interface OrdershipService extends Services<Ordership> {}
