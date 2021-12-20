@@ -1,0 +1,4 @@
+encrypt:
+  key: tuling  # 设置对称密钥
+  
+  
