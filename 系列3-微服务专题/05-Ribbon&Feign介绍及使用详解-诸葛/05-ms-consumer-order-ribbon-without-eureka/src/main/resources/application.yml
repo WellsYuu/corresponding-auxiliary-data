@@ -1,0 +1,10 @@
+server:
+  port: 8010
+spring:
+  application:
+    name: microservice-consumer-order
+microservice-provider-user:
+  ribbon:
+    listOfServers: localhost:8001,localhost:8002
+    NFLoadBalancerRuleClassName: com.netflix.loadbalancer.RandomRule
+    
