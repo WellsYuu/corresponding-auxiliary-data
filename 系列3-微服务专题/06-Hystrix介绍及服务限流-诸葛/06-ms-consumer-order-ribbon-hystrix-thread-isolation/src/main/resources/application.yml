@@ -1,0 +1,18 @@
+server:
+  port: 8010
+spring:
+  application:
+    name: microservice-consumer-order
+eureka:
+  client:
+    serviceUrl:
+      defaultZone: http://localhost:8761/eureka/
+  instance:
+    prefer-ip-address: true
+hystrix:
+  command:
+    default:
+      execution:
+        isolation:
+          thread:
+            timeoutInMilliseconds: 20000
