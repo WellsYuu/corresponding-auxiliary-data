@@ -1,0 +1,12 @@
+spring:
+  cloud:
+    config:
+      server:
+        git:
+          uri: https://gitee.com/aaronrao/spring-cloud-config-test.git
+          search-paths: foo,bar*  #Configserver会在 Git仓库根目录、 foo子目录，以及所有以 bar开始的子目录中查找配置文件。
+          clone-on-start: true  #启动时就clone仓库到本地，默认是在配置被首次请求时，config server才会clone git仓库
+logging:	
+  level:
+    org.springframework.cloud: DEBUG
+    org.springframework.boot: DEBUG

@@ -1,0 +1,13 @@
+server:
+  port: 9411
+zipkin:
+  storage:
+    type: elasticsearch
+    elasticsearch:
+      cluster: elasticsearch
+      hosts: http://localhost:9200
+      index: zipkin
+      index-shards: 5
+      index-replicas: 1
+      
+      
