@@ -1,0 +1,8 @@
+log规范相关资料：采用log4j标准
+1.log对象定义格式：private static Logger logger = LoggerFactory.getLogger(SolrSearchManger.class);
+2.log要求：分清war debug info error等四种情况，不能乱打info否则线上日志会爆炸
+3.入口出口一定要打印日志，分享一种格式：
+入口：uuid->xxx系统：method=,params={},ip=,session={}(ip，session等为可选项，其余为必填)
+出口: uuid->xxx系统：method=，data={},time={},code={}(data为返回数据，其中uuid应与入口一致，方便查询问题)
+4.关键业务点log:
+uuid->xxx系统:event（log事件）=xxx,result={},params={}，msg=xxx
