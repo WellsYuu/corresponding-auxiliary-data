@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<AgentPlugin>
+    <describe>基础采集器</describe>
+    <template name="returnTemplate">{
+com.cbt.agent.collect.InParams _param=new com.cbt.agent.collect.InParams();
+        com.cbt.agent.collect.OutResult _result=new com.cbt.agent.collect.OutResult();
+        _param.args=$args;
+        _result.args=$args;
+        _param.className="${target.className}";
+        _param.methodName="${target.methodName}";
+        _result.className="${target.className}";
+        _result.methodName="${target.methodName}";
+        _param.paramTypes="${target.paramTypes}".split(",");
+        _result.paramTypes="${target.paramTypes}".split(",");
+${beforeSrc}
+        com.cbt.agent.collect.CollectHandle handle=com.cbt.agent.collect.CollectHandleBeanFactory.getBean(${handle.className}.class);
+        com.cbt.agent.collect.Event event = handle.invokerBefore(null,_param);
+        try {
+            _result.result=($w)${target.methodName}$agent($$);
+        } catch (Throwable e) {
+            _result.error=e;
+            throw e;
+        }finally{
+${afterSrc}
+            handle.invokerAfter(event, _result);
+        }
+        return ($r) _result.result;
+}
+</template>
+    <template name="voidTemplate">{
+com.cbt.agent.collect.InParams _param=new com.cbt.agent.collect.InParams();
+        com.cbt.agent.collect.OutResult _result=new com.cbt.agent.collect.OutResult();
+        _param.args=$args;
+        _result.args=$args;
+        _param.className="${target.className}";
+        _param.methodName="${target.methodName}";
+        _result.className="${target.className}";
+        _result.methodName="${target.methodName}";
+        _param.paramTypes="${target.paramTypes}".split(",");
+        _result.paramTypes="${target.paramTypes}".split(",");
+${beforeSrc}
+        com.cbt.agent.collect.CollectHandle handle=com.cbt.agent.collect.CollectHandleBeanFactory.getBean(${handle.className}.class);
+        com.cbt.agent.collect.Event event = handle.invokerBefore(null,_param);
+        try {
+            ${target.methodName}$agent($$);
+        } catch (Throwable e) {
+            _result.error=e;
+            throw e;
+        }finally{
+${afterSrc}
+            handle.invokerAfter(event, _result);
+        }
+}
+</template>
+    <agent target="com.mysql.jdbc.NonRegisteringDriver" handle="com.cbt.agent.collects.jdbc.JdbcDriverHandle" template="returnTemplate" way="trace">
+        <method name="connect" returnType="java.sql.Connection" class="com.mysql.jdbc.NonRegisteringDriver">
+            <paramTypes>java.lang.String java.util.Properties</paramTypes>
+        </method>
+    </agent>
+    <agent target="com.alibaba.dubbo.rpc.proxy.InvokerInvocationHandler" handle="com.cbt.agent.collects.dubbo.DubboConsumerRpcExceptionMonitorHandle" template="returnTemplate" way="trace">
+        <method name="invoke" returnType="java.lang.Object" class="com.alibaba.dubbo.rpc.proxy.InvokerInvocationHandler"/>
+        <beforeSrc>_param.put("invoker",$0.invoker);</beforeSrc>
+    </agent>
+    <agent target="com.alibaba.dubbo.rpc.protocol.dubbo.filter.FutureFilter" handle="com.cbt.agent.collects.dubbo.DubboConsumerMonitorHandle" template="returnTemplate" way="trace">
+        <method name="invoke" returnType="com.alibaba.dubbo.rpc.Result" class="com.alibaba.dubbo.rpc.protocol.dubbo.filter.FutureFilter"/>
+    </agent>
+    <agent target="com.alibaba.dubbo.rpc.filter.EchoFilter" handle="com.cbt.agent.collects.dubbo.DubboProviderMonitorHandle" template="returnTemplate" way="trace">
+        <method name="invoke" returnType="com.alibaba.dubbo.rpc.Result" class="com.alibaba.dubbo.rpc.filter.EchoFilter"/>
+    </agent>
+    <agent target="redis.clients.jedis.Connection" handle="com.cbt.agent.collects.redis.RedisConnectionHandle" template="returnTemplate" way="trace">
+        <method name="sendCommand" returnType="redis.clients.jedis.Connection" class="redis.clients.jedis.Connection">
+            <paramTypes>redis.clients.jedis.Protocol$Command [[B</paramTypes>
+        </method>
+        <beforeSrc>_param.put("this",$0);</beforeSrc>
+    </agent>
+</AgentPlugin>
