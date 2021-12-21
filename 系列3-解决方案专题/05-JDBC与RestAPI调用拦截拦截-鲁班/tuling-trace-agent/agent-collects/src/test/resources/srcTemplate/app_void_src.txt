@@ -1,0 +1,24 @@
+{
+com.cbt.agent.collect.InParams _param=new com.cbt.agent.collect.InParams();
+        com.cbt.agent.collect.OutResult _result=new com.cbt.agent.collect.OutResult();
+        _param.args=$args;
+        _result.args=$args;
+        _param.className="${target.className}";
+        _param.methodName="${target.methodName}";
+        _result.className="${target.className}";
+        _result.methodName="${target.methodName}";
+        _param.paramTypes="${target.paramTypes}".split(",");
+        _param.paramTypes="${target.paramTypes}".split(",");
+${beforeSrc}
+        com.cbt.agent.collect.CollectHandle handle=com.cbt.agent.collect.CollectHandleBeanFactory.getBean(${handle.className}.class);
+        com.cbt.agent.collect.Event event = handle.invokerBefore(null,_param);
+        try {
+            ${target.methodName}$agent($$);
+        } catch (Throwable e) {
+            _result.error=e;
+            throw e;
+        }finally{
+${afterSrc}
+            handle.invokerAfter(event, _result);
+        }
+}
