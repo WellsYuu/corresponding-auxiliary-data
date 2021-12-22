@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd">
+
+
+
+    <bean id="jedisPoolConfig" class="redis.clients.jedis.JedisPoolConfig">
+        <property name="maxTotal" value="500" />
+        <property name="maxIdle" value="100" />
+        <property name="minIdle" value="10" />
+        <property name="maxWaitMillis" value="2000" />
+        <property name="testOnBorrow" value="true" />
+    </bean>
+
+
+    <bean id="redisClusterConnectionFactory"
+          class="com.tl.flasher.spring.RedisClusterConnectionFactory">
+        <property name="jedisPoolConfig" ref="jedisPoolConfig"></property>
+        <property name="hostPort" value="192.168.0.12:7001,192.168.0.12:7002,192.168.0.11:7001,192.168.0.11:7002,192.168.0.13:7001,192.168.0.13:7002"/>
+    </bean>
+
+    <bean id="redisCluster"
+          class="com.tl.flasher.impl.RedisClusterImpl">
+        <constructor-arg index="0" ref="redisClusterConnectionFactory" />
+    </bean>
+
+
+
+
+
+    <bean id="monitorInterceptor" class="com.tl.flasher.monitor.interceptor.MonitorInterceptor" />
+
+
+    <bean id="autoProxyCreator" class="org.springframework.aop.framework.autoproxy.BeanNameAutoProxyCreator">
+        <!-- 设置目标对象 -->
+        <property name="beanNames">
+            <list>
+                <value>redisCluster</value>
+            </list>
+        </property>
+        <!-- 代理对象所使用的拦截器 -->
+        <property name="interceptorNames">
+            <list>
+                <value>monitorInterceptor</value>
+            </list>
+        </property>
+    </bean>
+
+    <bean id="monitorService" class="com.tl.flasher.monitor.MonitorService">
+        <property name="url" value="http://127.0.0.1:8080/log"/>
+        <property name="protocol" ref="protocol"/>
+    </bean>
+
+    <bean id="protocol" class="com.tl.flasher.monitor.protocol.falcon.FalconProtocol">
+        <property name="endpoint" value="redis-cluster"/>
+    </bean>
+
+</beans>
