@@ -1,0 +1,9 @@
+<body>
+	$!errorMsg
+	<form action="/doLogin" method="post">
+		用户名<input name="name" type="text" value="" />
+		校验码<input name="checkCode" type="password" value="" />
+		<input type="submit" value="Submit" />
+	</form>
+</body>
+	
