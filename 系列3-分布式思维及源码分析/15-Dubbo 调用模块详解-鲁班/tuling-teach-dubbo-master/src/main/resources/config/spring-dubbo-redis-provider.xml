@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:dubbo="http://code.alibabatech.com/schema/dubbo"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd http://code.alibabatech.com/schema/dubbo http://code.alibabatech.com/schema/dubbo/dubbo.xsd">
+    <dubbo:application name="demo-provider"/>
+    <dubbo:registry protocol="redis" address="192.168.0.147:6379" check="true"/>
+    <dubbo:protocol id="dubboProtocol" name="dubbo" port="-1"/>
+    <dubbo:provider threadpool="fixed"
+                    threads="500"
+                    timeout="5000"
+                    retries="2"/>
+    <dubbo:service protocol="dubboProtocol" interface="com.tuling.teach.service.DemoService"
+                   timeout="5000"
+                   retries="1"
+                   group="tuling.dubbo.demo"
+                   version="3.0.0"
+                   ref="demoService" >
+    </dubbo:service>
+    <bean id="demoService" class="com.tuling.teach.service.DemoServiceImpl"/>
+</beans>
