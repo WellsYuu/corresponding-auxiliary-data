@@ -1,0 +1,285 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>欢迎来到图灵学院</title>
+</head>
+<body>
+
+<canvas id="myCanvas" width="600" height="600" style="background: Black"></canvas>
+<div style="position: fixed;top:0px;left: 610px; width: 300px;height: 600px;">
+    <ul>
+        <li>
+            <ul id="status_list">
+                <li>在线人数：<span id="online_count" style="color: #2f3bff">0</span></li>
+                <li>你当前 击杀：<span id="current_killer" style="color: #FF0000">空</span>
+                    ，死亡：<span id="current_die" style="color: #fffd0d">空</span>
+                </li>
+            </ul>
+        </li>
+        <li>------------排行榜---------</li>
+        <li>
+            <ul id="ranking_list">
+                <li>xxx 击杀：10 ，死亡：10</li>
+                <li>xxx 击杀：10 ，死亡：10</li>
+                <li>xxx 击杀：10 ，死亡：10</li>
+            </ul>
+        </li>
+    </ul>
+</div>
+
+
+<script type="text/javascript"
+        src="http://ajax.aspnetcdn.com/ajax/jQuery/jquery-1.8.0.js"></script>
+<script type="text/javascript">
+    // TODO 设置游戏状态
+    // TODO 设置定时任务定时 检测版本
+    // TODO 更新版本数据
+
+    var websocket = null;
+    var _top = 80;
+    var index = 0;
+
+    var host = window.location.host;
+    var accountName = "";
+    var connectionState;//Connect,Disconnect
+    //判断当前浏览器是否支持WebSocket
+    if ('WebSocket' in window) {
+        websocket = new WebSocket("ws://" + host + "/ws");
+        accountName = prompt("请输入你的游戏名称:", "我的小可爱");
+    } else {
+        alert("当前浏览器不支持 WebSocket!");
+    }
+
+
+    //连接发生错误的回调方法
+    websocket.onerror = function () {
+    };
+
+    //连接成功建立的回调方法
+    websocket.onopen = function (event) {
+        // 加入游戏
+        websocket.send("JOIN:" + accountName);
+        connectionState = "Connect";
+    }
+
+    //接收到消息的回调方法
+    // 收到服务器发送的消息
+    websocket.onmessage = function (event) {
+        var source = event.data;
+        var i = source.indexOf("\r\n");
+        var objData;
+        var method;
+        if (i < 0) {
+            return;
+        }
+        method = source.substr(0, i);
+        objData = source.substr(i + 1);
+        if (method == "version") {
+            pushVersionData(objData);
+        } else if (method == "status") {
+            pushStatus(objData);
+        } else if (method == "event") {
+            noticeEvent(objData);
+        }
+
+    }
+
+    //连接关闭的回调方法
+    websocket.onclose = function () {
+        // 断开连接
+        connectionState = "Disconnect";
+    }
+
+
+    //监听窗口关闭事件，当窗口关闭时，主动去关闭websocket连接，防止连接还没断开就关闭窗口，server端会抛异常。
+    window.onbeforeunload = function () {
+        websocket.close();
+    }
+
+
+    function draw(color, x, y) {
+        ctx.fillStyle = color;
+        ctx.fillRect(x * size, y * size, size, size);
+    }
+
+    document.onkeydown = function (e) {
+        websocket.send("CONTROL:" + e.keyCode);
+    };
+
+    var canvas = document.getElementById('myCanvas');
+    var ctx = canvas.getContext('2d');
+    var size = 3;
+    function refresh(version) {
+        var data;
+        /*  if (version.full) {
+         console.log("当前版本:%s,是否全量:%s,命令:%s,数据:%s", version.version, version.full, version.cmds, version.cmdDatas);
+         }*/
+        for (var i = 0; i < version.cmds.length; i++) {
+            data = version.cmdDatas[i].split(",");
+            for (var k = 0; k < data.length; k += 2) {
+                draw(version.cmds[i], data[k], data[k + 1]);
+            }
+        }
+
+        dataQueues.splice($.inArray(version, dataQueues), 1);  //从对列当中清除已更亲版本
+        lastTime = $.now();// 最后更新时间
+        lastVersion = version.version; // 最后更新版本
+    }
+
+    // 画面刷新算法
+    var lastVersion = 0;
+    var lastTime = 0;
+    // 数据对列
+    var dataQueues = new Array(30);
+
+    function VersionData(full) {
+        this.version;  // 版本号
+        this.time;    // 实际更新时间
+        this.full = full;//是否为全量版本
+        this.cmds = [];
+        this.cmdDatas = [];
+        this.requestTime = $.now(); //发起更新时间
+    }
+
+    // 定期对版本进行检测
+    setInterval(versionUpdateCheck, 60);
+
+    // 推送版本
+    function pushVersionData(data) {
+        // 解析版本
+        var vd = $.parseJSON(data);
+        // 判断是否为重复推送
+        if (vd.version <= lastVersion) {
+            return;
+        }
+        var localVersion = getVersion(vd.version);
+        if (vd.full) {
+            localVersion = getFullVersion();
+        } else {
+            localVersion = getVersion(vd.version);
+        }
+
+        if (localVersion == null) {
+            localVersion = new VersionData(vd.full);
+            dataQueues.push(localVersion);
+        }
+        localVersion.version = vd.version;
+        localVersion.time = vd.time;
+        localVersion.full = vd.full;//是否为全量版本
+        localVersion.cmds = vd.cmds;
+        localVersion.cmdDatas = vd.cmdDatas;
+    }
+
+    // 版本更新检测
+    function versionUpdateCheck() {
+        /**
+         * 连接状态检测
+         * */
+        if (connectionState != "Connect") {// 未连接
+            return;
+        }
+
+        /**
+         * 全量更新逻辑
+         * */
+        var fullVersion = getFullVersion();
+        if (fullVersion != null && fullVersion.time != null) { // 全量刷新界面
+            refresh(fullVersion);
+            return;
+        } else if (lastVersion == 0 && fullVersion == null) {// 全量更新
+            var vd = new VersionData(true);
+            dataQueues.push(vd);
+            websocket.send("FULL:true");
+            return;
+        } else if (fullVersion != null && fullVersion.time == null) { // 等待全量更新
+            return;
+        }
+
+        /**
+         * 定量更新逻辑
+         */
+        // TODO 检测是否存在丢失版本，批量更新
+        // TODO 丢失版本是否已超过10次，否则直接全量更新
+        // TODO 等待定量更新完成超时需要重新定量更新
+        if (lastVersion != 0) {
+            var nextVersionNumber = lastVersion + 1;
+            var nextVersion = getVersion(nextVersionNumber);
+            if (nextVersion != null && nextVersion.time != null) { // 基于版本 刷新界面
+                refresh(nextVersion);
+                return;
+            } else if (nextVersion == null && $.now() - lastTime > 500) { //下个版本获取超时 定量更新
+                nextVersion = new VersionData(false);
+                nextVersion.version = nextVersionNumber;
+                dataQueues.push(vd);
+                websocket.send("QUANTITATIVE:" + (lastVersion + 1));
+                return;
+            } else if (nextVersion != null && nextVersion.time == null) { // 等待定量更新完成
+                return;
+            }
+        }
+    }
+    // 获取全量版本
+    function getFullVersion() {
+        for (var i = 0; i < dataQueues.length; i++) {
+            if (dataQueues[i] != null && dataQueues[i].full) {
+                return dataQueues[i];
+            }
+        }
+        return null;
+    }
+
+    // 基于版本号获取指定版本
+    function getVersion(version) {
+        for (var i = 0; i < dataQueues.length; i++) {
+            if (dataQueues[i] != null && dataQueues[i].version == version) {
+                return dataQueues[i];
+            }
+        }
+        return null;
+    }
+
+    //
+
+    /**
+     * 状态信息变更
+     * 在线人数、当前玩家积分、积分排行榜
+     * @param data
+     */
+    function pushStatus(data) {
+        console.log("游戏状态信息变更：" + data);
+        var statusHtml;
+        var statistics = $.parseJSON(data);
+        $("#online_count").text(statistics.onlineCount)
+        if (statistics.current != null) {
+            $("#current_killer").text(statistics.current.killIntegral);
+            $("#current_die").text(statistics.current.dieIntegral);
+        }
+        if (statistics.rankingList != null) {
+            var rankingHtml = "";
+            for (var i = 0; i < statistics.rankingList.length; i++) {
+                var ranking = statistics.rankingList[i];
+                rankingHtml += "<li>" + ranking.gameName + " 击杀：" + ranking.killIntegral + " ，死亡：" + ranking.dieIntegral + "</li>";
+            }
+            $("#ranking_list").html(rankingHtml);
+        }
+
+    }
+
+    function noticeEvent(data) {
+        var eventData = $.parseJSON(data);
+        if (eventData.type == "die") {
+            var v = prompt("哦哦挂掉了！输入'鲁班就是帅'复活:", "");
+            if (v == '鲁班就是帅') {
+                websocket.send("RESURGENCE:" + accountName);
+            } else {
+                alert("游戏结束!!");
+            }
+        }
+    }
+
+
+    //refresh("Lime,0,0,1,1,2,2\r\nYellow,4,4,5,5");
+</script>
+</body>
+</html>
