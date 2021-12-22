@@ -1,0 +1,5 @@
+server:
+  port: 8082
+management:
+  security:
+    enabled: false  #关掉安全认证

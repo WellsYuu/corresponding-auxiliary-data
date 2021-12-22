@@ -1,0 +1,1 @@
+package com.jiagouedu.services.manage.area.dao;import com.jiagouedu.core.DaoManager;import com.jiagouedu.services.manage.area.bean.Area;import java.util.List;public interface AreaDao extends DaoManager<Area> {	void deleteAll();	List<Area> selectListByPcode(String pcode);	int getCount(Area area);}

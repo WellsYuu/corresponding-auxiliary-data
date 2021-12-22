@@ -1,0 +1,1 @@
+package com.jiagouedu.services.front.questionnaire.dao;import com.jiagouedu.core.DaoManager;import com.jiagouedu.services.front.questionnaire.bean.Questionnaire;public interface QuestionnaireDao extends DaoManager<Questionnaire> {}

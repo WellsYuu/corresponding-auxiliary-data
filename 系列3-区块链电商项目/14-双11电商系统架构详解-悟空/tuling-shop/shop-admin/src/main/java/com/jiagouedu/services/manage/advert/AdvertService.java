@@ -1,0 +1,1 @@
+package com.jiagouedu.services.manage.advert;import com.jiagouedu.core.Services;import com.jiagouedu.services.manage.advert.bean.Advert;public interface AdvertService extends Services<Advert> {}

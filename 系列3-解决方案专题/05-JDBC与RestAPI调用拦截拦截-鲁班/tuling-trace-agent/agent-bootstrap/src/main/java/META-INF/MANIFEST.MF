@@ -1,0 +1,11 @@
+Manifest-Version: 1.1.0
+Archiver-Version: Plexus Archiver
+Created-By: Apache Maven
+Built-By: tomcat
+Build-Jdk: 1.7.0_45
+Boot-Class-Path: javassist-3.18.1-GA.jar asm-debug-all-5.0.3.jar
+Can-Redefine-Classes: true
+Can-Retransform-Classes: false
+Premain-Class: com.cbt.agent.bootstrap.DevelopBootMain
+Project-name: cbt-agent
+Project-version: 1.1.0-SNAPSHOT

@@ -1,0 +1,1 @@
+package com.jiagouedu.services.front.catalog.dao;import com.jiagouedu.core.DaoManager;import com.jiagouedu.services.front.catalog.bean.Catalog;public interface CatalogDao extends DaoManager<Catalog> {}

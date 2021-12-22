@@ -1,0 +1,1 @@
+package com.jiagouedu.services.front.orderpay.dao;import com.jiagouedu.core.DaoManager;import com.jiagouedu.services.front.orderpay.bean.Orderpay;public interface OrderpayDao extends DaoManager<Orderpay> {}

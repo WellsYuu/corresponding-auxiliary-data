@@ -1,0 +1,1 @@
+package com.jiagouedu.services.manage.sms.dao;import com.jiagouedu.core.DaoManager;import com.jiagouedu.services.manage.sms.bean.Sms;public interface SmsDao extends DaoManager<Sms> {}

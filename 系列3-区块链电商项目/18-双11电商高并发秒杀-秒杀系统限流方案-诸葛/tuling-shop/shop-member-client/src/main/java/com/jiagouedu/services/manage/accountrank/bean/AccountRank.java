@@ -1,0 +1,1 @@
+package com.jiagouedu.services.manage.accountrank.bean;import java.io.Serializable;public class AccountRank extends com.jiagouedu.services.common.AccountRank implements Serializable {	private static final long serialVersionUID = 1L;	public void clear() {		super.clear();	}}

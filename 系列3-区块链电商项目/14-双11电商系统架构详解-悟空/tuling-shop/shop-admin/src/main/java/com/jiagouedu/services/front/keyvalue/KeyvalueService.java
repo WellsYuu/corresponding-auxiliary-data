@@ -1,0 +1,1 @@
+package com.jiagouedu.services.front.keyvalue;import com.jiagouedu.core.Services;import com.jiagouedu.services.front.keyvalue.bean.Keyvalue;public interface KeyvalueService extends Services<Keyvalue> {}

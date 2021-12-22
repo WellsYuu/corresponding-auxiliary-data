@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:dubbo="http://code.alibabatech.com/schema/dubbo"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+        http://www.springframework.org/schema/beans/spring-beans.xsd
+        http://code.alibabatech.com/schema/dubbo
+        http://code.alibabatech.com/schema/dubbo/dubbo.xsd">
+
+
+    <dubbo:reference id="productService" interface="com.jiagouedu.services.front.product.ProductService" check="false" />
+    <dubbo:reference  id="productServiceManage"  interface="com.jiagouedu.services.manage.product.ProductService"  check="false"/>
+    <dubbo:reference id="specServiceManage"   interface="com.jiagouedu.services.manage.spec.SpecService" check="false"/>
+    <dubbo:reference  id="giftServiceManage"   interface="com.jiagouedu.services.manage.gift.GiftService"  check="false"/>
+    <dubbo:reference id="activityServiceManage"   interface="com.jiagouedu.services.manage.activity.ActivityService" />
+
+<!--    <dubbo:reference  interface="com.jiagouedu.services.front.area.AreaService" id="areaServiceFront"  check="false" />-->
+    <dubbo:reference interface="com.jiagouedu.services.front.attribute.AttributeService" id="attributeServiceFront"  check="false"/>
+    <dubbo:reference  interface="com.jiagouedu.services.front.navigation.NavigationService" id="navigationService"  check="false"/>
+
+</beans>

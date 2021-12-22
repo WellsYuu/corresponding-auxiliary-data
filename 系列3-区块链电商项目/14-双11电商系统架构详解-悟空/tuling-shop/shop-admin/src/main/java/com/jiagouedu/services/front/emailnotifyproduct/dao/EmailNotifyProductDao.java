@@ -1,0 +1,1 @@
+package com.jiagouedu.services.front.emailnotifyproduct.dao;import com.jiagouedu.core.DaoManager;import com.jiagouedu.services.front.emailnotifyproduct.bean.EmailNotifyProduct;public interface EmailNotifyProductDao extends DaoManager<EmailNotifyProduct> {	int selectCount(EmailNotifyProduct ep);}

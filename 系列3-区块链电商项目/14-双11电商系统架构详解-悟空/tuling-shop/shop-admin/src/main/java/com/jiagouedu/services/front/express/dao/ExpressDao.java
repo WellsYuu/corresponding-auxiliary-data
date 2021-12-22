@@ -1,0 +1,1 @@
+package com.jiagouedu.services.front.express.dao;import com.jiagouedu.core.DaoManager;import com.jiagouedu.services.front.express.bean.Express;import org.springframework.stereotype.Repository;@Repository("expressFront")public interface ExpressDao extends DaoManager<Express> {}

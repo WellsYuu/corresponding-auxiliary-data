@@ -1,0 +1,1 @@
+package com.jiagouedu.services.manage.questionnaire;import com.jiagouedu.core.Services;import com.jiagouedu.services.manage.questionnaire.bean.Questionnaire;public interface QuestionnaireService extends Services<Questionnaire> {	/**	 * 批量修改问卷状态	 * @param ids	 * @param questionnaireStatusY	 */	void changeStatus(String[] ids, String questionnaireStatusY);}

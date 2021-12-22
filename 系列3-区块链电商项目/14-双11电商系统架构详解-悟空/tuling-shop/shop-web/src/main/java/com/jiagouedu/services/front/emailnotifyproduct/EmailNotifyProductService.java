@@ -1,0 +1,1 @@
+package com.jiagouedu.services.front.emailnotifyproduct;import com.jiagouedu.core.Services;import com.jiagouedu.services.front.emailnotifyproduct.bean.EmailNotifyProduct;public interface EmailNotifyProductService extends Services<EmailNotifyProduct> {	int selectCount(EmailNotifyProduct ep);}

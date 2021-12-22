@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:dubbo="http://code.alibabatech.com/schema/dubbo"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd http://code.alibabatech.com/schema/dubbo http://code.alibabatech.com/schema/dubbo/dubbo.xsd">
+
+    <dubbo:application name="shop-members-service"/>
+    <!-- 使用redis中心暴露发现服务地址-->
+    <dubbo:registry address="${dubbo.zk.ip}" check="false" id="shop-members"/>
+    <!-- 当ProtocolConfig和ServiceConfig某属性没有配置时,采用此缺省值 -->
+    <dubbo:provider timeout="10000" threadpool="fixed" threads="100" accepts="1000"  port="20884"/>
+    <!--通讯配置-->
+    <dubbo:protocol name="dubbo"  dispatcher="all" threadpool="fixed" threads="20"  />
+
+    <!-- front-->
+    <dubbo:service retries="0" interface="com.jiagouedu.services.front.account.AccountService" ref="accountServiceFront"  />
+
+    <dubbo:service retries="0" interface="com.jiagouedu.services.manage.accountrank.AccountRankService" ref="accountRankServiceManage"  />
+
+
+</beans>

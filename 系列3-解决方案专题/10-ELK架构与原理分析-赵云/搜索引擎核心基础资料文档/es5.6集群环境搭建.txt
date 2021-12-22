@@ -1,0 +1,35 @@
+1.配置jdk1.8：
+export JAVA_HOME=/usr/java/jdk-1.8
+export CLASSPATH=$JAVA_HOME/lib/
+export PATH=$PATH:$JAVA_HOME/bin
+export PATH JAVA_HOME CLASSPATH
+
+2.es的配置文件：
+cluster.name: my-es
+node.name: node-01 #集群需要改名字
+node.master: true#尽量配置机器差作为主节点
+node.data: true
+network.host: 192.168.0.15
+http.port: 9200
+transport.tcp.port: 9300
+#单播(unicast)协议，指定要发现的节点信息了，可以不指定端口[默认9300]
+discovery.zen.ping.unicast.hosts: ["192.168.0.15","192.168.0.15:8300"]
+#默认是1看到的具有master节点资格的最小数量，然后才能在集群中做操作。官方的推荐值是(N/2)+1，如果只有2个节点设为1
+discovery.zen.minimum_master_nodes: 1
+http.cors.enabled: true
+http.cors.allow-origin: "*"
+bootstrap.system_call_filter: false
+
+#集群容灾配置：
+gateway.recover_after_nodes: 5
+gateway.expected_nodes: 7
+gateway.recover_after_time: 10m #默认为5分钟
+
+3.修改jvm参数：
+-Xms1g
+-Xmx1g
+
+4.配置集群注意点：
+启动前删除掉es data目录下的所有东西：rm -rf *
+
+5.关闭防火墙：service iptables stop 即外部访问。

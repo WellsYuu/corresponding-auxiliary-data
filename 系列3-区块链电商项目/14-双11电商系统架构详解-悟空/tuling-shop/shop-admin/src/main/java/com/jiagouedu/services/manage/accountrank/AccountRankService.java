@@ -1,0 +1,1 @@
+package com.jiagouedu.services.manage.accountrank;import com.jiagouedu.core.Services;import com.jiagouedu.services.manage.accountrank.bean.AccountRank;public interface AccountRankService extends Services<AccountRank> {}

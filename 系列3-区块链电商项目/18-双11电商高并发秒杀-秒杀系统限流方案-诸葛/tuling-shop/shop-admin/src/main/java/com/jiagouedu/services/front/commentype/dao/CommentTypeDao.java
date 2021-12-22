@@ -1,0 +1,1 @@
+package com.jiagouedu.services.front.commentype.dao;import com.jiagouedu.core.DaoManager;import com.jiagouedu.services.front.commentype.bean.CommentType;public interface CommentTypeDao extends DaoManager<CommentType> {}

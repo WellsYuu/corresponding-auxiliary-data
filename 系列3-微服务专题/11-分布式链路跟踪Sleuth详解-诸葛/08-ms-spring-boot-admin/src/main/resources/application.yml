@@ -1,0 +1,22 @@
+server:
+  port: 9999 
+spring:  
+  application:  
+    name: service-admin  
+  mail:  
+    host: smtp.163.com  
+    username: aaronrao2018@163.com
+    password: 2018shijiebei  
+    properties:  
+      mail.debug: false  
+      mail.smtp.auth: true  
+  boot:  
+    admin:  
+      notify:  
+        mail:  
+          to: 3376224996@qq.com  
+          from: aaronrao2018@163.com  
+#          ignore-changes: UNKNOWN:UP  
+      routes:  
+        endpoints: env,metrics,dump,jolokia,info,configprops,trace,logfile,refresh,flyway,liquibase,heapdump,loggers,auditevents,hystrix.stream 
+               

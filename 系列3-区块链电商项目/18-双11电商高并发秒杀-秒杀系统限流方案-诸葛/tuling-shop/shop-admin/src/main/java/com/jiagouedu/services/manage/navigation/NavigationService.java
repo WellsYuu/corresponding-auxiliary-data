@@ -1,0 +1,1 @@
+package com.jiagouedu.services.manage.navigation;import com.jiagouedu.core.Services;import com.jiagouedu.services.manage.navigation.bean.Navigation;public interface NavigationService extends Services<Navigation> {}

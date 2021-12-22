@@ -1,0 +1,1 @@
+package com.jiagouedu.services.manage.orderlog.dao;import com.jiagouedu.core.DaoManager;import com.jiagouedu.services.manage.orderlog.bean.Orderlog;public interface OrderlogDao extends DaoManager<Orderlog> {}

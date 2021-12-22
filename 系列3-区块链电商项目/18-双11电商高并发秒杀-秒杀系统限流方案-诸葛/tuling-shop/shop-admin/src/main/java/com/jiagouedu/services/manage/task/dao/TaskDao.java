@@ -1,0 +1,1 @@
+package com.jiagouedu.services.manage.task.dao;import com.jiagouedu.core.DaoManager;import com.jiagouedu.services.manage.task.bean.Task;public interface TaskDao extends DaoManager<Task> {}

@@ -1,0 +1,22 @@
+//
+{
+com.cbt.agent.bootstrap.adapter.ServletAgentProxyHandle.Params _param = new com.cbt.agent.bootstrap.adapter.ServletAgentProxyHandle.Params();
+_param.targetClassName="${target.className}";
+_param.paramTypes="${target.paramTypes}".split(",");
+_param.methodName="${target.methodName}";
+_param.handClass="${handle.className}";
+_param.args=$args;
+_param.proxy=$0;
+Object event = com.cbt.agent.bootstrap.adapter.ServletAgentProxyHandle.beforeProxy(_param);
+Object result = null;
+         try {
+           ${target.methodName}$agent(${target.args});
+         } catch (Throwable e) {
+             _param.error = e;
+             throw e;
+         } finally {
+             _param.args=$args;
+             _param.result=result;
+             com.cbt.agent.bootstrap.adapter.ServletAgentProxyHandle.afterProxy(_param, event);
+          }
+}

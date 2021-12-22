@@ -1,0 +1,1 @@
+package com.jiagouedu.services.front.comment.dao;import com.jiagouedu.core.DaoManager;import com.jiagouedu.services.front.comment.bean.Comment;public interface CommentDao extends DaoManager<Comment> {	int selectCount(String orderid);}

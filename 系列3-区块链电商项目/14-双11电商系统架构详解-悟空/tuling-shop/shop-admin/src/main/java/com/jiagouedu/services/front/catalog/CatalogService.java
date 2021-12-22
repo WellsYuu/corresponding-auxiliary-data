@@ -1,0 +1,1 @@
+package com.jiagouedu.services.front.catalog;import com.jiagouedu.core.Services;import com.jiagouedu.services.front.catalog.bean.Catalog;import java.util.List;public interface CatalogService extends Services<Catalog> {	/**	 * 加载指定节点下的全部节点。 如果指定的节点为NULL则加载整棵树，否则加载指定对象下的所有节点	 * 	 * @param e	 * @return	 */	public List<Catalog> loadRoot(Catalog e);}

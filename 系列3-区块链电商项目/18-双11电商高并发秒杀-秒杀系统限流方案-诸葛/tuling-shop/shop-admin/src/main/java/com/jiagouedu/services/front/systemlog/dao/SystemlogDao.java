@@ -1,0 +1,1 @@
+package com.jiagouedu.services.front.systemlog.dao;import com.jiagouedu.core.DaoManager;import com.jiagouedu.services.front.systemlog.bean.Systemlog;public interface SystemlogDao extends DaoManager<Systemlog> {}

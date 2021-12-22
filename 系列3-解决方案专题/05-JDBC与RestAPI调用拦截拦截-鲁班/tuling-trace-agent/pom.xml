@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+
+	<groupId>com.cbt.agent</groupId>
+	<artifactId>cbt-agent</artifactId>
+	<packaging>pom</packaging>
+	<version>1.0-SNAPSHOT</version>
+	<modules>
+		<module>agent-bootstrap</module>
+		<module>agent-base</module>
+		<module>agent-collects</module>
+		<module>agent-collect-servlet</module>
+	</modules>
+
+	<!-- 定义系统属性 -->
+	<properties>
+		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+		<!-- compile插件 -->
+		<project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
+		<locales>en_US</locales>
+		<!-- site插件 -->
+		<argLine>-XX:-UseSplitVerifier</argLine>
+		<maven.compiler.source>1.7</maven.compiler.source><!-- compile插件 -->
+		<maven.compiler.target>1.7</maven.compiler.target><!-- compile插件 -->
+	</properties>
+
+	   <build>
+		<plugins>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-compiler-plugin</artifactId>
+				<configuration>
+					<source>1.7</source>
+					<target>1.7</target>
+				</configuration>
+			</plugin>
+		</plugins>
+		<!-- <finalName>cbt-agent</finalName> -->
+		<resources>
+		   <resource>
+			   <directory>src/main/java</directory>
+			   <includes>
+				   <include>**/*.MF</include>
+				   <include>**/*.XML</include>
+			   </includes>
+			   <filtering>true</filtering>
+		   </resource>
+		   <resource>
+			   <directory>src/main/resources</directory>
+			   <includes>
+				   <include>**/*</include>
+				   <include>*</include>
+			   </includes>
+			   <filtering>true</filtering>
+		   </resource>
+	   </resources>
+	</build>
+
+</project>

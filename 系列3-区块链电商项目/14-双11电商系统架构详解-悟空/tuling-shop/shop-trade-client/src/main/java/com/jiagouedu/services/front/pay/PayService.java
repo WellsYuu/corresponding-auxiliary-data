@@ -1,0 +1,1 @@
+package com.jiagouedu.services.front.pay;import com.jiagouedu.core.Services;import com.jiagouedu.services.front.pay.bean.Pay;public interface PayService extends Services<Pay> {}
