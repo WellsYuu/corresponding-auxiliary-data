@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:dubbo="http://code.alibabatech.com/schema/dubbo"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+       http://www.springframework.org/schema/beans/spring-beans.xsd http://code.alibabatech.com/schema/dubbo http://code.alibabatech.com/schema/dubbo/dubbo.xsd">
+    <dubbo:application name="demo-provider"/>
+    <dubbo:registry protocol="zookeeper" address="192.168.0.147:2181" check="true"/>
+    <dubbo:protocol name="dubbo" port="-1"/>
+
+    <dubbo:service interface="com.tuling.teach.service.router.RouterDemoService" ref="routerDemoServic">
+    </dubbo:service>
+    <bean id="routerDemoServic" class="com.tuling.teach.service.router.RouterDemoServiceImpl"></bean>
+</beans>
