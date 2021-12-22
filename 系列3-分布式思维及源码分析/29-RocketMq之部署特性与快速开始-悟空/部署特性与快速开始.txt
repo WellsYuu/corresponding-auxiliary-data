@@ -1,0 +1,3 @@
+上课的时候有一项配置错了 导致部分broker不可用
+#配置从节点 错写层 ASYNC_SLAVE
+brokerRole=SLAVE 
