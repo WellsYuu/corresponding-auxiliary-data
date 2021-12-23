@@ -1,0 +1,92 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.edu.example.dao.OrderMapper" >
+  <resultMap id="BaseResultMap" type="com.edu.example.bean.Order" >
+    <id column="id" property="id"/>
+    <result column="order_no" property="orderNo"/>
+    <result column="title" property="title"/>
+    <result column="status" property="status"/>
+    <result column="amount" property="amount"/>
+  </resultMap>
+  <sql id="Base_Column_List" >
+    id, order_no,title,status,amount
+  </sql>
+  
+  <!-- 根据主键id查询用户信息 -->
+  <select id="selectById"  resultType="com.edu.example.bean.Order" parameterType="int" >
+    select 
+    <include refid="Base_Column_List" />
+    from t_order
+    where id = #{id,jdbcType=BIGINT}
+  </select>
+  
+  <!-- 根据主键id删除用户信息 -->
+  <delete id="deleteById" parameterType="int" >
+    delete from t_order
+    where id = #{id,jdbcType=BIGINT}
+  </delete>
+  
+  <!--添加用户记录(选择性字段)  -->
+  <insert id="insert" parameterType="com.edu.example.bean.Order" keyProperty="id" useGeneratedKeys="true">
+    insert into t_order
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        id,
+      </if>
+      <if test="orderNo != null" >
+        order_no,
+      </if>
+      <if test="title != null" >
+        title,
+      </if>
+      <if test="status != null" >
+        status,
+      </if>
+      <if test="amount != null" >
+        amount,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        #{id},
+      </if>
+      <if test="orderNo != null" >
+        #{orderNo},
+      </if>
+      <if test="title != null" >
+        #{title},
+      </if>
+      <if test="status != null" >
+        #{status},
+      </if>
+      <if test="amount != null" >
+        #{amount},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.edu.example.bean.Order" >
+    update t_order
+    <set>
+      <if test="orderNo != null" >
+        order_no = #{orderNo},
+      </if>
+      <if test="title != null" >
+        title = #{title},
+      </if>
+      <if test="status != null" >
+        status = #{status},
+      </if>
+      <if test="fplmn != null" >
+        amount = #{amount},
+      </if>
+    </set>
+    where id = #{id}
+  </update>
+  
+  <update id="updateStatusByPrimaryKeyAndStatus" parameterType="map">
+    update t_order set status = #{newStatus} where id = #{id} and status= #{status}
+  </update>
+  <select id="getAll" resultMap="BaseResultMap">
+  	select * from t_order
+  </select>
+</mapper>

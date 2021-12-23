@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- 
+status="OFF"，可以去掉，它的含义为是否记录log4j2本身的event信息，默认是OFF 
+monitorInterval 监控日志的时间，没30分钟监控一次
+-->
+<configuration status="OFF" monitorInterval="1800">
+	<!-- 定义下面的引用名 -->
+	<Properties>
+		<property name="log_pattern">%d{yyyy-MM-dd HH:mm:ss.SSS}|%-5level|%X{uniq}|%t|%class{36}|%L|%M|%msg%xEx%n</property>
+		<property name="log_filename_debug">/data/weblog/aop/debug</property>
+		<property name="log_filename_info">/data/weblog/aop/info</property>
+		<property name="log_filename_sql">/data/weblog/aop/sql</property>
+		<property name="every_file_size">100M</property><!-- 日志切割的最小单位 -->
+		<property name="output_log_level">debug</property><!-- 日志输出级别 -->
+	</Properties>
+
+	<appenders>
+		<!--这个输出控制台的配置 -->
+		<Console name="Console" target="SYSTEM_OUT">
+			<!--控制台只输出level及以上级别的信息（onMatch），其他的直接拒绝（onMismatch） -->
+			<ThresholdFilter level="debug" onMatch="ACCEPT" onMismatch="DENY" />
+			<!--这个都知道是输出日志的格式 -->
+			<PatternLayout pattern="${log_pattern}" />
+		</Console>
+
+		<!-- 重要的是，如果有多个ThresholdFilter，那么Filters是必须的，同时在Filters中，首先要过滤不符合的日志级别，把不需要的首先DENY掉，然后再ACCEPT需要的日志级别，这个次序不能搞颠倒。 -->
+		<!-- 
+			按月生成归档日志，并压缩(这个会打印出所有的信息，每次大小超过size，则这size大小的日志会自动存入按年份-月份建立的文件夹下面并进行压缩，作为存档)，可以使用 :
+			filePattern="logs/$${date:yyyy-MM}/app-%d{MM-dd-yyyy}-%i.log.gz" 
+			<SizeBasedTriggeringPolicy size="${every_file_size}" />
+			按照天生成归档日志:
+			filePattern="${log_filename_all}-%d{yyyy-MM-dd}.log
+			<TimeBasedTriggeringPolicy modulate="true" interval="1"/>
+		 -->
+		<!-- 显示debug级别的日志信息 -->
+		<RollingFile name="DebugLog" fileName="${log_filename_debug}.log" filePattern="${log_filename_debug}.log.%d{yyyy-MM-dd}">
+			<PatternLayout pattern="${log_pattern}" />
+<!-- 			<SizeBasedTriggeringPolicy size="${every_file_size}" /> -->
+			<TimeBasedTriggeringPolicy modulate="true" interval="1"/>
+			<Filters>
+<!-- 				<ThresholdFilter level="error" onMatch="DENY" onMismatch="NEUTRAL" /> -->
+				<ThresholdFilter level="debug" onMatch="ACCEPT" onMismatch="DENY" />
+			</Filters>
+		</RollingFile>
+		
+		<!-- 显示所有级别的日志信息 -->
+		<RollingFile name="InfoLog" fileName="${log_filename_info}.log" filePattern="${log_filename_info}.log.%d{yyyy-MM-dd}">
+			<PatternLayout pattern="${log_pattern}" />
+			<TimeBasedTriggeringPolicy modulate="true" interval="1"/>
+			<Filters>
+				<ThresholdFilter level="info" onMatch="ACCEPT" onMismatch="DENY" />
+			</Filters>
+		</RollingFile>
+		
+		<RollingFile name="SqlLog" fileName="${log_filename_sql}.log" filePattern="${log_filename_sql}.log.%d{yyyy-MM-dd}"  append="true">
+			<PatternLayout pattern="${log_pattern}" />
+			<TimeBasedTriggeringPolicy modulate="true" interval="1"/>
+			<Filters>
+				<ThresholdFilter level="debug" onMatch="ACCEPT" onMismatch="DENY" />
+			</Filters>
+		</RollingFile>
+		
+	</appenders>
+	<!--然后定义logger，只有定义了logger并引入的appender，appender才会生效 -->
+	<loggers>
+		<!-- show sql -->
+		<Logger name="com.edu.example.dao" level="debug" additivity="true">
+			<AppenderRef ref="SqlLog" />
+		</Logger>
+		<!--建立一个默认的root的logger，需要在root的level中指定输出的级别， -->
+		<root level="${output_log_level}">
+			<appender-ref ref="DebugLog"/>
+			<appender-ref ref="InfoLog"/>
+			<appender-ref ref="SqlLog"/>
+			<appender-ref ref="Console" />
+		</root>
+	</loggers>
+</configuration>
