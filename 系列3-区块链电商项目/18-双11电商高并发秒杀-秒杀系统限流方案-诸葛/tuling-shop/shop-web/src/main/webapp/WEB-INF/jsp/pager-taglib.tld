@@ -1,4 +1,20 @@
 <?xml version="1.0" encoding="ISO-8859-1" ?>
+<!--
+  ~ Copyright 2022 the original author or authors.
+  ~
+  ~ Licensed under the Apache License, Version 2.0 (the "License");
+  ~ you may not use this file except in compliance with the License.
+  ~ You may obtain a copy of the License at
+  ~
+  ~     http://www.apache.org/licenses/LICENSE-2.0
+  ~
+  ~ Unless required by applicable law or agreed to in writing, software
+  ~ distributed under the License is distributed on an "AS IS" BASIS,
+  ~ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  ~ See the License for the specific language governing permissions and
+  ~ limitations under the License.
+  -->
+
 <!DOCTYPE taglib
   PUBLIC "-//Sun Microsystems, Inc.//DTD JSP Tag Library 1.1//EN"
   "http://java.sun.com/j2ee/dtds/web-jsptaglibrary_1_1.dtd">
@@ -13,7 +29,7 @@
     large data sets in JavaServer Pages (JSP). It can emulate all currently
     known paging styles with minimal effort. It also includes re-usable index
     styles that emulate the search result navigators of popular web sites
-    such as Google[sm], AltaVistaÂ® and Yahoo!. The Pager Tag Library does most
+    such as Google[sm], AltaVista® and Yahoo!. The Pager Tag Library does most
     of the work for you by dynamically organizing your data set into pages and
     generating a browsable index with virtually any look desired.
   </info>
