@@ -1,6 +1,6 @@
-# <img src="https://i1.hdslb.com/bfs/face/859398b588e9406296e3fb008a2f46b51ad499c3.jpg@256w_256h_1o.webp" width="80" height="60"> Corresponding Auxiliary Data 
+# <img src="https://i1.hdslb.com/bfs/face/859398b588e9406296e3fb008a2f46b51ad499c3.jpg@256w_256h_1o.webp" width="80" height="60"> Corresponding Auxiliary Data
 
-Corresponding Auxiliary Data 是专为 [哔哩哔哩 (B站) ](https://space.bilibili.com/243683809/video) 视频中所涉及到的源码、PPT、Word、笔记、辅助工具等材料的项目，项目开发类别不限于 Java、C/C++、Python、汇编、Go、Vue、Angular、SQL等语言，各个不同项目多对应的语言可自行利用对应的开发工具进行学习。
+Corresponding Auxiliary Data 是专为 [哔哩哔哩 (B站) ](https://space.bilibili.com/243683809/video) 视频中所涉及到的源码、PPT、Word、笔记、辅助工具等材料所提供的辅助项目，项目开发类别不限于 Java、C/C++、Python、汇编、Go、Vue、Angular、SQL等语言，各个不同项目多对应的语言可自行利用对应的开发工具进行学习。
 
 我们的主要目标是：
 
@@ -51,9 +51,11 @@ Corresponding Auxiliary Data 以系列模块的方式来区分不同的视频集
 
 ### 系列三
 
-更新中...
+该**系列三**视频及源码、PPT、笔记等材料均来自于 *图灵学院Java架构师VIP全套* 内部培训课程，其中系列二中部分章节没有源码，只有笔记或者PPT，那么可以在 [系列3-综合源码](https://github.com/walesu/corresponding-auxiliary-data/tree/main/%E7%B3%BB%E5%88%973-%E7%BB%BC%E5%90%88%E6%BA%90%E7%A0%81) 中寻找
 
+### 系列四
 
+更新中 ......
 
 ## License
 
