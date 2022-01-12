@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Insert title here</title>
+</head>
+<body>
+
+	<script type="text/javascript">
+		// 初始化, 参数为url
+		// 依赖H5
+		var sse = new EventSource("SSE");
+
+		sse.onmessage = function(e) {
+			console.log("message", e.data, e);
+		}
+
+		// 监听指定事件, (就不会进入onmessage了)
+		sse.addEventListener("me", function(e) {
+			console.log("me event", e.data);
+			// 如果不关闭,会自动重连
+			if (e.data == 3) {
+				sse.close();
+			}
+		});
+	</script>
+</body>
+</html>
