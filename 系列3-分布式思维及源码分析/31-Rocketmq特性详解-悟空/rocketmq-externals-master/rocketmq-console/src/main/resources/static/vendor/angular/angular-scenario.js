@@ -1,15 +1,17 @@
-/*!
- * jQuery JavaScript Library v2.2.3
- * http://jquery.com/
+/*
+ * Copyright 2021-2022 the original author or authors.
  *
- * Includes Sizzle.js
- * http://sizzlejs.com/
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
  *
- * Copyright jQuery Foundation and other contributors
- * Released under the MIT license
- * http://jquery.org/license
+ *     http://www.apache.org/licenses/LICENSE-2.0
  *
- * Date: 2016-04-05T19:26Z
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 
 (function( global, factory ) {'use strict';
