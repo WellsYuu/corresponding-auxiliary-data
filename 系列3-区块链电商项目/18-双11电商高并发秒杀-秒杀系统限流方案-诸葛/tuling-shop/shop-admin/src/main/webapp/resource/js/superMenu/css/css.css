@@ -1,3 +1,19 @@
+/*
+ * Copyright 2021-2022 the original author or authors.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 *{margin:0;padding:0;}
 #sidebar{background: #FAFAFA;height:auto;width:100%;border:2px solid #e33a3d;padding:0px;margin-top:0px;margin-left:0px;border-top: 0px;}
 #sidebar h3{text-align:left;margin-top: 0px;margin-bottom: 0px;padding-left: 40px;}
@@ -31,7 +47,7 @@ padding:15px;background: #FAFAFA;border:1px solid #c30;
 	display: block;
 /* 	margin:30px;padding:0 15px; */
 /* 	width: 50px; */
-	overflow: hidden; /*×¢Òâ²»ÒªÐ´ÔÚ×îºóÁË*/
+	overflow: hidden; /*×¢ï¿½â²»ÒªÐ´ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½*/
 	white-space: nowrap;
 	-o-text-overflow: ellipsis;
 	text-overflow: ellipsis;

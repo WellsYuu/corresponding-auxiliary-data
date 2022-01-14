@@ -1,3 +1,19 @@
+/*
+ * Copyright 2021-2022 the original author or authors.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 /**
  * @package Xslider - A slider plugin for jQuery
  * @version 0.5
@@ -5,17 +21,17 @@
  **/
 ;(function($){
     $.fn.Xslider = function(options){var settings ={
-            affect: 'scrollx', //Ð§¹û  ÓÐscrollx|scrolly|fade|none
-            speed: 1200, //¶¯»­ËÙ¶È
-            space: 6000, //Ê±¼ä¼ä¸ô
-            auto: true, //×Ô¶¯¹ö¶¯
-            trigger: 'mouseover', //´¥·¢ÊÂ¼þ ×¢ÒâÓÃmouseover´úÌæhover
-            conbox: '.conbox', //ÄÚÈÝÈÝÆ÷id»òclass
-            ctag: 'a', //ÄÚÈÝ±êÇ© Ä¬ÈÏÎª<a>
-            switcher: '.switcher', //ÇÐ»»´¥·¢Æ÷id»òclass
-            stag: 'a', //ÇÐ»»Æ÷±êÇ© Ä¬ÈÏÎªa
-            current:'cur', //µ±Ç°ÇÐ»»Æ÷ÑùÊ½Ãû³Æ
-            rand:false //ÊÇ·ñËæ»úÖ¸¶¨Ä¬ÈÏ»ÃµÆÍ¼Æ¬
+            affect: 'scrollx', //Ð§ï¿½ï¿½  ï¿½ï¿½scrollx|scrolly|fade|none
+            speed: 1200, //ï¿½ï¿½ï¿½ï¿½ï¿½Ù¶ï¿½
+            space: 6000, //Ê±ï¿½ï¿½ï¿½ï¿½
+            auto: true, //ï¿½Ô¶ï¿½ï¿½ï¿½ï¿½ï¿½
+            trigger: 'mouseover', //ï¿½ï¿½ï¿½ï¿½ï¿½Â¼ï¿½ ×¢ï¿½ï¿½ï¿½ï¿½mouseoverï¿½ï¿½ï¿½ï¿½hover
+            conbox: '.conbox', //ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½idï¿½ï¿½class
+            ctag: 'a', //ï¿½ï¿½ï¿½Ý±ï¿½Ç© Ä¬ï¿½ï¿½Îª<a>
+            switcher: '.switcher', //ï¿½Ð»ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½idï¿½ï¿½class
+            stag: 'a', //ï¿½Ð»ï¿½ï¿½ï¿½ï¿½ï¿½Ç© Ä¬ï¿½ï¿½Îªa
+            current:'cur', //ï¿½ï¿½Ç°ï¿½Ð»ï¿½ï¿½ï¿½ï¿½ï¿½Ê½ï¿½ï¿½ï¿½ï¿½
+            rand:false //ï¿½Ç·ï¿½ï¿½ï¿½ï¿½Ö¸ï¿½ï¿½Ä¬ï¿½Ï»Ãµï¿½Í¼Æ¬
         };
         settings = $.extend({}, settings, options);
         var index = 1;

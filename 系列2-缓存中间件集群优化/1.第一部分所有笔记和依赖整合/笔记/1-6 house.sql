@@ -31,7 +31,7 @@ insert  into `tbl_house`(`id`,`house_user`,`house_address`,`house_time`,`house_d
 
 /*!40101 SET SQL_MODE=@OLD_SQL_MODE */;
 /*
- * Copyright 2021-2021 the original author or authors.
+ * Copyright 2021-2022 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.

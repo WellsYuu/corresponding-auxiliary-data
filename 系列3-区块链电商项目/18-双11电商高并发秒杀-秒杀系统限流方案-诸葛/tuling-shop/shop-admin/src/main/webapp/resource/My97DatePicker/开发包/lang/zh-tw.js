@@ -1,14 +1,30 @@
+/*
+ * Copyright 2021-2022 the original author or authors.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 var $lang={
-errAlertMsg: "²»ºÏ·¨µÄÈÕÆÚ¸ñÊ½»òÕßÈÕÆÚ³¬³öÏŞ¶¨¹ ‡ú,ĞèÒª³·äN†á?",
-aWeekStr: ["ÖÜ","ÈÕ","Ò»","¶ş","Èı","ËÄ","Îå","Áù"],
-aLongWeekStr:["ÖÜ","ĞÇÆÚÈÕ","ĞÇÆÚÒ»","ĞÇÆÚ¶ş","ĞÇÆÚÈı","ĞÇÆÚËÄ","ĞÇÆÚÎå","ĞÇÆÚÁù"],
-aMonStr: ["Ò»ÔÂ","¶şÔÂ","ÈıÔÂ","ËÄÔÂ","ÎåÔÂ","ÁùÔÂ","ÆßÔÂ","°ËÔÂ","¾ÅÔÂ","Ê®ÔÂ","Ê®Ò»","Ê®¶ş"],
-aLongMonStr: ["Ò»ÔÂ","¶şÔÂ","ÈıÔÂ","ËÄÔÂ","ÎåÔÂ","ÁùÔÂ","ÆßÔÂ","°ËÔÂ","¾ÅÔÂ","Ê®ÔÂ","Ê®Ò»ÔÂ","Ê®¶şÔÂ"],
-clearStr: "Çå¿Õ",
-todayStr: "½ñÌì",
-okStr: "´_¶¨",
-updateStr: "´_¶¨",
-timeStr: "•rég",
-quickStr: "¿ìËÙßx“ñ",
-err_1: '×îĞ¡ÈÕÆÚ²»ÄÜ´óì¶×î´óÈÕÆÚ!'
+errAlertMsg: "ï¿½ï¿½ï¿½Ï·ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ú¸ï¿½Ê½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ú³ï¿½ï¿½ï¿½ï¿½Ş¶ï¿½ï¿½ï¿½ï¿½ï¿½,ï¿½ï¿½Òªï¿½ï¿½ï¿½Nï¿½ï¿½?",
+aWeekStr: ["ï¿½ï¿½","ï¿½ï¿½","Ò»","ï¿½ï¿½","ï¿½ï¿½","ï¿½ï¿½","ï¿½ï¿½","ï¿½ï¿½"],
+aLongWeekStr:["ï¿½ï¿½","ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½","ï¿½ï¿½ï¿½ï¿½Ò»","ï¿½ï¿½ï¿½Ú¶ï¿½","ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½","ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½","ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½","ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½"],
+aMonStr: ["Ò»ï¿½ï¿½","ï¿½ï¿½ï¿½ï¿½","ï¿½ï¿½ï¿½ï¿½","ï¿½ï¿½ï¿½ï¿½","ï¿½ï¿½ï¿½ï¿½","ï¿½ï¿½ï¿½ï¿½","ï¿½ï¿½ï¿½ï¿½","ï¿½ï¿½ï¿½ï¿½","ï¿½ï¿½ï¿½ï¿½","Ê®ï¿½ï¿½","Ê®Ò»","Ê®ï¿½ï¿½"],
+aLongMonStr: ["Ò»ï¿½ï¿½","ï¿½ï¿½ï¿½ï¿½","ï¿½ï¿½ï¿½ï¿½","ï¿½ï¿½ï¿½ï¿½","ï¿½ï¿½ï¿½ï¿½","ï¿½ï¿½ï¿½ï¿½","ï¿½ï¿½ï¿½ï¿½","ï¿½ï¿½ï¿½ï¿½","ï¿½ï¿½ï¿½ï¿½","Ê®ï¿½ï¿½","Ê®Ò»ï¿½ï¿½","Ê®ï¿½ï¿½ï¿½ï¿½"],
+clearStr: "ï¿½ï¿½ï¿½",
+todayStr: "ï¿½ï¿½ï¿½ï¿½",
+okStr: "ï¿½_ï¿½ï¿½",
+updateStr: "ï¿½_ï¿½ï¿½",
+timeStr: "ï¿½rï¿½g",
+quickStr: "ï¿½ï¿½ï¿½ï¿½ï¿½xï¿½ï¿½",
+err_1: 'ï¿½ï¿½Ğ¡ï¿½ï¿½ï¿½Ú²ï¿½ï¿½Ü´ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½!'
 }
