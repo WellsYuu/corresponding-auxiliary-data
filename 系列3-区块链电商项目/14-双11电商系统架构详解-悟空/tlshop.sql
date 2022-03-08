@@ -7537,7 +7537,7 @@ CREATE TABLE `t_task` (
 ) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
 
 /*
- * Copyright 2021-2022 the original author or authors.
+ * Copyright 2021-2022 the original author or authors
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
