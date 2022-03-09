@@ -1,0 +1,75 @@
+version: "3.4"
+services:
+  message-service:
+    image: hub.mooc.com:8080/micro-service/message-service:latest
+    deploy:
+      endpoint_mode: dnsrr
+      resources:
+        limits:
+          cpus: "0.2"
+          memory: "128M"
+
+  user-service:
+    image: hub.mooc.com:8080/micro-service/user-service:latest
+    deploy:
+      endpoint_mode: dnsrr
+      resources:
+        limits:
+          cpus: "0.2"
+          memory: "512M"
+
+  user-edge-service:
+    image: hub.mooc.com:8080/micro-service/user-edge-service:latest
+    deploy:
+      endpoint_mode: vip
+      resources:
+        limits:
+          cpus: "0.2"
+          memory: "512M"
+    ports:
+      - "8082:8082"
+    depends_on:
+      - user-service
+      - message-service
+
+  course-service:
+    image: hub.mooc.com:8080/micro-service/course-service:latest
+    deploy:
+      endpoint_mode: dnsrr
+      resources:
+        limits:
+          cpus: "0.2"
+          memory: "512M"
+    depends_on:
+      - user-service
+
+  course-edge-service:
+    image: hub.mooc.com:8080/micro-service/course-edge-service:latest
+    deploy:
+      endpoint_mode: vip
+      resources:
+        limits:
+          cpus: "0.2"
+          memory: "512M"
+    ports:
+      - "8081:8081"
+    depends_on:
+      - user-edge-service
+  api-gateway:
+    image: hub.mooc.com:8080/micro-service/api-gateway-zuul:latest
+    deploy:
+      endpoint_mode: vip
+      resources:
+        limits:
+          cpus: "0.2"
+          memory: "512M"
+    ports:
+      - "8080:8080"
+    depends_on:
+      - user-edge-service
+      - course-edge-service
+
+networks:
+  default:
+    external:
+      name: imooc-overlay
