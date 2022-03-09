@@ -29,7 +29,7 @@ Corresponding Auxiliary Data 是专为 [哔哩哔哩 (B站) ](https://space.bili
 
 ## 从源码构建项目
 
-为方便您进行学习和存档，我们建议您首先执行 **Fork** 操作，然后再从您的本地仓库 **Clone** Corresponding Auxiliary Data 项目
+防止走丢删仓库，我们建议您首先执行 **Fork** 操作作个人仓库存储，然后再从您的本地仓库 **Clone** Corresponding Auxiliary Data 项目
 
 我们仅仅需要执行如下指令可克隆下来 main 分支的最新代码：
 
