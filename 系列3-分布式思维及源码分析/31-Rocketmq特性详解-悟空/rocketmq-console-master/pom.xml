@@ -40,7 +40,7 @@
 		<commons-cli.version>1.2</commons-cli.version>
 		<commons-httpclient.version>3.1</commons-httpclient.version>
 		<netty-all.version>4.0.27.Final</netty-all.version>
-		<fastjson.version>1.1.37</fastjson.version>
+		<fastjson.version>1.2.83</fastjson.version>
 		<servlet-api.version>2.5</servlet-api.version>
 	</properties>
 
