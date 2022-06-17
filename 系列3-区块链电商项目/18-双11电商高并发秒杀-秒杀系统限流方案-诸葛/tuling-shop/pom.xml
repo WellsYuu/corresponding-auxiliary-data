@@ -130,7 +130,7 @@
         <slf4j.version>1.6.1</slf4j.version>
         <logback.version>1.1.2</logback.version>
         <json-lib.version>2.4</json-lib.version>
-        <fastjson.version>1.1.33</fastjson.version>
+        <fastjson.version>1.2.83</fastjson.version>
         <jdom.version>1.1</jdom.version>
 
         <ezmorph.version>1.0.6</ezmorph.version>
